@@ -7,7 +7,8 @@ from h1b.config import DEMO_DIR, ROOT
 from h1b.pipeline import process_files, publish
 
 APP = str(ROOT / "app" / "streamlit_app.py")
-PAGES = ["views/employer_lookup.py", "views/trends.py", "views/methodology.py"]
+FIND = "views/find_sponsors.py"
+PAGES = ["views/home.py", "views/employer_lookup.py", "views/trends.py", "views/methodology.py"]
 
 
 @pytest.fixture(scope="module")
@@ -26,7 +27,9 @@ def demo_app_data(tmp_path_factory):
 def app(demo_app_data, monkeypatch):
     monkeypatch.setenv("H1B_APP_DATA", str(demo_app_data))
     at = AppTest.from_file(APP, default_timeout=60)
-    at.run()
+    at.run()  # opens Home, the default page
+    assert not at.exception
+    at.switch_page(FIND).run()
     assert not at.exception
     return at
 
@@ -141,6 +144,7 @@ def test_filters_come_from_the_url_and_go_back_to_it(demo_app_data, monkeypatch)
     at.query_params.update({"role": "Operations Research", "state": "az", "min": "3"})
     at.query_params["consistent"] = "1"
     at.run()
+    at.switch_page(FIND).run()
     assert not at.exception
     assert at.selectbox[0].value == "Operations Research"
     assert at.selectbox[1].value == "AZ"
@@ -154,6 +158,7 @@ def test_bad_url_values_fall_back_to_defaults(demo_app_data, monkeypatch):
     at = AppTest.from_file(APP, default_timeout=60)
     at.query_params.update({"role": "Astronaut", "state": "ZZ", "min": "abc"})
     at.run()
+    at.switch_page(FIND).run()
     assert not at.exception
     assert at.selectbox[0].value == "Analytics (combined)"
     assert (at.selectbox[1].value, at.select_slider[0].value) == ("ALL", 5)
@@ -179,3 +184,25 @@ def test_trends_defaults_and_plain_caveats(app):
     assert [e.label for e in app.expander].count("Details") == 2
     for box in app.markdown:
         assert "`" not in box.value  # caveats in plain language, no code formatting
+
+
+def test_home_is_the_default_page_with_purpose_numbers_and_glossary(demo_app_data, monkeypatch):
+    monkeypatch.setenv("H1B_APP_DATA", str(demo_app_data))
+    at = AppTest.from_file(APP, default_timeout=60).run()
+    assert not at.exception
+    assert at.title[0].value == "H-1B Sponsor Scout"
+    assert "filing history, not current job openings or legal advice" in at.markdown[0].value
+    assert len(at.metric) == 3
+    assert [e.label for e in at.expander] == ["Glossary"]
+    assert "Not legal or immigration advice." in footer(at)
+
+
+@pytest.mark.parametrize("i", [0, 1, 2])
+def test_each_headline_number_opens_find_sponsors_showing_that_count(demo_app_data, monkeypatch, i):
+    monkeypatch.setenv("H1B_APP_DATA", str(demo_app_data))
+    at = AppTest.from_file(APP, default_timeout=60).run()
+    shown = at.metric[i].value
+    at.button(key=f"headline_{i}").click().run()
+    assert not at.exception
+    assert at.title[0].value == "Find sponsors"
+    assert status(at).startswith(f"Showing **{shown} employer")  # filtered count == headline

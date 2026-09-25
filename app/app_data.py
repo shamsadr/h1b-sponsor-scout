@@ -196,6 +196,36 @@ def encode_query(filters: dict) -> dict[str, str]:
     }
 
 
+PURPOSE = (
+    "For international students researching which employers sponsor H-1B in analytics, OR, "
+    "quant and IE roles. It shows filing history, not current job openings or legal advice."
+)
+
+
+def headline_numbers(sponsors: pd.DataFrame) -> list[dict]:
+    """The Home page's three numbers, each with the Find sponsors filters that reproduce it.
+
+    [{'label', 'note', 'value': int, 'filters': {family, state, min_cases, consistent}}, ...]
+    """
+    specs = [
+        ("employers with a certified LCA", "Any H-1B role.", ALL_OCCUPATIONS_LABEL, 1, False),
+        ("analytics employers", "At least 1 certified analytics LCA.", ANALYTICS_LABEL, 1, False),
+        (
+            "consistent analytics sponsors",
+            "10+ certified analytics LCAs every year.",
+            ANALYTICS_LABEL,
+            10,
+            True,
+        ),
+    ]
+    out = []
+    for label, note, family, n, consistent in specs:
+        filters = {"family": family, "state": STATE_ALL, "min_cases": n, "consistent": consistent}
+        value = len(filter_sponsors(sponsors, family, STATE_ALL, n, consistent))
+        out.append({"label": label, "note": note, "value": value, "filters": filters})
+    return out
+
+
 def status_line(n: int, family: str, state: str, consistent_only: bool, min_cases: int) -> str:
     """'Showing **312 employers** · Analytics (combined) · Arizona · consistent only · min 5
     cases/year' (markdown)."""

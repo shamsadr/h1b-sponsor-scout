@@ -21,7 +21,8 @@ st.set_page_config(page_title="H-1B Sponsor Scout", layout="wide")
 init_filters()
 pages = st.navigation(
     [
-        st.Page("views/find_sponsors.py", title="Find sponsors", default=True),
+        st.Page("views/home.py", title="Home", default=True),
+        st.Page("views/find_sponsors.py", title="Find sponsors"),
         st.Page("views/employer_lookup.py", title="Employer lookup"),
         st.Page("views/trends.py", title="Trends"),
         st.Page("views/methodology.py", title="Methodology & limitations"),

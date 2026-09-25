@@ -60,6 +60,11 @@ Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share
 streamlit run app/streamlit_app.py    # reads data/app/ only (about 2.6 MB, committed)
 ```
 Pages:
+- **Home** (the default): what the app is for, three steps, and three headline numbers:
+  employers with a certified LCA, analytics employers, and consistent analytics sponsors. Each
+  number has a button that opens Find sponsors with the filters that reproduce it (a test checks
+  that the filtered count equals the number). A glossary (LCA, prevailing wage, wage level, SOC
+  code, fiscal year) is in an expander.
 - **Find sponsors:** a ranked table for a role group and a worksite state. Role groups are
   Analytics (combined) (the default), each target family, "All target roles" and "All occupations
   (any H-1B role)". A status line shows the result count and filters, and an empty result
@@ -75,8 +80,8 @@ Pages:
 
   **Shareable links.** The role group, state, minimum cases and consistency filter are shared by
   every page and kept in the URL, e.g.
-  `?role=Operations+Research&state=AZ&min=3&consistent=1`, so a filtered view can be bookmarked
-  or sent. Unknown or invalid values fall back to the defaults.
+  `/find_sponsors?role=Operations+Research&state=AZ&min=3&consistent=1`, so a filtered view can be
+  bookmarked or sent. Unknown or invalid values fall back to the defaults.
 - **Employer lookup:** quick picks for the 8 largest employers in the current role group and for
   curated sets (`data/reference/curated_sets.csv`, keyed on `parent_group`): Big Tech, Banks &
   Quant, Consulting (Big 4 / MBB), Analytics consultancies, Manufacturing / EV and Retail &

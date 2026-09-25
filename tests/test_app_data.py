@@ -21,6 +21,7 @@ from app_data import (
     encode_query,
     filter_sponsors,
     footer_text,
+    headline_numbers,
     load_curated_sets,
     lookup_options,
     parse_query,
@@ -327,3 +328,29 @@ def test_curated_table_sorts_by_lcas_with_zero_members_last():
 )
 def test_plural(n, singular, plural_form, expected):
     assert plural(n, singular, plural_form) == expected
+
+
+def test_headline_filters_reproduce_each_number():
+    df = pd.concat([sponsors(), sponsors(family=ANALYTICS_LABEL)], ignore_index=True)
+    for h in headline_numbers(df):
+        f = h["filters"]
+        got = filter_sponsors(df, f["family"], f["state"], f["min_cases"], f["consistent"])
+        assert len(got) == h["value"], h["label"]
+    consistent = headline_numbers(df)[2]
+    assert consistent["filters"] == {
+        "family": ANALYTICS_LABEL,
+        "state": STATE_ALL,
+        "min_cases": 10,
+        "consistent": True,
+    }
+    assert consistent["value"] == 1  # only A has 10+ in both years
+
+
+def test_committed_headline_numbers():
+    folder = ROOT / "data" / "app"
+    if not (folder / "sponsors.parquet").exists():
+        pytest.skip("data/app/ not published yet")
+    s = pd.read_parquet(folder / "sponsors.parquet")
+    for col in s.select_dtypes("category"):
+        s[col] = s[col].astype(str)
+    assert headline_numbers(s)[2]["value"] == 468  # consistent analytics sponsors (findings)
