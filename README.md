@@ -68,10 +68,21 @@ Pages:
 - **Trends:** certified cases per family and year, with the SOC-substitution and withdrawal caveats.
 - **Methodology & limitations:** rendered from this README.
 
-`publish` precomputes the scorecard for every family group × worksite state (plus all states)
-with the same functions as the reports, so the app does no heavy computation. It fails if
-`data/app/` would exceed 20 MB, and `meta.json` records the fiscal years, build date and the commit
-the data was built from (`-dirty` if the code had uncommitted edits).
+`publish` precomputes the scorecard for every role group × worksite state (plus all states)
+with the same functions as the reports, so the app does no heavy computation. The role groups are
+each target family, Analytics (combined), "All target roles" and "All occupations" (every H-1B
+role, including software and "Other"). Each row also carries certified cases per fiscal year
+(`cases_fy2024`, `cases_fy2025`, …) and the number of distinct filing FEINs. The lookup tables
+(`groups`, `employer_breakdown`, `employer_levels`, `members`) cover every employer group, so any
+row can be opened in Employer lookup. `publish` fails if `data/app/` would exceed 20 MB (it is
+13.2 MB for FY2024–FY2025), and `meta.json` records the fiscal years, build date, name and group
+counts, and the commit the data was built from (`-dirty` if the code had uncommitted edits).
+
+**Display names.** The app shows each group by its `display_name`: the override's
+`display_name` (e.g. "Goldman Sachs", "Citi"), otherwise the most frequent raw `EMPLOYER_NAME` as
+filed (e.g. "Tesla, Inc."). Names are never re-cased, so "IBM" and "EY" stay as filed. Names that
+look alike ignoring case and punctuation get the employer state, then the FEIN, appended
+("Acme, LLC (AZ)"), so every display name is unique. `parent_group` stays the internal key.
 
 **Deploy (Streamlit Community Cloud):** repo `shamsadr/h1b-sponsor-scout`, branch `main`, main
 file `app/streamlit_app.py`, Python 3.12. Cloud installs the lean `app/requirements.txt`
@@ -123,7 +134,8 @@ are the connected components, and their label is the `parent_group` column.
   they share a first word or are ≥ 0.85 similar by `difflib`). This cuts state university
   systems and law-firm FEINs typed on client filings.
 - **Manual overrides:** `data/reference/employer_overrides.csv` (committed) holds `merge` rows
-  (join a name to a `parent_group` label) and `split` rows (the name gets no automatic edges).
+  (join a name to a `parent_group` label, with an optional `display_name` for the app) and `split`
+  rows (the name gets no automatic edges).
 - **Merge rule: one hiring brand a candidate would apply to, not corporate ownership.** Amazon
   therefore covers the Amazon-branded entities (Amazon.com Services, AWS, Amazon Data Services,
   Amazon Development Center, Amazon Advertising, Payments, Retail, Studios, ...) but not Twitch,
