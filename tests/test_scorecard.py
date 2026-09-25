@@ -1,6 +1,6 @@
 import pandas as pd
 
-from h1b.scorecard import employer_scorecard
+from h1b.scorecard import employer_scorecard, family_scorecards
 
 
 def make_rows(n: int = 1, **overrides) -> pd.DataFrame:
@@ -103,3 +103,23 @@ def test_sorted_by_cases_then_new_hires_with_bulk_filer_flag():
 def test_bulk_filer_threshold_is_strictly_above_five():
     df = make_rows(2, positions=[5.0, 5.0])  # exactly 5 per case
     assert not employer_scorecard(df).iloc[0]["bulk_filer"]
+
+
+def test_family_scorecards_top_n_per_family_with_family_column():
+    frames = []
+    for fam, n_emp in [("Operations Research", 4), ("Quant / Finance", 2), ("Other", 3)]:
+        for i in range(n_emp):  # employer i has i+1 cases
+            frames.append(
+                make_rows(
+                    i + 1, soc_family=fam, employer_norm=f"{fam[:2]}{i}", EMPLOYER_NAME=f"E{i}"
+                )
+            )
+    df = pd.concat(frames, ignore_index=True)
+
+    out = family_scorecards(df, ["Operations Research", "Quant / Finance"], top_n=3)
+    assert out.columns[0] == "family"
+    assert set(out["family"]) == {"Operations Research", "Quant / Finance"}  # 'Other' skipped
+    counts = out["family"].value_counts()
+    assert counts["Operations Research"] == 3 and counts["Quant / Finance"] == 2  # capped at top_n
+    ops = out[out["family"] == "Operations Research"]
+    assert ops["cases"].tolist() == [4, 3, 2]  # top by cases

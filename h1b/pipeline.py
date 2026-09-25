@@ -15,7 +15,7 @@ import pandas as pd
 from h1b.clean import clean_lca
 from h1b.config import DEMO_DIR, PROCESSED_DIR, REPORTS_DIR, TARGET_FAMILIES
 from h1b.ingest import ingest, normalize_col, read_raw
-from h1b.scorecard import employer_scorecard
+from h1b.scorecard import employer_scorecard, family_scorecards
 
 
 def inspect_file(path: Path) -> list[str]:
@@ -54,7 +54,7 @@ def build_scorecard(
     reports_dir: Path = REPORTS_DIR,
     families: list[str] | None = TARGET_FAMILIES,
 ) -> pd.DataFrame:
-    """Combine all processed years and write the target-role scorecard CSV."""
+    """Combine all processed years; write the target-role and per-family scorecard CSVs."""
     files = sorted(processed_dir.glob("lca_fy*.parquet"))
     if not files:
         raise FileNotFoundError(f"No processed files in {processed_dir}. Run `run` first.")
@@ -63,6 +63,8 @@ def build_scorecard(
     reports_dir.mkdir(parents=True, exist_ok=True)
     out = reports_dir / "scorecard_target_roles.csv"
     card.to_csv(out, index=False)
+    by_family = family_scorecards(df, families if families is not None else TARGET_FAMILIES)
+    by_family.to_csv(reports_dir / "scorecard_by_family.csv", index=False)
     years = sorted(df["fiscal_year"].unique().tolist())
     print(f"[ok] scorecard: {len(card):,} employers, FY {years} -> {out}")
     cols = [

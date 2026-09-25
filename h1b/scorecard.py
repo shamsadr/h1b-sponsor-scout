@@ -74,3 +74,16 @@ def employer_scorecard(
 
     card = card[card["positions"] >= min_positions]
     return card.sort_values(["cases", "new_hire_positions"], ascending=False).reset_index()
+
+
+def family_scorecards(df: pd.DataFrame, families: list[str], top_n: int = 25) -> pd.DataFrame:
+    """Top `top_n` employers by cases within each family, stacked with a 'family' column."""
+    parts = []
+    for fam in families:
+        card = employer_scorecard(df, families=[fam]).head(top_n)
+        if not card.empty:
+            parts.append(card.assign(family=fam))
+    if not parts:
+        return pd.DataFrame()
+    out = pd.concat(parts, ignore_index=True)
+    return out[["family"] + [c for c in out.columns if c != "family"]]

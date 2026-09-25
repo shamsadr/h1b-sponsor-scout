@@ -34,6 +34,8 @@ Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share
 ## Scorecard columns
 Positions, wages and levels use strict `CASE_STATUS == 'Certified'` rows only.
 The table is sorted by `cases`, then `new_hire_positions`.
+`reports/scorecard_by_family.csv` has the same columns for the top 25 employers by cases in each
+target family, with a leading `family` column.
 
 | column | meaning |
 |---|---|
