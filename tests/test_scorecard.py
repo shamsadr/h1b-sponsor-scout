@@ -8,6 +8,7 @@ def make_rows(n: int = 1, **overrides) -> pd.DataFrame:
     base = {
         "CASE_STATUS": "Certified",
         "EMPLOYER_NAME": "X Inc",
+        "SOC_TITLE": "Operations Research Analysts",
         "employer_norm": "X",
         "positions": 1.0,
         "new_hire_positions": 0.0,
@@ -74,3 +75,12 @@ def test_range_share_and_n_leveled():
     row = employer_scorecard(df).iloc[0]
     assert row["range_share"] == 0.5  # share of rows with a TO wage
     assert row["n_leveled"] == 2  # rows with a wage level I-IV
+
+
+def test_top_soc_title_is_most_common_certified_title():
+    df = make_rows(
+        4,
+        SOC_TITLE=["Logisticians", "Logisticians", "Purchasing Agents", "Purchasing Agents"],
+        CASE_STATUS=["Certified", "Certified", "Certified", "Denied"],
+    )
+    assert employer_scorecard(df).iloc[0]["top_soc_title"] == "Logisticians"

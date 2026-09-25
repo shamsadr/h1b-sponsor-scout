@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 from h1b.clean import annualize, clean_lca, map_soc_family, normalize_employer_name
+from h1b.config import SOC_FAMILIES, TARGET_FAMILIES
 from h1b.ingest import standardize_columns
 
 
@@ -80,3 +81,16 @@ def test_clean_annualizes_wage_to():
     out = clean_lca(std, 2025).set_index("CASE_NUMBER")
     assert out.loc["A", "annual_wage_to"] == 60 * 2080
     assert math.isnan(out.loc["B", "annual_wage_to"])  # blank TO stays NaN
+
+
+def test_families_split_it_analysts_and_supply_chain():
+    assert map_soc_family("15-1211.00") == "IT Systems Analyst (context)"
+    assert map_soc_family("13-1081.02") == "Supply Chain / Logistics"
+    assert map_soc_family("17-2112.00") == "Industrial Engineering"
+
+
+def test_target_families_exclude_context_families():
+    assert "Supply Chain / Logistics" in TARGET_FAMILIES
+    assert "Industrial Engineering" in TARGET_FAMILIES
+    assert not [f for f in TARGET_FAMILIES if f.endswith("(context)")]
+    assert {"Software (context)", "IT Systems Analyst (context)"} <= set(SOC_FAMILIES.values())

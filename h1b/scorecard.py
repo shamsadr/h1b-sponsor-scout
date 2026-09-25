@@ -43,6 +43,7 @@ def employer_scorecard(
             "new_hire_positions": g["new_hire_positions"].sum(),
             "years_active": g["fiscal_year"].nunique(),
             "top_family": g["soc_family"].agg(_mode),
+            "top_soc_title": g["SOC_TITLE"].agg(_mode),
             "top_state": g["WORKSITE_STATE"].agg(_mode),
         }
     )

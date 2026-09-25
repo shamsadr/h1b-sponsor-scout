@@ -7,7 +7,8 @@ over time. The official data is split across agencies and hard to use raw.
 **Approach.** Build a reproducible pipeline on public U.S. Department of Labor (DOL)
 LCA disclosure data (FY2019 → present). It cleans and dedupes cases, annualizes wages,
 normalizes employer names, maps SOC codes to role families (OR, Data/BI, Quant, IE,
-Business Analyst), and produces a transparent employer scorecard. Each metric is shown
+Supply Chain/Logistics, Business Analyst; IT systems analysts and software are kept only as
+"(context)" families, outside the target roles), and produces a transparent employer scorecard. Each metric is shown
 separately; there is no single black-box score.
 
 **Status.** Phase 1 of 5: ingest → clean → scorecard, running on synthetic demo data.
@@ -37,6 +38,7 @@ Positions, wages and levels use strict `CASE_STATUS == 'Certified'` rows only.
 |---|---|
 | cases | certified LCAs in target role families |
 | positions | certified LCA worker positions in target role families |
+| top_soc_title | most common SOC title among the employer's certified cases |
 | new_hire_positions | positions flagged new employment or change of employer |
 | years_active | number of fiscal years with ≥1 certified LCA |
 | median_wage_floor | median annualized offered wage from `WAGE_RATE_OF_PAY_FROM` (full-time, outliers excluded) |

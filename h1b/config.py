@@ -70,10 +70,11 @@ SOC_FAMILIES = {
     "13-2054": "Quant / Finance",
     "13-2099.01": "Quant / Finance",
     "17-2112": "Industrial Engineering",
-    "13-1081": "Industrial Engineering",
+    "13-1081": "Supply Chain / Logistics",
     "13-1111": "Business / Mgmt Analyst",
     "13-1161": "Business / Mgmt Analyst",
-    "15-1211": "Business / Mgmt Analyst",
+    "15-1211": "IT Systems Analyst (context)",
     "15-1252": "Software (context)",
 }
-TARGET_FAMILIES = sorted(set(SOC_FAMILIES.values()) - {"Software (context)"})
+# Families tagged "(context)" are kept for comparison but are not target roles.
+TARGET_FAMILIES = sorted(f for f in set(SOC_FAMILIES.values()) if not f.endswith("(context)"))
