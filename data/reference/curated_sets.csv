@@ -1,59 +1,70 @@
 set_name,parent_group,display_name
 Big Tech,AMAZON,Amazon
-Big Tech,MICROSOFT,Microsoft Corporation
-Big Tech,GOOGLE,Google LLC
-Big Tech,META PLATFORMS,"Meta Platforms, Inc"
-Big Tech,APPLE,Apple Inc.
-Big Tech,BYTEDANCE,ByteDance Inc.
-Big Tech,ADOBE,Adobe Inc.
-Big Tech,TIKTOK,TikTok Inc.
-Big Tech,UBER TECHNOLOGIES,"Uber Technologies, Inc."
-Big Tech,LINKEDIN,LINKEDIN CORPORATION
-Big Tech,INTEL,Intel Corporation
-Big Tech,SALESFORCE,"Salesforce, Inc."
-Big Tech,IBM,IBM Corporation
-Big Tech,NVIDIA,NVIDIA Corporation
-Big Tech,NETFLIX,"Netflix, Inc."
+Big Tech,MICROSOFT,Microsoft
+Big Tech,GOOGLE,Google
+Big Tech,META PLATFORMS,Meta
+Big Tech,APPLE,Apple
+Big Tech,BYTEDANCE,ByteDance
+Big Tech,ADOBE,Adobe
+Big Tech,TIKTOK,TikTok
+Big Tech,UBER TECHNOLOGIES,Uber
+Big Tech,LINKEDIN,LinkedIn
+Big Tech,INTEL,Intel
+Big Tech,SALESFORCE,Salesforce
+Big Tech,IBM,IBM
+Big Tech,NVIDIA,NVIDIA
+Big Tech,NETFLIX,Netflix
 Banks & Quant,GOLDMAN SACHS,Goldman Sachs
-Banks & Quant,JPMORGAN CHASE AND,JPMorgan Chase & Co.
+Banks & Quant,JPMORGAN CHASE AND,JPMorgan Chase
 Banks & Quant,CAPITAL ONE,Capital One
 Banks & Quant,CITI,Citi
 Banks & Quant,BANK OF AMERICA,Bank of America
-Banks & Quant,MORGAN STANLEY SERVICES GROUP,Morgan Stanley Services Group Inc.
-Banks & Quant,BLACKROCK FINANCIAL MANAGEMENT,"BlackRock Financial Management, Inc."
-Banks & Quant,DEUTSCHE BANK SECURITIES,"Deutsche Bank Securities, Inc."
-Banks & Quant,BARCLAYS SERVICES,Barclays Services Corp.
-Banks & Quant,WELLS FARGO BANK N A,"WELLS FARGO BANK, N.A."
-Banks & Quant,CITADEL AMERICAS SERVICES,CITADEL AMERICAS SERVICES LLC
-Banks & Quant,CITADEL SECURITIES AMERICAS SERVICES,CITADEL SECURITIES AMERICAS SERVICES LLC
-Banks & Quant,AMERICAN EXPRESS,American Express Company
-Banks & Quant,UBS SECURITIES,UBS Securities LLC
+Banks & Quant,MORGAN STANLEY SERVICES GROUP,Morgan Stanley
+Banks & Quant,BLACKROCK FINANCIAL MANAGEMENT,BlackRock
+Banks & Quant,DEUTSCHE BANK SECURITIES,Deutsche Bank
+Banks & Quant,BARCLAYS,Barclays
+Banks & Quant,WELLS FARGO BANK N A,Wells Fargo
+Banks & Quant,CITADEL AMERICAS SERVICES,Citadel
+Banks & Quant,CITADEL SECURITIES AMERICAS SERVICES,Citadel Securities
+Banks & Quant,AMERICAN EXPRESS,American Express
+Banks & Quant,UBS SECURITIES,UBS
 Consulting (Big 4 / MBB),EY,EY
 Consulting (Big 4 / MBB),DELOITTE,Deloitte
-Consulting (Big 4 / MBB),MCKINSEY AND UNITED STATES,"McKinsey & Company, Inc. United States"
-Consulting (Big 4 / MBB),BOSTON CONSULTING GROUP,"Boston Consulting Group, Inc."
-Consulting (Big 4 / MBB),PRICEWATERHOUSECOOPERS ADVISORY SERVICES,PRICEWATERHOUSECOOPERS ADVISORY SERVICES LLC
-Consulting (Big 4 / MBB),BAIN AND,"BAIN & COMPANY, INC."
-Consulting (Big 4 / MBB),KPMG,KPMG LLP
-Consulting (Big 4 / MBB),PWC US CONSULTING,PwC US Consulting LLP
-Consulting (Big 4 / MBB),PRICEWATERHOUSECOOPERS,PRICEWATERHOUSECOOPERS LLP
-Consulting (Big 4 / MBB),PWC US BUSINESS ADVISORY,PwC US Business Advisory LLP
-Analytics consultancies,EXLSERVICE COM,"ExlService.com, LLC"
-Analytics consultancies,TIGER ANALYTICS,"Tiger Analytics, Inc."
-Analytics consultancies,ZS ASSOCIATES,"ZS Associates, Inc."
-Analytics consultancies,GENPACT,Genpact LLC
-Analytics consultancies,TREDENCE,Tredence Inc.
-Analytics consultancies,AXTRIA,Axtria INC
-Analytics consultancies,LATENTVIEW ANALYTICS,LatentView Analytics Corporation
-Analytics consultancies,FRACTAL ANALYTICS,"Fractal Analytics, Inc."
-Analytics consultancies,QUANTIPHI,"Quantiphi, Inc."
-Manufacturing / EV,TESLA,"Tesla, Inc."
-Manufacturing / EV,RIVIAN AUTOMOTIVE,"Rivian Automotive, LLC"
-Manufacturing / EV,LUCID USA,"Lucid USA, Inc."
-Manufacturing / EV,FORD MOTOR,FORD MOTOR COMPANY
+Consulting (Big 4 / MBB),MCKINSEY AND UNITED STATES,McKinsey
+Consulting (Big 4 / MBB),BOSTON CONSULTING GROUP,Boston Consulting Group
+Consulting (Big 4 / MBB),PWC,PwC
+Consulting (Big 4 / MBB),BAIN AND,Bain & Company
+Consulting (Big 4 / MBB),KPMG,KPMG
+Analytics consultancies,EXLSERVICE COM,EXL
+Analytics consultancies,TIGER ANALYTICS,Tiger Analytics
+Analytics consultancies,ZS ASSOCIATES,ZS Associates
+Analytics consultancies,GENPACT,Genpact
+Analytics consultancies,TREDENCE,Tredence
+Analytics consultancies,AXTRIA,Axtria
+Analytics consultancies,LATENTVIEW ANALYTICS,LatentView Analytics
+Analytics consultancies,FRACTAL ANALYTICS,Fractal Analytics
+Manufacturing / EV,TESLA,Tesla
+Manufacturing / EV,RIVIAN,Rivian
+Manufacturing / EV,LUCID USA,Lucid
+Manufacturing / EV,FORD MOTOR,Ford
 Manufacturing / EV,GENERAL MOTORS,General Motors
-Manufacturing / EV,CATERPILLAR,Caterpillar Inc.
-Manufacturing / EV,RIVIAN,"RIVIAN, LLC"
-Manufacturing / EV,FCA US,FCA US LLC
-Manufacturing / EV,LG ENERGY SOLUTION MICHIGAN,"LG Energy Solution Michigan, Inc."
-Manufacturing / EV,BOEING,The Boeing Company
+Manufacturing / EV,CATERPILLAR,Caterpillar
+Manufacturing / EV,FCA US,Stellantis (FCA US)
+Retail & Consumer,WAL MART ASSOCIATES,Walmart
+Retail & Consumer,DOORDASH,DoorDash
+Retail & Consumer,HOME DEPOT,Home Depot
+Retail & Consumer,WAYFAIR,Wayfair
+Retail & Consumer,CHEWY,Chewy
+Retail & Consumer,EBAY,eBay
+Retail & Consumer,TARGET ENTERPRISE,Target
+Retail & Consumer,CVS HEALTH,CVS Health
+Retail & Consumer,NIKE,Nike
+Retail & Consumer,LOWE S COMPANIES,Lowe's
+Retail & Consumer,GAP,Gap
+Retail & Consumer,SAFEWAY,Safeway
+Retail & Consumer,MAPLEBEAR,Instacart (Maplebear)
+Retail & Consumer,PEPSICO,PepsiCo
+Retail & Consumer,NESTLE USA,Nestlé USA
+Retail & Consumer,ETSY,Etsy
+Retail & Consumer,STARBUCKS COFFEE,Starbucks
+Retail & Consumer,7 ELEVEN,7-Eleven

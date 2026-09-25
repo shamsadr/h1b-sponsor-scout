@@ -78,7 +78,10 @@ Pages:
   `?role=Operations+Research&state=AZ&min=3&consistent=1`, so a filtered view can be bookmarked
   or sent. Unknown or invalid values fall back to the defaults.
 - **Employer lookup:** quick picks for the 8 largest employers in the current role group and for
-  curated sets (`data/reference/curated_sets.csv`, keyed on `parent_group`, marked "(curated)").
+  curated sets (`data/reference/curated_sets.csv`, keyed on `parent_group`): Big Tech, Banks &
+  Quant, Consulting (Big 4 / MBB), Analytics consultancies, Manufacturing / EV and Retail &
+  Consumer. **Curated rule:** a set lists only employers with at least 25 certified target-role
+  LCAs in FY2024–FY2025 (a test checks this).
   A searchable list of employers also matches legal-entity names, so typing "Merrill" finds Bank
   of America. A summary card (certified LCAs, years active, median offered wage, Level II+ share)
   comes first, then certified LCAs by role family and year, the wage-level mix and the member
@@ -98,8 +101,13 @@ row can be opened in Employer lookup. `publish` fails if `data/app/` would excee
 counts, and the commit the data was built from (`-dirty` if the code had uncommitted edits).
 
 **Display names.** The app shows each group by its `display_name`: the override's
-`display_name` (e.g. "Goldman Sachs", "Citi"), otherwise the most frequent raw `EMPLOYER_NAME` as
-filed (e.g. "Tesla, Inc."). Names are never re-cased, so "IBM" and "EY" stay as filed. Names that
+`display_name` (e.g. "Goldman Sachs", "Citi"), otherwise the most frequent filed `EMPLOYER_NAME`
+that is not all caps, or the most frequent all-caps one if that is all there is. Trailing legal
+suffixes are dropped for display (Inc, LLC, LLP, LP, Ltd, Corp/Corporation, PLLC, PC, N.A.,
+"& Co.", with a comma before or period after), so "Tiger Analytics, Inc." shows as
+"Tiger Analytics". Names are never re-cased, so "IBM" and "KFORCE" stay as filed. The top 30
+analytics sponsors and every curated-set member have a pinned `display_name` in the overrides
+file. Names that
 look alike ignoring case and punctuation get the employer state, then the FEIN, appended
 ("Acme, LLC (AZ)"), so every display name is unique. `parent_group` stays the internal key.
 

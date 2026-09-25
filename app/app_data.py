@@ -221,6 +221,7 @@ def as_percent(df: pd.DataFrame) -> pd.DataFrame:
 
 
 CURATED_SETS = ROOT / "data" / "reference" / "curated_sets.csv"
+CURATED_MIN_LCAS = 25  # curated sets list employers with at least this many target-role LCAs
 ALIAS_PREFIX = "alias:"  # selectbox option values for member names: 'alias:<employer_norm>'
 
 

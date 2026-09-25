@@ -47,3 +47,85 @@ merge,CITI FUND SERVICES OHIO,CITI,Citi,hiring brand Citi
 merge,CITI VENTURES,CITI,Citi,hiring brand Citi
 merge,MERRILL LYNCH,BANK OF AMERICA,Bank of America,BofA subsidiary since 2009; hires via BofA careers
 merge,MERRILL LYNCH COMMODITIES,BANK OF AMERICA,Bank of America,BofA subsidiary since 2009; hires via BofA careers
+merge,PRICEWATERHOUSECOOPERS,PWC,PwC,hiring brand PwC
+merge,PRICEWATERHOUSECOOPERS ADVISORY SERVICES,PWC,PwC,hiring brand PwC
+merge,PRICEWATERHOUSECOOPERS CORPORATE FINANCE,PWC,PwC,hiring brand PwC
+merge,PWC US BUSINESS ADVISORY,PWC,PwC,hiring brand PwC
+merge,PWC US CONSULTING,PWC,PwC,hiring brand PwC
+merge,PWC US GROUP,PWC,PwC,hiring brand PwC
+merge,PWC US TAX,PWC,PwC,hiring brand PwC
+merge,PWC PRODUCT SALES,PWC,PwC,hiring brand PwC
+merge,BARCLAYS BANK DELAWARE,BARCLAYS,Barclays,hiring brand Barclays
+merge,BARCLAYS BANK PLC,BARCLAYS,Barclays,hiring brand Barclays
+merge,BARCLAYS CAPITAL,BARCLAYS,Barclays,hiring brand Barclays
+merge,BARCLAYS SERVICES,BARCLAYS,Barclays,hiring brand Barclays
+merge,RIVIAN,RIVIAN,Rivian,hiring brand Rivian
+merge,RIVIAN AUTOMOTIVE,RIVIAN,Rivian,hiring brand Rivian
+merge,FIDELITY MANAGEMENT AND RESEARCH,FIDELITY INVESTMENTS,Fidelity Investments,hiring brand Fidelity Investments
+merge,FMR D B A FIDELITY INVESTMENTS,FIDELITY INVESTMENTS,Fidelity Investments,hiring brand Fidelity Investments
+merge,NATIONAL FINANCIAL SERVICES,FIDELITY INVESTMENTS,Fidelity Investments,hiring brand Fidelity Investments
+merge,HOME DEPOT MANAGEMENT,HOME DEPOT,Home Depot,hiring brand Home Depot
+merge,HOME DEPOT USA,HOME DEPOT,Home Depot,hiring brand Home Depot
+merge,CVS PHARMACY,CVS HEALTH,CVS Health,hiring brand CVS Health
+merge,CVS SHARED SERVICES RESOURCES,CVS HEALTH,CVS Health,hiring brand CVS Health
+merge,MICROSOFT,MICROSOFT,Microsoft,display name pin (keeps the group as is)
+merge,WAL MART ASSOCIATES,WAL MART ASSOCIATES,Walmart,display name pin (keeps the group as is)
+merge,JPMORGAN CHASE AND,JPMORGAN CHASE AND,JPMorgan Chase,display name pin (keeps the group as is)
+merge,META PLATFORMS,META PLATFORMS,Meta,display name pin (keeps the group as is)
+merge,GOOGLE,GOOGLE,Google,display name pin (keeps the group as is)
+merge,MORGAN STANLEY SERVICES GROUP,MORGAN STANLEY SERVICES GROUP,Morgan Stanley,display name pin (keeps the group as is)
+merge,BYTEDANCE,BYTEDANCE,ByteDance,display name pin (keeps the group as is)
+merge,APPLE,APPLE,Apple,display name pin (keeps the group as is)
+merge,ADOBE,ADOBE,Adobe,display name pin (keeps the group as is)
+merge,TIKTOK,TIKTOK,TikTok,display name pin (keeps the group as is)
+merge,BLACKROCK FINANCIAL MANAGEMENT,BLACKROCK FINANCIAL MANAGEMENT,BlackRock,display name pin (keeps the group as is)
+merge,TIGER ANALYTICS,TIGER ANALYTICS,Tiger Analytics,display name pin (keeps the group as is)
+merge,UBER TECHNOLOGIES,UBER TECHNOLOGIES,Uber,display name pin (keeps the group as is)
+merge,FEDERAL EXPRESS,FEDERAL EXPRESS,FedEx,display name pin (keeps the group as is)
+merge,DEUTSCHE BANK SECURITIES,DEUTSCHE BANK SECURITIES,Deutsche Bank,display name pin (keeps the group as is)
+merge,INTUIT,INTUIT,Intuit,display name pin (keeps the group as is)
+merge,LINKEDIN,LINKEDIN,LinkedIn,display name pin (keeps the group as is)
+merge,KFORCE,KFORCE,Kforce,display name pin (keeps the group as is)
+merge,DISCOVER PRODUCTS,DISCOVER PRODUCTS,Discover,display name pin (keeps the group as is)
+merge,MCKINSEY AND UNITED STATES,MCKINSEY AND UNITED STATES,McKinsey,display name pin (keeps the group as is)
+merge,DOORDASH,DOORDASH,DoorDash,display name pin (keeps the group as is)
+merge,INTEL,INTEL,Intel,display name pin (keeps the group as is)
+merge,SALESFORCE,SALESFORCE,Salesforce,display name pin (keeps the group as is)
+merge,IBM,IBM,IBM,display name pin (keeps the group as is)
+merge,NVIDIA,NVIDIA,NVIDIA,display name pin (keeps the group as is)
+merge,NETFLIX,NETFLIX,Netflix,display name pin (keeps the group as is)
+merge,WELLS FARGO BANK N A,WELLS FARGO BANK N A,Wells Fargo,display name pin (keeps the group as is)
+merge,CITADEL AMERICAS SERVICES,CITADEL AMERICAS SERVICES,Citadel,display name pin (keeps the group as is)
+merge,CITADEL SECURITIES AMERICAS SERVICES,CITADEL SECURITIES AMERICAS SERVICES,Citadel Securities,display name pin (keeps the group as is)
+merge,AMERICAN EXPRESS,AMERICAN EXPRESS,American Express,display name pin (keeps the group as is)
+merge,UBS SECURITIES,UBS SECURITIES,UBS,display name pin (keeps the group as is)
+merge,BOSTON CONSULTING GROUP,BOSTON CONSULTING GROUP,Boston Consulting Group,display name pin (keeps the group as is)
+merge,BAIN AND,BAIN AND,Bain & Company,display name pin (keeps the group as is)
+merge,KPMG,KPMG,KPMG,display name pin (keeps the group as is)
+merge,EXLSERVICE COM,EXLSERVICE COM,EXL,display name pin (keeps the group as is)
+merge,ZS ASSOCIATES,ZS ASSOCIATES,ZS Associates,display name pin (keeps the group as is)
+merge,GENPACT,GENPACT,Genpact,display name pin (keeps the group as is)
+merge,TREDENCE,TREDENCE,Tredence,display name pin (keeps the group as is)
+merge,AXTRIA,AXTRIA,Axtria,display name pin (keeps the group as is)
+merge,LATENTVIEW ANALYTICS,LATENTVIEW ANALYTICS,LatentView Analytics,display name pin (keeps the group as is)
+merge,FRACTAL ANALYTICS,FRACTAL ANALYTICS,Fractal Analytics,display name pin (keeps the group as is)
+merge,TESLA,TESLA,Tesla,display name pin (keeps the group as is)
+merge,LUCID USA,LUCID USA,Lucid,display name pin (keeps the group as is)
+merge,FORD MOTOR,FORD MOTOR,Ford,display name pin (keeps the group as is)
+merge,GENERAL MOTORS,GENERAL MOTORS,General Motors,display name pin (keeps the group as is)
+merge,CATERPILLAR,CATERPILLAR,Caterpillar,display name pin (keeps the group as is)
+merge,FCA US,FCA US,Stellantis (FCA US),display name pin (keeps the group as is)
+merge,WAYFAIR,WAYFAIR,Wayfair,display name pin (keeps the group as is)
+merge,CHEWY,CHEWY,Chewy,display name pin (keeps the group as is)
+merge,EBAY,EBAY,eBay,display name pin (keeps the group as is)
+merge,TARGET ENTERPRISE,TARGET ENTERPRISE,Target,display name pin (keeps the group as is)
+merge,NIKE,NIKE,Nike,display name pin (keeps the group as is)
+merge,LOWE S COMPANIES,LOWE S COMPANIES,Lowe's,display name pin (keeps the group as is)
+merge,GAP,GAP,Gap,display name pin (keeps the group as is)
+merge,SAFEWAY,SAFEWAY,Safeway,display name pin (keeps the group as is)
+merge,MAPLEBEAR,MAPLEBEAR,Instacart (Maplebear),display name pin (keeps the group as is)
+merge,PEPSICO,PEPSICO,PepsiCo,display name pin (keeps the group as is)
+merge,NESTLE USA,NESTLE USA,Nestlé USA,display name pin (keeps the group as is)
+merge,ETSY,ETSY,Etsy,display name pin (keeps the group as is)
+merge,STARBUCKS COFFEE,STARBUCKS COFFEE,Starbucks,display name pin (keeps the group as is)
+merge,7 ELEVEN,7 ELEVEN,7-Eleven,display name pin (keeps the group as is)

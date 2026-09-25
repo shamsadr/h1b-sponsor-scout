@@ -338,3 +338,34 @@ All 469 groups that contain a qualifying name also qualify, so 483 − 14 + 8 = 
 - **To review:** Fidelity is still three separate groups (FMR, Fidelity Management and Research,
   National Financial Services), a candidate for a "Fidelity" override. GuruSchools joined Guru
   Consulting Services through a shared FEIN.
+
+## 2026-09-25 — Brand merges, curated rule and display names (Phase C)
+
+Source: FY2024 + FY2025, republished once with the new overrides.
+
+- **New brand merges** (hiring-brand rule), with certified target-role LCAs after merging:
+  - PwC: 8 groups (PwC LLP, Advisory, Corporate Finance, US Business Advisory, US Consulting,
+    US Group, US Tax, Product Sales), 1,014
+  - Barclays: 4 groups (Services, Capital, Bank PLC, Bank Delaware), 466
+  - Rivian: 2 groups, 300
+  - Home Depot: 2 groups, 294
+  - Fidelity Investments: 3 groups (FMR, Fidelity Management and Research, National Financial
+    Services), 168
+  - CVS Health: 2 groups, 137
+
+  Citadel and Citadel Securities stay separate groups.
+- **Groups:** 88,665 names form 84,896 groups (84,911 before these merges).
+- **Display names:** 61 groups have a pinned display name that keeps the group unchanged: the top 30
+  analytics sponsors and every curated-set member. Other groups use the most common filed name that
+  is not all caps, with legal suffixes stripped. Curated members shown in all caps are the
+  acronyms EXL, EY, IBM, KPMG, NVIDIA and UBS. None still carries a legal suffix.
+- **Analytics (combined), top 30 by certified LCAs:** Amazon 7,411, EY 4,346, Microsoft 1,883,
+  Goldman Sachs 1,879, Walmart 1,701, JPMorgan Chase 1,613, Meta 1,410, Google 1,320, Deloitte
+  1,158, Capital One 1,144, Citi 1,073, PwC 977, Bank of America 849, ByteDance 518, Morgan Stanley
+  518, Apple 473, Barclays 463, Adobe 446, TikTok 404, BlackRock 396, Tiger Analytics 376, Uber 371,
+  FedEx 342, Deutsche Bank 305, Intuit 301, LinkedIn 297, Discover 294, Kforce 294, Home Depot 279,
+  McKinsey 274. With Home Depot merged, DoorDash (272) is now 31st.
+- **Curated rule:** at least 25 certified target-role LCAs. This drops Quantiphi (11), Boeing (20)
+  and LG Energy Solution Michigan (21). A new Retail & Consumer set has 18 members. The sets have 69
+  rows in total.
+- **App data:** 13.02 MB (13.19 MB before); `publish` took 5 min 17 s.

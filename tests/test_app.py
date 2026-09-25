@@ -96,11 +96,11 @@ def test_quick_pick_opens_a_summary_card(app):
     lookup(app)
     app.get("button_group")[0].set_value("ACME ANALYTICS").run()
     assert not app.exception
-    assert app.subheader[0].value == "Acme Analytics, Inc."
+    assert app.subheader[0].value == "Acme Analytics"
     labels = [m.label for m in app.metric]
     assert labels == ["Certified LCAs", "Years active", "Median offered wage", "Level II+ share"]
     assert app.metric[2].value.startswith("$")
-    assert app.query_params["employer"] == ["Acme Analytics, Inc."]
+    assert app.query_params["employer"] == ["Acme Analytics"]
     app.switch_page("views/trends.py").run()
     assert "employer" not in app.query_params  # only Employer lookup keeps it
 
@@ -113,17 +113,17 @@ def test_selectbox_and_row_click_handoff_open_the_employer(app):
     app.session_state["employer"] = "BLUE RIVER LOGISTICS"
     app.session_state["lookup_choice"] = "BLUE RIVER LOGISTICS"
     lookup(app)
-    assert app.subheader[0].value == "Blue River Logistics LLC"
+    assert app.subheader[0].value == "Blue River Logistics"
 
 
 def test_shared_employer_link_opens_the_employer(demo_app_data, monkeypatch):
     monkeypatch.setenv("H1B_APP_DATA", str(demo_app_data))
     at = AppTest.from_file(APP, default_timeout=60)
-    at.query_params["employer"] = "Quantfield Capital L.P."
+    at.query_params["employer"] = "Quantfield Capital"
     at.switch_page("views/employer_lookup.py")  # a shared link opens this page directly
     at.run()
     assert not at.exception
-    assert at.subheader[0].value == "Quantfield Capital L.P."
+    assert at.subheader[0].value == "Quantfield Capital"
 
 
 def test_filters_come_from_the_url_and_go_back_to_it(demo_app_data, monkeypatch):

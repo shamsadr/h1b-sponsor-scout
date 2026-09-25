@@ -23,8 +23,10 @@ from h1b.publish import (
     STATE_ALL,
     TREND_COLS,
     display_names,
+    is_all_caps,
     publish_app_data,
     sponsor_columns,
+    strip_legal_suffix,
 )
 from h1b.scorecard import analysis_groups
 
@@ -140,9 +142,9 @@ def test_display_names_are_unique_and_follow_the_rules():
     out = display_names(df, parent_groups, {"AMAZON": "Amazon"}).set_index("parent_group")
     assert list(out.columns) == GROUP_COLS[1:]
     assert out.loc["AMAZON", "display_name"] == "Amazon"  # override label wins
-    assert out.loc["IBM", "display_name"] == "IBM Corporation"  # raw name, not 'Ibm Corporation'
-    assert out.loc["ACME B", "display_name"] == "ACME LLC"  # larger look-alike keeps it
-    assert out.loc["ACME A", "display_name"] == "Acme, LLC (AZ)"
+    assert out.loc["IBM", "display_name"] == "IBM"  # suffix stripped, never 'Ibm'
+    assert out.loc["ACME B", "display_name"] == "ACME"  # only an all-caps name: kept as filed
+    assert out.loc["ACME A", "display_name"] == "Acme (AZ)"  # look-alike of the larger group
     assert out["display_name"].is_unique
 
 
@@ -199,3 +201,67 @@ def test_committed_app_data_is_small_and_matches_schema():
     assert list(read(folder, "sponsors.parquet").columns) == sponsor_columns(years)
     assert list(read(folder, "members.parquet").columns) == MEMBER_COLS
     assert read(folder, "groups.parquet")["display_name"].is_unique
+
+
+@pytest.mark.parametrize(
+    "filed, shown",
+    [
+        ("Tiger Analytics, Inc.", "Tiger Analytics"),
+        ("Goldman Sachs & Co. LLC", "Goldman Sachs"),
+        ("Bank of America, N.A.", "Bank of America"),
+        ("Deloitte Consulting L.L.C.", "Deloitte Consulting"),
+        ("PwC US Consulting LLP", "PwC US Consulting"),
+        ("Acme Holdings, Ltd", "Acme Holdings"),
+        ("KFORCE INC.", "KFORCE"),  # casing untouched
+        ("Ford Motor Company", "Ford Motor Company"),  # 'Company' is not stripped
+        ("Barclays Bank PLC", "Barclays Bank PLC"),  # PLC is not on the list
+        ("LLC", "LLC"),  # nothing would be left
+    ],
+)
+def test_strip_legal_suffix(filed, shown):
+    assert strip_legal_suffix(filed) == shown
+
+
+def test_display_name_prefers_a_name_that_is_not_all_caps():
+    df = pd.DataFrame(
+        {
+            "parent_group": ["X"] * 3 + ["Y"],
+            "EMPLOYER_NAME": [
+                "EXAMPLE DATA INC",
+                "EXAMPLE DATA INC",
+                "Example Data, Inc.",
+                "ZETA LLC",
+            ],
+        }
+    )
+    parent_groups = pd.DataFrame(
+        {
+            "parent_group": ["X", "Y"],
+            "employer_norm": ["EXAMPLE DATA", "ZETA"],
+            "primary_fein": ["11-1111111", "22-2222222"],
+            "primary_state": ["NY", "TX"],
+            "rows": [3, 1],
+        }
+    )
+    out = display_names(df, parent_groups, {}).set_index("parent_group")["display_name"]
+    assert out["X"] == "Example Data"  # the mixed-case filing wins over the more common caps one
+    assert out["Y"] == "ZETA"  # all caps is all there is: shown as filed, not 'Zeta'
+    assert is_all_caps("KFORCE INC.") and not is_all_caps("eBay Inc.") and not is_all_caps("7-11")
+
+
+def test_curated_members_have_25_target_lcas_and_their_pinned_names():
+    folder = ROOT / "data" / "app"
+    if not (folder / "groups.parquet").exists():
+        pytest.skip("data/app/ not published yet")
+    curated = pd.read_csv(ROOT / "data" / "reference" / "curated_sets.csv", dtype=str)
+    sponsors = read(folder, "sponsors.parquet")
+    target = sponsors[(sponsors["family"] == ALL_TARGET_LABEL) & (sponsors["state"] == STATE_ALL)]
+    cases = target.set_index("parent_group")["cases"]
+    low = {g: int(cases.get(g, 0)) for g in curated["parent_group"] if cases.get(g, 0) < 25}
+    assert not low, low  # the curated rule: at least 25 certified target-role LCAs
+    names = read(folder, "groups.parquet").set_index("parent_group")["display_name"]
+    shown = curated["parent_group"].map(names)
+    assert (shown == curated["display_name"]).all(), curated[shown != curated["display_name"]]
+    caps = shown[shown.map(is_all_caps)]
+    assert caps.str.fullmatch(r"[A-Z]{2,6}").all(), caps  # only acronyms such as EY, IBM, KPMG
+    assert (shown.map(strip_legal_suffix) == shown).all()  # no legal suffix left

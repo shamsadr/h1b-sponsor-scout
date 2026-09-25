@@ -4,6 +4,7 @@ import streamlit as st
 
 from app_data import (
     ALL_OCCUPATIONS_LABEL,
+    CURATED_MIN_LCAS,
     CURATED_SETS,
     STATE_ALL,
     load_curated_sets,
@@ -154,6 +155,10 @@ def render() -> None:
             list(sets),
             format_func=lambda s: f"{s} (curated)",
             key="pick_set",
+        )
+        st.caption(
+            f"Curated sets list employers with at least {CURATED_MIN_LCAS} certified "
+            f"target-role LCAs in {years_label(YEARS)}."
         )
         if picked_set:
             st.pills(

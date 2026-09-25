@@ -139,14 +139,52 @@ def _name_key(name: str) -> str:
     return re.sub(r"[^a-z0-9]", "", name.casefold())
 
 
+# Legal suffixes stripped from the END of a filed name, for display only. Each may follow a
+# comma and end with a period: 'Tiger Analytics, Inc.' -> 'Tiger Analytics'.
+LEGAL_SUFFIXES = [
+    r"Inc",
+    r"Incorporated",
+    r"L\.?L\.?C",
+    r"L\.?L\.?P",
+    r"L\.?P",
+    r"Ltd",
+    r"Limited",
+    r"Corp",
+    r"Corporation",
+    r"P\.?L\.?L\.?C",
+    r"P\.?C",
+    r"N\.?A",
+    r"&\s*Co",
+]
+_SUFFIX_RE = re.compile(r"[\s,]+(?:" + "|".join(LEGAL_SUFFIXES) + r")\.?\s*$", re.IGNORECASE)
+
+
+def strip_legal_suffix(name: str) -> str:
+    """'Goldman Sachs & Co. LLC' -> 'Goldman Sachs'. Repeats while a suffix ends the name;
+    keeps the name unchanged if stripping would leave nothing. Casing is never changed."""
+    out = name.strip()
+    while True:
+        shorter = _SUFFIX_RE.sub("", out).rstrip(" ,")
+        if shorter == out or not shorter:
+            return out
+        out = shorter
+
+
+def is_all_caps(name: str) -> bool:
+    """True when a name has letters and none of them is lowercase ('KFORCE INC.')."""
+    return any(c.isalpha() for c in name) and not any(c.islower() for c in name)
+
+
 def display_names(
     df: pd.DataFrame, parent_groups: pd.DataFrame, labels: dict[str, str]
 ) -> pd.DataFrame:
     """One unique display name per parent_group.
 
     1. The override display_name for that group's label (labels: {parent_group: name}).
-    2. Otherwise the most frequent raw EMPLOYER_NAME as filed (ties: alphabetical). Names
-       are never re-cased, so 'IBM' and 'EY' stay as filed.
+    2. Otherwise the most frequent raw EMPLOYER_NAME as filed that is not all caps (ties:
+       alphabetical), or the most frequent all-caps name if that is all there is. Names are
+       never re-cased, so 'IBM' and 'EY' stay as filed. Trailing legal suffixes are stripped
+       for display (strip_legal_suffix).
     Look-alike names (same letters and digits, ignoring case and punctuation) are made
     unique: override names and then larger groups keep the plain name; later ones get
     ' (ST)', then ' (ST, FEIN)', then ' [parent_group]'.
@@ -160,9 +198,15 @@ def display_names(
         .size()
         .rename("n")
         .reset_index()
-        .sort_values(["parent_group", "n", "name"], ascending=[True, False, True])
+    )
+    counts["caps"] = counts["name"].map(is_all_caps)
+    counts = (
+        counts.sort_values(
+            ["parent_group", "caps", "n", "name"], ascending=[True, True, False, True]
+        )
         .drop_duplicates("parent_group")
         .set_index("parent_group")["name"]
+        .map(strip_legal_suffix)
     )
     g = parent_groups.sort_values(["rows", "employer_norm"], ascending=[False, True])
     lead = g.drop_duplicates("parent_group").set_index("parent_group")
