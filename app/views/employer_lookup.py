@@ -77,7 +77,9 @@ def set_comparison(set_name: str, members: list[str], family: str) -> None:
     shown = as_percent(table)
     years = year_columns(shown)
     cols = ["display_name", "cases", *years, "median_wage_floor", "pct_above_pw"]
-    cols += ["level2plus_pct", "note"]
+    cols += ["level2plus_pct"]
+    if shown["note"].ne("").any():  # only when some member has no filings in this family
+        cols.append("note")
     config = sponsor_column_config(years) | {"note": text_col("Note", width="medium")}
     event = st.dataframe(
         shown[cols],  # zero-filing rows: last, 0 LCAs and a note, in the normal text color

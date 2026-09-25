@@ -208,10 +208,10 @@ def headline_numbers(sponsors: pd.DataFrame) -> list[dict]:
     [{'label', 'note', 'value': int, 'filters': {family, state, min_cases, consistent}}, ...]
     """
     specs = [
-        ("employers with a certified LCA", "Any H-1B role.", ALL_OCCUPATIONS_LABEL, 1, False),
-        ("analytics employers", "At least 1 certified analytics LCA.", ANALYTICS_LABEL, 1, False),
+        ("Employers with a certified LCA", "Any H-1B role.", ALL_OCCUPATIONS_LABEL, 1, False),
+        ("Analytics employers", "At least 1 certified analytics LCA.", ANALYTICS_LABEL, 1, False),
         (
-            "consistent analytics sponsors",
+            "Consistent analytics sponsors",
             "10+ certified analytics LCAs every year.",
             ANALYTICS_LABEL,
             10,

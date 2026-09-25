@@ -193,6 +193,7 @@ def test_home_is_the_default_page_with_purpose_numbers_and_glossary(demo_app_dat
     assert at.title[0].value == "H-1B Sponsor Scout"
     assert "filing history, not current job openings or legal advice" in at.markdown[0].value
     assert len(at.metric) == 3
+    assert all(m.label[0].isupper() for m in at.metric)  # sentence case
     assert [e.label for e in at.expander] == ["Glossary"]
     assert "Not legal or immigration advice." in footer(at)
 
@@ -257,3 +258,7 @@ def test_set_table_zero_rows_last_with_note_and_plain_text(demo_app_data, monkey
     assert rows["cases"].tolist()[-1] == 0  # the zero-filing member is last ...
     assert rows["note"].tolist()[-1] == f"No {family} filings"  # ... with its note
     assert not table.proto.arrow_data.HasField("styler")  # no custom (gray) text color
+    at.switch_page("views/employer_lookup.py")  # same set, but with only members that filed
+    curated.write_text(f"set_name,parent_group,display_name\nDemo set,{present},y\n")
+    at.run()
+    assert "note" not in at.dataframe[0].value.columns  # no member has a note: column hidden

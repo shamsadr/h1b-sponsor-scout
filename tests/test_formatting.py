@@ -125,3 +125,8 @@ def test_pct_change_labels_are_wcag_large_text():
         assert mark["color"] == ui.MUTED_GRAY
         for bg in BACKGROUNDS.values():
             assert contrast(mark["color"], bg) >= 3
+
+
+def test_fiscal_years_read_clearly_apart():
+    # The two year colors differ by at least 2:1 luminance contrast (1.48:1 before).
+    assert contrast(ui.YEAR_RAMP[0], ui.YEAR_RAMP[-1]) >= 2

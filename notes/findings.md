@@ -405,3 +405,18 @@ also has the `[theme.light]` / `[theme.dark]` sections.
   (at least 14 pt bold, threshold 3:1), so `#797979` at 4.35:1 passes on both backgrounds. At
   1280 px in both themes, the labels (+35% to −8%) fit without overlap or clipping. The x axis gets
   15% padding past the longest bars, and rows are 32 px tall for the 19 px labels.
+
+## 2026-09-25 — Polish pass
+
+- **Infosys** now shows as "Infosys". Its group (11,599 certified LCAs, all roles) had only
+  all-caps filed names, so it displayed as "INFOSYS". The pin is display-only: Infosys BPM,
+  Infosys McCamish, Infosys Nova Holdings and Infosys Public Services stay separate groups. One
+  republish: 13.02 MB, 4 min 47 s.
+- **Fiscal-year colors:** FY2024 `#4894f5`, FY2025 `#0760bb`. These are the lightest and darkest
+  shades of the chart blue's hue that still clear 3:1 on both backgrounds (3.07 and 6.15;
+  6.18 and 3.06). Their OKLab lightness gap is 0.169 (0.095 before), and the luminance contrast
+  between the two years is at least 2:1 (1.48:1 before). The palette validator passes the pair as
+  an ordinal ramp in both modes.
+- **Display name to review:** the group "AMERICAN INFOSYS" (13 rows) displays as
+  "3781 Westerre Pkwy  F", a street address filed as its most common employer name. A pinned
+  display name would fix it.

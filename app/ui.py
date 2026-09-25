@@ -14,9 +14,10 @@ from app_data import FILTER_DEFAULTS, data_dir, encode_query, load_tables, parse
 # every bar color clears 3:1 against both the light (#ffffff) and dark (#0e1117)
 # backgrounds (WCAG 1.4.11). tests/test_formatting.py checks each one.
 SERIES_BLUE = "#2a78d6"  # 4.4:1 on white, 4.3:1 on dark
-# Fiscal years, older -> lighter: steps 400, 450, 500 of the blue ramp, the only steps that
-# clear 3:1 on both backgrounds (#3987e5 3.6 / 5.2, #256abf 5.4 / 3.5).
-YEAR_RAMP = ["#3987e5", "#2a78d6", "#256abf"]
+# Fiscal years, older -> lighter. The ends are the lightest and darkest shades of the chart
+# blue's hue that still clear 3:1 on both backgrounds (#4894f5: 3.1 on white / 6.2 on dark;
+# #0760bb: 6.2 / 3.1), so two years read clearly apart (OKLab lightness 0.665 vs 0.496).
+YEAR_RAMP = ["#4894f5", SERIES_BLUE, "#0760bb"]
 # Chart value labels (Altair text does not follow Streamlit's theme text color). No single
 # gray reaches the 4.5:1 normal-text threshold on both backgrounds (#797979 is the best: 4.35:1
 # on each), so labels in this gray are bold and at least 14 pt (18.7 px): WCAG "large text",
