@@ -79,3 +79,51 @@ FY2025 quarterly LCA files (`LCA_Disclosure_Data_FY2025_Q1..Q4.xlsx`) unless sta
   The only header in FY2025 Q4 but not FY2024 Q1 is `LAWFIRM_BUSINESS_FEIN`. FY2024 Q1 has all 7
   `REQUIRED_COLS` and all 17 `OPTIONAL_COLS`, so `COLUMN_ALIASES` is still empty. Only this one
   FY2024 file was inspected.
+
+## 2026-09-24 — FY2024 and cross-year checks
+
+Source: `lca_fy2024.parquet` and `lca_fy2025.parquet`, built from the eight quarterly files.
+
+- **FY2024 quarterly files are not cumulative, and `EMPLOYER_FEIN` is filled on every row.**
+
+  | File | Rows | Min `DECISION_DATE` | Max `DECISION_DATE` | Non-blank `EMPLOYER_FEIN` |
+  |---|---|---|---|---|
+  | Q1 | 99,692 | 2023-10-02 | 2023-12-31 | 100% |
+  | Q2 | 123,978 | 2024-01-01 | 2024-03-31 | 100% |
+  | Q3 | 216,470 | 2024-04-01 | 2024-06-30 | 100% |
+  | Q4 | 120,897 | 2024-07-01 | 2024-09-30 | 100% |
+
+- **FY2024 rows.** The four files hold 561,037 rows with 561,037 unique `CASE_NUMBER`s, so the
+  within-year dedupe removed 0 (FY2025 had 1,731 cases in more than one file). Keeping
+  `VISA_CLASS == 'H-1B'` leaves 546,807 rows (2023-10-02 to 2024-09-30, 0 duplicate case numbers).
+  The 14,230 cases dropped are E-3 Australian 10,399, H-1B1 Chile 2,312 and H-1B1 Singapore 1,519.
+- **Cross-year overlap.** 8,662 `CASE_NUMBER`s appear in both `lca_fy2024` and `lca_fy2025`. All 8,662
+  are `Certified` in FY2024 and `Certified - Withdrawn` in FY2025, with the same employer and
+  `soc_family` in both years. 1,169 of them are in the target families. The combined scorecard
+  input has 0 duplicate `CASE_NUMBER`s among certified target-family rows.
+- **How the scorecard treats them.** `cases`, `positions` and wages use strict `Certified`, so each
+  overlapping case is counted once (as its FY2024 certified record). The FY2025 record is included
+  in `withdrawn_rate` and in the `denial_rate` denominator, so those cases appear in those
+  denominators twice. Across all target-family rows the withdrawn share is 6.48% as scored and
+  6.52% when only the latest record per case is kept.
+- **Certified target-family cases, FY2024 vs FY2025:**
+
+  | Family | FY2024 | FY2025 | Change |
+  |---|---|---|---|
+  | Business / Mgmt Analyst | 9,963 | 11,413 | +14.6% |
+  | Data Science / BI | 23,685 | 31,465 | +32.8% |
+  | Industrial Engineering | 6,398 | 7,640 | +19.4% |
+  | Operations Research | 8,241 | 7,475 | -9.3% |
+  | Quant / Finance | 11,248 | 12,388 | +10.1% |
+  | Statistics / Decision Science | 4,756 | 4,406 | -7.4% |
+  | Supply Chain / Logistics | 3,331 | 4,071 | +22.2% |
+  | All target families | 67,622 | 78,858 | +16.6% |
+
+  Certified H-1B rows in all families: 502,374 (FY2024) and 537,796 (FY2025), +7.1%.
+- **Employers with at least 10 certified cases in both years** (by `employer_norm`, in the family):
+  Business / Mgmt Analyst 55, Data Science / BI 226, Industrial Engineering 57, Operations
+  Research 60, Quant / Finance 112, Statistics / Decision Science 65, Supply Chain / Logistics 20.
+- **Employers' SOC choices differ by year.** Amazon.com Services had 14,249 certified cases in
+  FY2024 and 15,192 in FY2025. Its 15-2031 cases went from 1,283 to 541, 15-2041 from 402 to 229,
+  15-2051 from 1,394 to 1,810, and 13-1082 from 21 to 235. All SOC codes are in the same format in
+  both years.
