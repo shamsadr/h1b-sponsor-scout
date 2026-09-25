@@ -369,3 +369,7 @@ Source: FY2024 + FY2025, republished once with the new overrides.
   and LG Energy Solution Michigan (21). A new Retail & Consumer set has 18 members. The sets have 69
   rows in total.
 - **App data:** 13.02 MB (13.19 MB before); `publish` took 5 min 17 s.
+- **Consistent analytics sponsors: 477 → 468** (at least 10 certified Analytics (combined) LCAs in
+  each of FY2024 and FY2025, by `parent_group`). All 9 fewer come from the Phase C merges
+  collapsing groups that each qualified on their own: PwC (5 → 1), Fidelity Investments (3 → 1),
+  Barclays (3 → 1) and Home Depot (2 → 1). No group newly qualified or dropped out.

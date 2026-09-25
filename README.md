@@ -23,12 +23,12 @@ scorecard, and a Streamlit app reads precomputed tables from it. Next: earlier f
   DOL files. After removing duplicates and keeping only H-1B filings, 1,118,768 unique cases remain
   across both years.
 - **Employer names → groups:** across FY2024–FY2025, 88,665 distinct employer names collapse into
-  84,911 employer groups, using shared tax IDs (FEINs), matching names and a hand-checked overrides
+  84,896 employer groups, using shared tax IDs (FEINs), matching names and a hand-checked overrides
   file. For example, 10 Amazon names, including Amazon.com Services and AWS, become one AMAZON group.
 - **Analytics hiring grew:** certified LCAs in analytics roles (operations research, statistics,
   data science / BI, quant) rose from 47,051 in FY2024 to 55,734 in FY2025, +18.5%. Read FY2025 as
   an upper bound: its cases have had less time to be withdrawn.
-- **Consistent sponsors:** 477 employer groups had at least 10 certified analytics cases in both
+- **Consistent sponsors:** 468 employer groups had at least 10 certified analytics LCAs in both
   FY2024 and FY2025.
 - **Many offers sit exactly at the prevailing wage:** in FY2025, about 35% of certified H-1B filings
   (185,025 of the 536,249 that could be compared, all roles) offered exactly the prevailing wage.
