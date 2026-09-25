@@ -18,8 +18,7 @@ green-card data, and a Streamlit app.
 
 ## How to run
 ```bash
-conda env create -f environment.yml
-conda activate h1b
+python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 python -m h1b.pipeline run --demo       # synthetic data -> reports/demo/
 pytest -q                               # tests
 ```

@@ -11,7 +11,8 @@ modular, with type hints and docstrings. Offer Option A (simple) vs Option B (sc
 when there's a real tradeoff.
 
 ## Environment
-- macOS Apple Silicon, conda env `h1b` (`environment.yml`), Python 3.11
+- macOS Apple Silicon, venv `.venv` (`requirements.txt`), Python 3.11
+- Setup: `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
 - Run from repo root: `python -m h1b.pipeline ...`
 
 ## Rules
@@ -21,7 +22,7 @@ when there's a real tradeoff.
   or query parquet with pandas/DuckDB and print summaries.
 - NEVER commit anything in `data/raw/` or `data/processed/`.
 - Don't invent statistics or findings. README results come only from actual runs.
-- Ask before adding new dependencies; update `environment.yml` if approved.
+- Ask before adding new dependencies; update `requirements.txt` if approved.
 - Make small changes; one phase or feature per commit.
 
 ## Definition of done (every change)
