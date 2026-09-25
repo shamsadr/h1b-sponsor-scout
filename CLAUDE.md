@@ -11,7 +11,7 @@ modular, with type hints and docstrings. Offer Option A (simple) vs Option B (sc
 when there's a real tradeoff.
 
 ## Environment
-- macOS Apple Silicon, venv `.venv` (`requirements.txt`), Python 3.11
+- macOS Apple Silicon, venv `.venv` (`requirements.txt`), Python 3.11+ (developed on 3.14)
 - Setup: `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
 - Run from repo root: `python -m h1b.pipeline ...`
 

@@ -10,3 +10,7 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 .venv/
+
+# generated scorecards (keep the folder tracked via .gitkeep)
+reports/*.csv
+!reports/.gitkeep
