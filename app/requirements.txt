@@ -1,5 +1,6 @@
 # Streamlit Community Cloud installs this (lean: the app only reads data/app/).
-# Minimums tested on Python 3.12: every page runs under streamlit 1.51 (1.50 fails).
-streamlit>=1.51
+# Minimums tested on Python 3.12: every page runs under streamlit 1.51,
+# and the "$%,.0f" money format needs 1.55 (1.54 shows the raw number).
+streamlit>=1.55
 pandas>=2.1.4
 pyarrow>=14.0.2

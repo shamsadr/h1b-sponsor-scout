@@ -2,7 +2,7 @@ pandas>=2.1
 numpy
 pyarrow
 openpyxl
-streamlit>=1.51
+streamlit>=1.55
 pytest
 black
 ruff

@@ -1,8 +1,9 @@
 """Employer lookup: one group's cases by year and family, wage levels and member names."""
 
 import streamlit as st
+
 from app_data import search_groups
-from ui import cases_by_year_chart, data, level_chart
+from ui import cases_by_year_chart, count_col, data, fmt_count, level_chart, text_col
 
 DATA = data()
 
@@ -23,10 +24,10 @@ def render() -> None:
     b = breakdown[breakdown["parent_group"] == group]
     members = DATA["members"][DATA["members"]["parent_group"] == group]
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Certified cases", f"{int(b['cases'].sum()):,}")
-    m2.metric("All filings", f"{int(b['filings'].sum()):,}")
-    m3.metric("Withdrawn", f"{int(b['withdrawn'].sum()):,}")
-    m4.metric("Names in group", f"{len(members):,}")
+    m1.metric("Certified cases", fmt_count(b["cases"].sum()))
+    m2.metric("All filings", fmt_count(b["filings"].sum()))
+    m3.metric("Withdrawn", fmt_count(b["withdrawn"].sum()))
+    m4.metric("Names in group", fmt_count(len(members)))
 
     left, right = st.columns(2)
     with left:
@@ -39,7 +40,9 @@ def render() -> None:
             st.altair_chart(cases_by_year_chart(by, "soc_family"), width="stretch")
             with st.expander("Table"):
                 wide = by.pivot(index="soc_family", columns="fiscal_year", values="cases")
-                st.dataframe(wide.fillna(0).astype(int))
+                wide = wide.fillna(0).astype(int)
+                wide.columns = [f"FY{y}" for y in wide.columns]
+                st.dataframe(wide, column_config={c: count_col(c) for c in wide.columns})
     with right:
         st.subheader("Wage-level mix (certified)")
         lv = DATA["employer_levels"]
@@ -58,11 +61,11 @@ def render() -> None:
         hide_index=True,
         width="stretch",
         column_config={
-            "employer_norm": "Normalized name",
-            "primary_fein": "Primary FEIN",
-            "primary_state": "Employer state",
-            "rows": st.column_config.NumberColumn("LCA rows (all roles)", format="localized"),
-            "link": "Linked by",
+            "employer_norm": text_col("Normalized name"),
+            "primary_fein": text_col("Primary FEIN"),
+            "primary_state": text_col("Employer state"),
+            "rows": count_col("LCA rows (all roles)"),
+            "link": text_col("Linked by"),
         },
     )
 

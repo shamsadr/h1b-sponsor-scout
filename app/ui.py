@@ -1,10 +1,12 @@
-"""Shared pieces of the Streamlit app: cached data and the two chart builders."""
+"""Shared pieces of the Streamlit app: cached data, formatting and the two chart builders."""
 
+import math
 from pathlib import Path
 
 import altair as alt
 import pandas as pd
 import streamlit as st
+
 from app_data import data_dir, load_tables
 
 # Ordinal blue ramp (older/lower -> lighter), validated for light and dark surfaces.
@@ -23,6 +25,59 @@ def tables(folder: str) -> dict:
 def data() -> dict:
     """The published tables for this session (data/app/ or $H1B_APP_DATA)."""
     return tables(str(data_dir()))
+
+
+# --- Formatting: the one place that decides how numbers look -----------------------------
+# Tables keep numeric columns (so sorting works) and format them through column_config;
+# a missing value there renders as Streamlit's gray "None" (explained in a caption).
+# Scalar displays (metrics, status lines, cards) use the fmt_* helpers, which print "—".
+MISSING = "—"
+MONEY_FORMAT = "$%,.0f"  # needs streamlit >= 1.55 (older versions ignore the ',' flag)
+PERCENT_FORMAT = "%.0f%%"  # applied to 0-100 values (see app_data.as_percent)
+COUNT_FORMAT = "localized"
+
+
+def _missing(x) -> bool:
+    return x is None or (isinstance(x, float) and math.isnan(x)) or x is pd.NA
+
+
+def _round_half_up(x: float) -> int:
+    return int(math.floor(x + 0.5))
+
+
+def fmt_money(x) -> str:
+    """137900.4 -> '$137,900'; missing -> '—'."""
+    return MISSING if _missing(x) else f"${_round_half_up(float(x)):,}"
+
+
+def fmt_pct(share) -> str:
+    """A 0-1 share -> whole percent: 0.844 -> '84%', 0 -> '0%'; missing -> '—'."""
+    return MISSING if _missing(share) else f"{_round_half_up(float(share) * 100)}%"
+
+
+def fmt_count(n) -> str:
+    """1423 -> '1,423'; missing -> '—'."""
+    return MISSING if _missing(n) else f"{int(n):,}"
+
+
+def money_col(label: str, help: str | None = None):
+    return st.column_config.NumberColumn(label, format=MONEY_FORMAT, help=help)
+
+
+def pct_col(label: str, help: str | None = None):
+    """For columns already scaled to 0-100."""
+    return st.column_config.NumberColumn(label, format=PERCENT_FORMAT, help=help)
+
+
+def count_col(label: str, help: str | None = None):
+    return st.column_config.NumberColumn(label, format=COUNT_FORMAT, help=help)
+
+
+def text_col(label: str, help: str | None = None, pinned: bool = False):
+    return st.column_config.TextColumn(label, help=help, pinned=pinned)
+
+
+NONE_CAPTION = "None = not enough full-time or leveled cases to compute that value."
 
 
 def year_ramp(years: list[int]) -> list[str]:

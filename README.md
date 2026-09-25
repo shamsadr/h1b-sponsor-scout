@@ -75,7 +75,8 @@ the data was built from (`-dirty` if the code had uncommitted edits).
 
 **Deploy (Streamlit Community Cloud):** repo `shamsadr/h1b-sponsor-scout`, branch `main`, main
 file `app/streamlit_app.py`, Python 3.12. Cloud installs the lean `app/requirements.txt`
-(streamlit ≥ 1.51, pandas ≥ 2.1.4, pyarrow ≥ 14.0.2, the tested minimums). To update the site,
+(streamlit ≥ 1.55, pandas ≥ 2.1.4, pyarrow ≥ 14.0.2, the tested minimums; 1.55 is the first
+version that shows money as `$137,900`). To update the site,
 run `publish`, commit `data/app/`, and push.
 
 ## Scorecard columns

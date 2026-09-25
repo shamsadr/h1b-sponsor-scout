@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from app.app_data import (
+from app_data import (
     ANALYTICS_LABEL,
     STATE_ALL,
     as_percent,

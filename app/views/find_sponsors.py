@@ -3,8 +3,9 @@
 import re
 
 import streamlit as st
+
 from app_data import ANALYTICS_LABEL, STATE_ALL, as_percent, filter_sponsors, years_label
-from ui import data
+from ui import NONE_CAPTION, count_col, data, money_col, pct_col, text_col
 
 DATA = data()
 META = DATA["meta"]
@@ -34,28 +35,26 @@ st.caption(
     "state. The latest year's withdrawn rate is low because recent cases have had less "
     "time to be withdrawn."
 )
-pct = "%.0f%%"
 st.dataframe(
     shown,
     hide_index=True,
     width="stretch",
     column_config={
-        "parent_group": st.column_config.TextColumn("Employer group", pinned=True),
-        "cases": st.column_config.NumberColumn("Cases", format="localized"),
-        "years_active": st.column_config.NumberColumn("Years active"),
-        "median_wage_floor": st.column_config.NumberColumn(
-            "Median wage floor (USD)", format="localized"
-        ),
-        "pct_above_pw": st.column_config.NumberColumn("Above prevailing wage", format=pct),
-        "level2plus_pct": st.column_config.NumberColumn("Level II+", format=pct),
-        "n_leveled": st.column_config.NumberColumn("Cases with a level", format="localized"),
-        "withdrawn_pct": st.column_config.NumberColumn("Withdrawn", format=pct),
-        "positions": st.column_config.NumberColumn("Positions", format="localized"),
-        "n_entities": st.column_config.NumberColumn("Names in group"),
-        "top_soc_title": st.column_config.TextColumn("Top SOC title"),
-        "top_state": st.column_config.TextColumn("Top state"),
+        "parent_group": text_col("Employer group", pinned=True),
+        "cases": count_col("Cases"),
+        "years_active": count_col("Years active"),
+        "median_wage_floor": money_col("Median wage floor"),
+        "pct_above_pw": pct_col("Above prevailing wage"),
+        "level2plus_pct": pct_col("Level II+"),
+        "n_leveled": count_col("Cases with a level"),
+        "withdrawn_pct": pct_col("Withdrawn"),
+        "positions": count_col("Positions"),
+        "n_entities": count_col("Names in group"),
+        "top_soc_title": text_col("Top SOC title"),
+        "top_state": text_col("Top state"),
     },
 )
+st.caption(NONE_CAPTION)
 slug = re.sub(r"[^a-z0-9]+", "_", f"{family} {state}".lower()).strip("_")
 st.download_button(
     "Download CSV",

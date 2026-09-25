@@ -1,6 +1,7 @@
 """Methodology & limitations, rendered from the README."""
 
 import streamlit as st
+
 from app_data import readme_sections, years_label
 from ui import data
 

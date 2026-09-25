@@ -16,3 +16,7 @@ select = ["E", "F", "I", "B"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[tool.ruff.lint.isort]
+# app/ modules are imported by bare name (app/ is on sys.path in the app and in tests)
+known-first-party = ["h1b", "app_data", "ui"]
