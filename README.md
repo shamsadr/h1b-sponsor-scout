@@ -1,6 +1,6 @@
 # H-1B Sponsor Scout
 
-**Live app:** <URL — add after deploy>
+**Live app:** https://ie-h1b-sponsor.streamlit.app/
 
 **Problem.** International students (F-1 → OPT → H-1B) need to know which employers
 *actually* sponsor H-1B in their target roles, at what wage level, and consistently
