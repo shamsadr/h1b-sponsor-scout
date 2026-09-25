@@ -27,16 +27,25 @@ def inspect_file(path: Path) -> list[str]:
     return cols
 
 
-def process_file(path: Path, fy: int, out_dir: Path = PROCESSED_DIR) -> Path:
-    """Raw file -> cleaned parquet. Returns the parquet path."""
-    raw, missing = ingest(path)
-    if missing:
-        print(f"[warn] {path.name}: optional columns missing -> NA: {missing}")
-    df = clean_lca(raw, fy)
+def process_files(paths: list[Path], fy: int, out_dir: Path = PROCESSED_DIR) -> Path:
+    """Raw file(s) for ONE fiscal year -> one cleaned parquet. Returns its path.
+
+    Files are concatenated before cleaning, so cases repeated across quarterly
+    files are deduped on CASE_NUMBER (latest decision kept).
+    """
+    frames = []
+    for path in paths:
+        raw, missing = ingest(path)
+        if missing:
+            print(f"[warn] {path.name}: optional columns missing -> NA: {missing}")
+        frames.append(raw)
+    combined = pd.concat(frames, ignore_index=True)
+    df = clean_lca(combined, fy)
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"lca_fy{fy}.parquet"
     df.to_parquet(out, index=False)
-    print(f"[ok] {path.name}: {len(raw):,} raw rows -> {len(df):,} H-1B rows -> {out}")
+    names = ", ".join(p.name for p in paths)
+    print(f"[ok] FY{fy} ({names}): {len(combined):,} raw rows -> {len(df):,} H-1B rows -> {out}")
     return out
 
 
@@ -68,6 +77,14 @@ def _fy_from_name(path: Path) -> int:
     return int(m.group(1))
 
 
+def group_by_fy(paths: list[Path], fy: int | None = None) -> dict[int, list[Path]]:
+    """Group input files by fiscal year (from filenames, or all under `fy` if given)."""
+    groups: dict[int, list[Path]] = {}
+    for path in paths:
+        groups.setdefault(fy or _fy_from_name(path), []).append(path)
+    return groups
+
+
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(prog="h1b")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -89,8 +106,8 @@ def main(argv: list[str] | None = None) -> None:
         # Demo outputs go to separate folders so they never mix with real data.
         proc = PROCESSED_DIR / "demo" if args.demo else PROCESSED_DIR
         rep = REPORTS_DIR / "demo" if args.demo else REPORTS_DIR
-        for f in inputs:
-            process_file(f, args.fy or _fy_from_name(f), out_dir=proc)
+        for year, files in sorted(group_by_fy(inputs, args.fy).items()):
+            process_files(files, year, out_dir=proc)
         build_scorecard(processed_dir=proc, reports_dir=rep)
     else:
         build_scorecard()
