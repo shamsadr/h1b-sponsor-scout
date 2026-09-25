@@ -113,3 +113,8 @@ def test_17_2112_detail_codes(code, family):
 def test_validation_eng_is_context_not_target():
     assert "Validation Eng (context)" in SOC_FAMILIES.values()
     assert "Validation Eng (context)" not in TARGET_FAMILIES
+
+
+@pytest.mark.parametrize("code", ["11-3071", "11-3071.00", "11-3071.04", "13-1081.02"])
+def test_supply_chain_codes(code):
+    assert map_soc_family(code) == "Supply Chain / Logistics"
