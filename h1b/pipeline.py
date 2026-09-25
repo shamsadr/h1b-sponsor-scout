@@ -65,7 +65,13 @@ def build_scorecard(
     card.to_csv(out, index=False)
     years = sorted(df["fiscal_year"].unique().tolist())
     print(f"[ok] scorecard: {len(card):,} employers, FY {years} -> {out}")
-    cols = ["employer_name", "positions", "years_active", "median_wage_floor", "level2plus_share"]
+    cols = [
+        "employer_name",
+        "cases",
+        "new_hire_positions",
+        "positions_per_case",
+        "median_wage_floor",
+    ]
     print(card[cols].head(10).to_string(index=False))
     return card
 

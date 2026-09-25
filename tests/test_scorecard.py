@@ -84,3 +84,22 @@ def test_top_soc_title_is_most_common_certified_title():
         CASE_STATUS=["Certified", "Certified", "Certified", "Denied"],
     )
     assert employer_scorecard(df).iloc[0]["top_soc_title"] == "Logisticians"
+
+
+def test_sorted_by_cases_then_new_hires_with_bulk_filer_flag():
+    a = make_rows(2, employer_norm="A", EMPLOYER_NAME="A", positions=[40.0, 40.0])  # 40/case
+    b = make_rows(3, employer_norm="B", EMPLOYER_NAME="B", new_hire_positions=[1.0, 1.0, 1.0])
+    c = make_rows(3, employer_norm="C", EMPLOYER_NAME="C", new_hire_positions=[5.0, 5.0, 5.0])
+    card = employer_scorecard(pd.concat([a, b, c], ignore_index=True))
+
+    assert card["employer_norm"].tolist() == ["C", "B", "A"]  # cases desc, then new hires desc
+    by = card.set_index("employer_norm")
+    assert by.loc["A", "positions_per_case"] == 40
+    assert by.loc["A", "bulk_filer"]
+    assert by.loc["B", "positions_per_case"] == 1
+    assert not by.loc["B", "bulk_filer"]
+
+
+def test_bulk_filer_threshold_is_strictly_above_five():
+    df = make_rows(2, positions=[5.0, 5.0])  # exactly 5 per case
+    assert not employer_scorecard(df).iloc[0]["bulk_filer"]

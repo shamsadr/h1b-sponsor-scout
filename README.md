@@ -33,12 +33,15 @@ Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share
 
 ## Scorecard columns
 Positions, wages and levels use strict `CASE_STATUS == 'Certified'` rows only.
+The table is sorted by `cases`, then `new_hire_positions`.
 
 | column | meaning |
 |---|---|
 | cases | certified LCAs in target role families |
 | positions | certified LCA worker positions in target role families |
 | top_soc_title | most common SOC title among the employer's certified cases |
+| positions_per_case | positions ÷ cases |
+| bulk_filer | true if positions_per_case > 5 (a few large LCAs can dominate `positions`) |
 | new_hire_positions | positions flagged new employment or change of employer |
 | years_active | number of fiscal years with ≥1 certified LCA |
 | median_wage_floor | median annualized offered wage from `WAGE_RATE_OF_PAY_FROM` (full-time, outliers excluded) |

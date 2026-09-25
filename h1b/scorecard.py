@@ -3,6 +3,7 @@
 import pandas as pd
 
 LEVELS = {"I", "II", "III", "IV"}
+BULK_POSITIONS_PER_CASE = 5  # above this many positions per case -> bulk_filer
 
 
 def _mode(s: pd.Series):
@@ -67,5 +68,9 @@ def employer_scorecard(
     card["h1b_dependent_share"] = g["h1b_dependent"].mean()
     card["willful_violator_count"] = g["willful_violator"].sum()
 
+    # Positions are worker counts requested per LCA, so a few bulk LCAs can dominate them.
+    card["positions_per_case"] = card["positions"] / card["cases"]
+    card["bulk_filer"] = card["positions_per_case"] > BULK_POSITIONS_PER_CASE
+
     card = card[card["positions"] >= min_positions]
-    return card.sort_values(["positions", "years_active"], ascending=False).reset_index()
+    return card.sort_values(["cases", "new_hire_positions"], ascending=False).reset_index()
