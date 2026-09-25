@@ -238,6 +238,8 @@ def merge_review(groups: pd.DataFrame) -> pd.DataFrame:
     risk_flags counts: name_sim < NAME_SIM_WARN (difflib ratio to the group label);
     linked by name only while its primary FEIN differs from the group's main FEIN;
     primary state differs from the group's main state; name looks like a person or title.
+    Members placed by employer_overrides.csv are reviewed=True with risk_flags=0; their
+    signal columns are still filled in.
     """
     m = groups[groups["n_entities"] > 1].copy()
     main_fein, main_state = _group_mode(m, "primary_fein"), _group_mode(m, "primary_state")
@@ -256,12 +258,14 @@ def merge_review(groups: pd.DataFrame) -> pd.DataFrame:
         & main_fein.notna()
         & (m["primary_fein"] != main_fein)
     )
-    m["risk_flags"] = (
+    m["reviewed"] = m["link"].str.contains("override")
+    flags = (
         (m["name_sim"] < NAME_SIM_WARN).astype(int)
         + name_only.astype(int)
         + m["state_mismatch"].astype(int)
         + m["looks_like_person_or_title"].astype(int)
     )
+    m["risk_flags"] = flags.where(~m["reviewed"], 0)
     m = m.sort_values(
         ["risk_flags", "rows", "parent_group", "employer_norm"],
         ascending=[False, False, True, True],
@@ -277,6 +281,7 @@ def merge_review(groups: pd.DataFrame) -> pd.DataFrame:
         "name_sim",
         "state_mismatch",
         "looks_like_person_or_title",
+        "reviewed",
         "risk_flags",
         "n_entities",
     ]

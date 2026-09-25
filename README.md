@@ -96,8 +96,8 @@ are the connected components, and their label is the `parent_group` column.
     3 words) or a professional suffix (MD, DDS, CPA, ...)
 
   Rows are sorted by `risk_flags`, then rows, and the top 25 are printed after each run.
-  Override members with a short brand label (`AMAZON WEB SERVICES` vs `AMAZON`) get the
-  `name_sim` flag too.
+  Members placed by an override are hand-reviewed: `reviewed=True` and `risk_flags=0`, with the
+  signal columns still filled in.
 
 ## Methodology decisions
 - **Quarterly files are not cumulative.** The FY2025 Q4 file's `DECISION_DATE` runs only
@@ -145,7 +145,7 @@ Written to `reports/` by `run` and `scorecard` (git-ignored, regenerate any time
 | scorecard_by_family.csv | same columns, top 25 employers by cases in each target family |
 | family_trends.csv | certified cases per family and fiscal year, plus an "Analytics (combined)" rollup of OR, Statistics / Decision Science, Data Science / BI and Quant / Finance |
 | parent_groups.csv | one row per `employer_norm`: parent_group, primary_fein, primary_state, rows, link (`name` / `fein` / `override` / `none`) |
-| merge_review.csv | one row per member of a multi-name group: name_sim, link, state_mismatch, looks_like_person_or_title, row_share, risk_flags |
+| merge_review.csv | one row per member of a multi-name group: name_sim, link, state_mismatch, looks_like_person_or_title, row_share, reviewed, risk_flags |
 | consistent_sponsors.csv | employers with ≥10 certified cases in every loaded year, per family and for the analytics rollup, with one `cases_fy{year}` column per year |
 
 ## Limitations

@@ -121,8 +121,9 @@ def test_override_merge_joins_unlinked_names_under_its_label():
     assert set(group_of(groups).values()) == {"AMAZON"}
     assert set(groups["link"]) == {"override"}
     review = merge_review(groups)
-    # Only the short brand label lowers name_sim; override links are never 'name only'.
-    assert review["risk_flags"].eq((review["name_sim"] < 0.5).astype(int)).all()
+    assert review["reviewed"].all()
+    assert review["risk_flags"].eq(0).all()  # hand-reviewed, despite a low name_sim
+    assert (review["name_sim"] < 0.5).any()  # signal columns are still filled in
 
 
 def test_label_matching_an_override_label_gets_its_fein_appended():
@@ -201,6 +202,7 @@ def test_merge_review_flags_one_row_unrelated_name_under_shared_fein():
     assert odd["row_share"] == pytest.approx(1 / 51)
     assert review.index[0] == "TALEBNEJAD"  # most flags first
     assert review.loc["BANK OF AMERICA N A", "risk_flags"] == 0
+    assert not review["reviewed"].any()
 
 
 def test_merge_review_name_only_state_and_title_signals():

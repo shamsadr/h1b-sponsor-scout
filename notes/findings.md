@@ -255,3 +255,17 @@ TALEBNEJAD and IRIS CAPITAL.
   (combined) 477, Business / Mgmt Analyst 54, Data Science / BI 217, Industrial Engineering 56,
   Operations Research 53, Quant / Finance 106, Statistics / Decision Science 63, Supply Chain /
   Logistics 19.
+
+## 2026-09-25 — Reviewed overrides, Citi and Merrill Lynch
+
+- **Overrides added:**
+  - CITI: Citigroup Technology, Citigroup Energy, CitiMortgage, Citi Fund Services Ohio, Citi
+    Ventures
+  - BANK OF AMERICA: Merrill Lynch and Merrill Lynch Commodities (BofA subsidiary since 2009;
+    hires via BofA careers)
+- **Groups.** 88,665 names form 84,911 groups; target-family employers: 26,200 groups.
+- **Certified target-family cases:** CITI 1,123 (5 names with certified cases), BANK OF AMERICA
+  851 (5).
+- **`merge_review.csv`.** 7,048 members; 45 placed by overrides are `reviewed=True` with
+  `risk_flags=0`. 1,187 members have at least one warning (1: 1,001, 2: 183, 3: 3).
+- **Consistent sponsors** are unchanged from the previous entry.

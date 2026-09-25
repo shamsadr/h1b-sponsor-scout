@@ -40,3 +40,10 @@ merge,CITIBANK N A,CITI,hiring brand Citi
 merge,CITIGROUP GLOBAL MARKETS,CITI,hiring brand Citi
 split,TALEBNEJAD,,1 row on Bank of America N.A.'s FEIN 94-1687665
 split,IRIS CAPITAL,,shares FEIN 93-4004615 with Iris Software and Services; different company
+merge,CITIGROUP TECHNOLOGY,CITI,hiring brand Citi
+merge,CITIGROUP ENERGY,CITI,hiring brand Citi
+merge,CITIMORTGAGE,CITI,hiring brand Citi
+merge,CITI FUND SERVICES OHIO,CITI,hiring brand Citi
+merge,CITI VENTURES,CITI,hiring brand Citi
+merge,MERRILL LYNCH,BANK OF AMERICA,BofA subsidiary since 2009; hires via BofA careers
+merge,MERRILL LYNCH COMMODITIES,BANK OF AMERICA,BofA subsidiary since 2009; hires via BofA careers
