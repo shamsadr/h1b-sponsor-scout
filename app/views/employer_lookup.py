@@ -20,7 +20,6 @@ from app_data import (
     years_label,
 )
 from ui import (
-    CONTEXT_GRAY,
     count_col,
     data,
     family_totals_chart,
@@ -28,7 +27,9 @@ from ui import (
     fmt_money,
     fmt_pct,
     level_chart,
+    muted_text,
     open_employer,
+    pct_col,
     sponsor_column_config,
     text_col,
 )
@@ -79,8 +80,9 @@ def set_comparison(set_name: str, members: list[str], family: str) -> None:
     cols = ["display_name", "cases", *years, "median_wage_floor", "pct_above_pw"]
     cols += ["level2plus_pct", "note"]
     zero = shown["cases"].eq(0)
+    gray = muted_text()  # de-emphasized, but still 4.5:1 in either theme
     styled = shown[cols].style.apply(
-        lambda r: [f"color: {CONTEXT_GRAY}" if zero[r.name] else "" for _ in r], axis=1
+        lambda r: [f"color: {gray}" if zero[r.name] else "" for _ in r], axis=1
     )
     config = sponsor_column_config(years) | {"note": text_col("Note", width="medium")}
     event = st.dataframe(
@@ -159,6 +161,19 @@ def detail(group: str) -> None:
         else:
             st.altair_chart(level_chart(lv), width="stretch")
             st.caption(f"Share of certified LCAs, all roles, {years_label(YEARS)}. {LEVEL_NOTE}")
+            with st.expander("Table"):
+                t = lv.groupby("level")["cases"].sum()
+                t = t.reindex(["I", "II", "III", "IV", "Not leveled"]).dropna().astype(int)
+                table = t.rename("Certified LCAs").to_frame()
+                table["Share"] = 100 * table["Certified LCAs"] / table["Certified LCAs"].sum()
+                table.index.name = "Wage level"
+                st.dataframe(
+                    table,
+                    column_config={
+                        "Certified LCAs": count_col("Certified LCAs"),
+                        "Share": pct_col("Share"),
+                    },
+                )
     with st.expander("How this employer group was built (technical)"):
         st.caption(
             "Filing names are joined into one group when they share a tax ID (FEIN), match "

@@ -9,11 +9,34 @@ import streamlit as st
 
 from app_data import FILTER_DEFAULTS, data_dir, encode_query, load_tables, parse_query
 
-# Ordinal blue ramp (older/lower -> lighter), validated for light and dark surfaces.
-BLUE_STEPS = ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#1c5cab"]
-BLUE_STEPS += ["#184f95"]
-LEVEL_COLORS = {"I": "#86b6ef", "II": "#5598e7", "III": "#256abf", "IV": "#184f95"}
-LEVEL_COLORS["Not leveled"] = "#898781"  # muted gray: no level, not a magnitude
+# Colors. Every bar color clears 3:1 against its theme's background (WCAG 1.4.11) and every
+# text color clears 4.5:1 (WCAG 1.4.3), so ramps and muted text depend on the theme.
+SERIES_BLUE = "#2a78d6"  # 4.4:1 on white, 4.3:1 on Streamlit's dark background
+# Ordinal ramps for fiscal years (older -> lighter), per theme: steps 400-600 on light
+# (3.6-8.1:1 on white), steps 250-500 on dark (9.0-3.5:1 on #0e1117).
+YEAR_RAMPS = {
+    "light": ["#3987e5", "#2a78d6", "#256abf", "#1c5cab", "#184f95"],
+    "dark": ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf"],
+}
+MUTED_TEXT = {"light": "#6b6a66", "dark": "#a3a29c"}  # 5.4:1 and 7.4:1
+REFERENCE_GRAY = "#898781"  # bars only (3.6:1 light, 5.3:1 dark): a reference, not a series
+CONTEXT_GRAY = REFERENCE_GRAY
+LEVEL_COLORS = {level: SERIES_BLUE for level in ["I", "II", "III", "IV"]}
+LEVEL_COLORS["Not leveled"] = REFERENCE_GRAY  # the axis names each bar; gray = no level
+
+
+def theme() -> str:
+    """'light' or 'dark', the viewer's active Streamlit theme (light if unknown)."""
+    try:
+        kind = st.context.theme.type
+    except AttributeError:
+        kind = None
+    return kind if kind in ("light", "dark") else "light"
+
+
+def muted_text() -> str:
+    """Gray for de-emphasized text that still clears 4.5:1 in the current theme."""
+    return MUTED_TEXT[theme()]
 
 
 @st.cache_data
@@ -179,11 +202,12 @@ def reset_filters() -> None:
 
 
 def year_ramp(years: list[int]) -> list[str]:
-    """One ramp step per fiscal year, spread across the validated range."""
+    """One ramp step per fiscal year, spread across the current theme's ramp."""
+    steps = YEAR_RAMPS[theme()]
     if len(years) == 1:
-        return [BLUE_STEPS[-1]]
-    idx = [round(i * (len(BLUE_STEPS) - 1) / (len(years) - 1)) for i in range(len(years))]
-    return [BLUE_STEPS[i] for i in idx]
+        return [SERIES_BLUE]
+    idx = [round(i * (len(steps) - 1) / (len(years) - 1)) for i in range(len(years))]
+    return [steps[i] for i in idx]
 
 
 CATEGORY_TITLES = {"soc_family": "Role family", "family": "Role family"}
@@ -243,7 +267,7 @@ def pct_change_chart(d: pd.DataFrame, reference: str, first: int, last: int) -> 
         color=alt.Color(
             "kind:N",
             scale=alt.Scale(
-                domain=["Role family", "Reference"], range=[BLUE_STEPS[4], REFERENCE_GRAY]
+                domain=["Role family", "Reference"], range=[SERIES_BLUE, REFERENCE_GRAY]
             ),
             legend=alt.Legend(title=None, orient="top"),
         ),
@@ -258,13 +282,10 @@ def pct_change_chart(d: pd.DataFrame, reference: str, first: int, last: int) -> 
     pos = base.transform_filter("datum.pct_change >= 0").mark_text(align="left", dx=4)
     neg = base.transform_filter("datum.pct_change < 0").mark_text(align="right", dx=-4)
     labels = alt.layer(
-        *[layer.encode(text="text:N", color=alt.value(REFERENCE_GRAY)) for layer in (pos, neg)]
+        *[layer.encode(text="text:N", color=alt.value(muted_text())) for layer in (pos, neg)]
     )
     rule = alt.Chart(pd.DataFrame({"x": [0]})).mark_rule(color=REFERENCE_GRAY).encode(x="x:Q")
     return (bars + labels + rule).properties(height=alt.Step(26))
-
-
-CONTEXT_GRAY = REFERENCE_GRAY
 
 
 def family_totals_chart(by: pd.DataFrame, target_families: list[str]) -> alt.Chart:
@@ -296,7 +317,7 @@ def family_totals_chart(by: pd.DataFrame, target_families: list[str]) -> alt.Cha
                 "kind:N",
                 scale=alt.Scale(
                     domain=["Target role family", "Other roles (context)"],
-                    range=[BLUE_STEPS[4], CONTEXT_GRAY],
+                    range=[SERIES_BLUE, CONTEXT_GRAY],
                 ),
                 legend=alt.Legend(title=None, orient="top"),
             ),

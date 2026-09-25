@@ -100,6 +100,13 @@ Pages:
   and withdrawal caveats as short summaries with details on demand.
 - **Methodology & limitations:** rendered from this README.
 
+**Accessibility.** Every chart has a "Table" view with the same numbers (a test checks this on
+every page). Color is never the only signal: charts have legends or axis labels, the reference bar
+is labelled "reference", and grayed rows carry a note. Colors depend on the viewer's light or dark
+theme so that bars clear 3:1 and muted text 4.5:1 against the background (WCAG 2.1 AA; a test
+checks every color). The default Find sponsors columns fit a 1280-px laptop screen without
+horizontal scrolling.
+
 `publish` precomputes the scorecard for every role group × worksite state (plus all states)
 with the same functions as the reports, so the app does no heavy computation. The role groups are
 each target family, Analytics (combined), "All target roles" and "All occupations" (every H-1B

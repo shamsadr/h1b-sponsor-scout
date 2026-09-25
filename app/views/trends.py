@@ -41,6 +41,20 @@ else:
     st.subheader(f"Change FY{FIRST} → FY{LAST}")
     changes = pct_change_table(t[t["family"].isin(picked + [ANALYTICS_LABEL])])
     st.altair_chart(pct_change_chart(changes, ANALYTICS_LABEL, FIRST, LAST), width="stretch")
+    with st.expander("Table"):
+        table = changes.set_index("family").rename(
+            columns={"first": f"FY{FIRST}", "last": f"FY{LAST}", "pct_change": "Change"}
+        )
+        table["Change"] = 100 * table["Change"]
+        table.index.name = "Role family"
+        st.dataframe(
+            table,
+            column_config={
+                f"FY{FIRST}": count_col(f"FY{FIRST}"),
+                f"FY{LAST}": count_col(f"FY{LAST}"),
+                "Change": st.column_config.NumberColumn("Change", format="%+.0f%%"),
+            },
+        )
     no_base = changes.loc[changes["pct_change"].isna(), "family"].tolist()
     if no_base:
         st.caption(f"No % change for {', '.join(no_base)}: no certified LCAs in FY{FIRST}.")

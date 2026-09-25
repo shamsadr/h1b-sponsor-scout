@@ -206,3 +206,18 @@ def test_each_headline_number_opens_find_sponsors_showing_that_count(demo_app_da
     assert not at.exception
     assert at.title[0].value == "Find sponsors"
     assert status(at).startswith(f"Showing **{shown} employer")  # filtered count == headline
+
+
+def test_every_chart_has_a_table_view(app):
+    app.switch_page("views/employer_lookup.py").run()
+    app.get("button_group")[0].set_value("ACME ANALYTICS").run()  # show the employer charts
+    seen = set()
+    for page in [None, "views/trends.py", "views/home.py", FIND, "views/methodology.py"]:
+        if page:
+            app.switch_page(page).run()
+        assert not app.exception, page
+        charts = len(app.get("vega_lite_chart"))
+        tables = [e for e in app.expander if e.label == "Table"]
+        assert len(tables) == charts, (page, charts, len(tables))
+        seen.add(charts > 0)
+    assert seen == {True, False}  # guards against counting the wrong element type
