@@ -94,3 +94,22 @@ def test_target_families_exclude_context_families():
     assert "Industrial Engineering" in TARGET_FAMILIES
     assert not [f for f in TARGET_FAMILIES if f.endswith("(context)")]
     assert {"Software (context)", "IT Systems Analyst (context)"} <= set(SOC_FAMILIES.values())
+
+
+@pytest.mark.parametrize(
+    "code, family",
+    [
+        ("17-2112.00", "Industrial Engineering"),
+        ("17-2112.01", "Industrial Engineering"),
+        ("17-2112.03", "Industrial Engineering"),
+        ("17-2112", "Industrial Engineering"),  # some filings omit the detail suffix
+        ("17-2112.02", "Validation Eng (context)"),
+    ],
+)
+def test_17_2112_detail_codes(code, family):
+    assert map_soc_family(code) == family
+
+
+def test_validation_eng_is_context_not_target():
+    assert "Validation Eng (context)" in SOC_FAMILIES.values()
+    assert "Validation Eng (context)" not in TARGET_FAMILIES

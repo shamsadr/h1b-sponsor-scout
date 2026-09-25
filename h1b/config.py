@@ -70,7 +70,8 @@ SOC_FAMILIES = {
     "13-2051": "Quant / Finance",
     "13-2054": "Quant / Finance",
     "13-2099.01": "Quant / Finance",
-    "17-2112": "Industrial Engineering",
+    "17-2112": "Industrial Engineering",  # .00 IE, .01 Human Factors, .03 Manufacturing
+    "17-2112.02": "Validation Eng (context)",
     "13-1081": "Supply Chain / Logistics",
     "13-1111": "Business / Mgmt Analyst",
     "13-1161": "Business / Mgmt Analyst",
