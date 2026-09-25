@@ -101,12 +101,12 @@ Source: `lca_fy2024.parquet` and `lca_fy2025.parquet`, built from the eight quar
   are `Certified` in FY2024 and `Certified - Withdrawn` in FY2025, with the same employer and
   `soc_family` in both years. 1,169 of them are in the target families. The combined scorecard
   input has 0 duplicate `CASE_NUMBER`s among certified target-family rows.
-- **How the scorecard treats them.** `cases`, `positions` and wages use strict `Certified`, so each
+- **How the scorecard treated them (before the cross-year dedupe was added).** `cases`, `positions` and wages use strict `Certified`, so each
   overlapping case is counted once (as its FY2024 certified record). The FY2025 record is included
   in `withdrawn_rate` and in the `denial_rate` denominator, so those cases appear in those
   denominators twice. Across all target-family rows the withdrawn share is 6.48% as scored and
   6.52% when only the latest record per case is kept.
-- **Certified target-family cases, FY2024 vs FY2025:**
+- **Certified target-family cases, FY2024 vs FY2025 (before the cross-year dedupe):**
 
   | Family | FY2024 | FY2025 | Change |
   |---|---|---|---|
@@ -127,3 +127,42 @@ Source: `lca_fy2024.parquet` and `lca_fy2025.parquet`, built from the eight quar
   FY2024 and 15,192 in FY2025. Its 15-2031 cases went from 1,283 to 541, 15-2041 from 402 to 229,
   15-2051 from 1,394 to 1,810, and 13-1082 from 21 to 235. All SOC codes are in the same format in
   both years.
+
+## 2026-09-24 — After the cross-year dedupe
+
+Source: `lca_fy2024.parquet` + `lca_fy2025.parquet`, deduped on `CASE_NUMBER` (latest
+`DECISION_DATE` kept, earliest fiscal year assigned).
+
+- **Rows.** 1,127,430 rows before and 1,118,768 after, so 8,662 rows removed. All 8,662 cases were
+  first seen in FY2024 and have `Certified - Withdrawn` as the latest status.
+- **Status by first-appearance year (all families):** FY2024 has 493,712 Certified, 40,325
+  Certified - Withdrawn, 8,836 Withdrawn and 3,934 Denied. FY2025 has 537,796 Certified, 21,449
+  Certified - Withdrawn, 9,211 Withdrawn and 3,505 Denied.
+- **Withdrawn share (`Withdrawn` + `Certified - Withdrawn`) by first-appearance year:** FY2024
+  9.0% and FY2025 5.4% across all families; in the target families 8.3% (6,062 of 73,094) and
+  5.0% (4,155 of 83,492).
+- **Certified cases by family and fiscal year** (`reports/family_trends.csv`):
+
+  | Family | FY2024 | FY2025 | Change |
+  |---|---|---|---|
+  | Analytics (combined) | 47,051 | 55,734 | +18.5% |
+  | Business / Mgmt Analyst | 9,845 | 11,413 | +15.9% |
+  | Data Science / BI | 23,294 | 31,465 | +35.1% |
+  | Industrial Engineering | 6,267 | 7,640 | +21.9% |
+  | Operations Research | 8,146 | 7,475 | -8.2% |
+  | Quant / Finance | 10,962 | 12,388 | +13.0% |
+  | Statistics / Decision Science | 4,649 | 4,406 | -5.2% |
+  | Supply Chain / Logistics | 3,290 | 4,071 | +23.7% |
+
+  The FY2025 counts are unchanged from before the dedupe; the FY2024 counts fell by 1,169 in total
+  across the seven target families.
+- **Consistent sponsors** (`reports/consistent_sponsors.csv`, at least 10 certified cases in both
+  years, by `employer_norm`): Analytics (combined) 483, Business / Mgmt Analyst 55, Data Science /
+  BI 223, Industrial Engineering 56, Operations Research 59, Quant / Finance 110, Statistics /
+  Decision Science 64, Supply Chain / Logistics 20. The largest in the analytics rollup are
+  Amazon.com Services (3,118 + 2,682 cases), Ernst & Young U.S. (2,447 + 1,897) and Microsoft
+  (861 + 1,022).
+- **Amazon.com Services SOC codes (certified cases, FY2024 → FY2025):** total 14,249 → 15,192;
+  15-2031 1,283 → 541; 15-2041 402 → 229; 15-2051 1,394 → 1,810; 13-1082 21 → 235. Its analytics
+  rollup total was 3,118 → 2,682.
+- **Employers in the scorecard:** 26,778 for FY2024 + FY2025, down from 26,958 before the dedupe.

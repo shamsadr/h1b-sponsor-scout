@@ -75,6 +75,35 @@ target family, with a leading `family` column.
 - **Flags are self-attestations, not employer labels.** `H_1B_DEPENDENT` and
   `WILLFUL_VIOLATOR` are answered on each filing and can differ between an employer's
   cases, so they are reported as a share or a count instead of a yes/no for the employer.
+- **Cases are deduped across years.** The scorecard loads every processed year and keeps one
+  row per `CASE_NUMBER`: the record with the latest `DECISION_DATE`, assigned to the earliest
+  fiscal year the case appears in. A case certified in FY2024 and withdrawn in the FY2025 file
+  therefore counts once, as an FY2024 case with a withdrawn status. In our data 8,662 cases
+  (1,169 in target families) were recorded this way.
+- **Withdrawals are right-censored in the latest year.** DOL records a withdrawal in the file of
+  the year it happens, so cases first seen in the newest loaded year have had no time to be
+  withdrawn. Among cases first seen in FY2024, 9.0% ended up withdrawn (`Withdrawn` or
+  `Certified - Withdrawn`), against 5.4% of those first seen in FY2025, and all 8,662 FY2024
+  cases re-recorded in FY2025 are `Certified - Withdrawn`. Compare `withdrawn_rate` across years
+  only once the later year's data is complete, and read the latest year's certified counts as an
+  upper bound.
+- **Employers substitute SOC codes, so family trends are partly classification.** Amazon.com
+  Services had 14,249 certified cases in FY2024 and 15,192 in FY2025. Its Operations Research
+  (15-2031) cases fell from 1,283 to 541 and Statistics (15-2041) from 402 to 229, while
+  Business Intelligence Analysts (15-2051, Data Science / BI) rose from 1,394 to 1,810 and Project
+  Management Specialists (13-1082) from 21 to 235. Moves among the four families in
+  "Analytics (combined)" net out of that rollup, so use it alongside the single-family trends
+  (for Amazon the rollup went from 3,118 to 2,682 cases).
+
+## Reports
+Written to `reports/` by `run` and `scorecard` (git-ignored, regenerate any time).
+
+| file | contents |
+|---|---|
+| scorecard_target_roles.csv | one row per employer, columns above, target families only |
+| scorecard_by_family.csv | same columns, top 25 employers by cases in each target family |
+| family_trends.csv | certified cases per family and fiscal year, plus an "Analytics (combined)" rollup of OR, Statistics / Decision Science, Data Science / BI and Quant / Finance |
+| consistent_sponsors.csv | employers with ≥10 certified cases in every loaded year, per family and for the analytics rollup, with one `cases_fy{year}` column per year |
 
 ## Limitations
 - An LCA is an employer's intent to hire. It is not a petition, an approval, or a hire.
