@@ -2,6 +2,8 @@
 
 import pandas as pd
 
+from h1b.config import ANALYTICS_COMBINED, ANALYTICS_LABEL
+
 LEVELS = {"I", "II", "III", "IV"}
 BULK_POSITIONS_PER_CASE = 5  # above this many positions per case -> bulk_filer
 
@@ -104,3 +106,26 @@ def family_scorecards(df: pd.DataFrame, families: list[str], top_n: int = 25) ->
         return pd.DataFrame()
     out = pd.concat(parts, ignore_index=True)
     return out[["family"] + [c for c in out.columns if c != "family"]]
+
+
+def analysis_groups(families: list[str]) -> dict[str, list[str]]:
+    """Each family on its own, plus the combined analytics rollup: {label: [soc_family, ...]}."""
+    groups = {fam: [fam] for fam in families}
+    groups[ANALYTICS_LABEL] = list(ANALYTICS_COMBINED)
+    return groups
+
+
+def family_trends(df: pd.DataFrame, groups: dict[str, list[str]]) -> pd.DataFrame:
+    """Certified cases per group and fiscal year (long format: family, fiscal_year, cases).
+
+    Expects one row per case (see dedupe_across_years). Every loaded year appears for every
+    group, with 0 where there were no certified cases.
+    """
+    status = df["CASE_STATUS"].astype("string").str.strip()
+    certified = df[status.eq("Certified").fillna(False)]
+    years = sorted(df["fiscal_year"].unique().tolist())
+    rows = []
+    for name, fams in groups.items():
+        counts = certified[certified["soc_family"].isin(fams)].groupby("fiscal_year").size()
+        rows += [(name, year, int(counts.get(year, 0))) for year in years]
+    return pd.DataFrame(rows, columns=["family", "fiscal_year", "cases"])

@@ -81,3 +81,12 @@ SOC_FAMILIES = {
 }
 # Families tagged "(context)" are kept for comparison but are not target roles.
 TARGET_FAMILIES = sorted(f for f in set(SOC_FAMILIES.values()) if not f.endswith("(context)"))
+
+# Rollup of the analytics-flavored target families, reported alongside each family.
+ANALYTICS_LABEL = "Analytics (combined)"
+ANALYTICS_COMBINED = [
+    "Operations Research",
+    "Statistics / Decision Science",
+    "Data Science / BI",
+    "Quant / Finance",
+]

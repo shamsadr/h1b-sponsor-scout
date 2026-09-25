@@ -20,6 +20,9 @@ def test_demo_end_to_end(tmp_path):
     assert (tmp_path / "scorecard_target_roles.csv").exists()
     by_family = pd.read_csv(tmp_path / "scorecard_by_family.csv")
     assert by_family.columns[0] == "family" and len(by_family) > 0
+    trends = pd.read_csv(tmp_path / "family_trends.csv")
+    assert list(trends.columns) == ["family", "fiscal_year", "cases"]
+    assert set(trends["fiscal_year"]) == {2024, 2025}
     assert 1 <= len(card) <= 5  # 5 fake employers in demo data
     assert card["positions"].gt(0).all()
     assert card["years_active"].between(1, 2).all()

@@ -16,7 +16,13 @@ import pandas as pd
 from h1b.clean import clean_lca
 from h1b.config import DEMO_DIR, INTERIM_DIR, PROCESSED_DIR, REPORTS_DIR, TARGET_FAMILIES
 from h1b.ingest import ingest, normalize_col, read_raw
-from h1b.scorecard import dedupe_across_years, employer_scorecard, family_scorecards
+from h1b.scorecard import (
+    analysis_groups,
+    dedupe_across_years,
+    employer_scorecard,
+    family_scorecards,
+    family_trends,
+)
 
 
 def inspect_file(path: Path) -> list[str]:
@@ -100,6 +106,8 @@ def build_scorecard(
     card.to_csv(out, index=False)
     by_family = family_scorecards(df, families if families is not None else TARGET_FAMILIES)
     by_family.to_csv(reports_dir / "scorecard_by_family.csv", index=False)
+    groups = analysis_groups(families if families is not None else TARGET_FAMILIES)
+    family_trends(df, groups).to_csv(reports_dir / "family_trends.csv", index=False)
     years = sorted(df["fiscal_year"].unique().tolist())
     print(f"[ok] scorecard: {len(card):,} employers, FY {years} -> {out}")
     cols = [

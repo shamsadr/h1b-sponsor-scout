@@ -1,6 +1,13 @@
 import pandas as pd
 
-from h1b.scorecard import dedupe_across_years, employer_scorecard, family_scorecards
+from h1b.config import ANALYTICS_COMBINED, ANALYTICS_LABEL
+from h1b.scorecard import (
+    analysis_groups,
+    dedupe_across_years,
+    employer_scorecard,
+    family_scorecards,
+    family_trends,
+)
 
 
 def make_rows(n: int = 1, **overrides) -> pd.DataFrame:
@@ -162,3 +169,39 @@ def test_dedupe_across_years_leaves_unique_cases_alone():
     out = dedupe_across_years(df)
     assert len(out) == 3
     assert sorted(out["fiscal_year"]) == [2024, 2025, 2025]
+
+
+def test_analytics_combined_membership():
+    assert set(ANALYTICS_COMBINED) == {
+        "Operations Research",
+        "Statistics / Decision Science",
+        "Data Science / BI",
+        "Quant / Finance",
+    }
+    groups = analysis_groups(["Operations Research", "Supply Chain / Logistics"])
+    assert groups["Operations Research"] == ["Operations Research"]
+    assert groups[ANALYTICS_LABEL] == ANALYTICS_COMBINED
+
+
+def test_family_trends_counts_certified_cases_by_year_with_rollup():
+    parts = [
+        make_rows(3, soc_family="Operations Research", fiscal_year=2024),
+        make_rows(2, soc_family="Operations Research", fiscal_year=2025),
+        make_rows(4, soc_family="Data Science / BI", fiscal_year=2025),
+        make_rows(5, soc_family="Supply Chain / Logistics", fiscal_year=2024),
+        make_rows(7, soc_family="Operations Research", fiscal_year=2025, CASE_STATUS="Withdrawn"),
+        make_rows(9, soc_family="Other", fiscal_year=2025),
+    ]
+    out = family_trends(
+        pd.concat(parts, ignore_index=True),
+        analysis_groups(["Operations Research", "Data Science / BI", "Supply Chain / Logistics"]),
+    )
+    got = {(r.family, r.fiscal_year): r.cases for r in out.itertuples()}
+
+    assert got[("Operations Research", 2024)] == 3
+    assert got[("Operations Research", 2025)] == 2  # withdrawn rows are not counted
+    assert got[("Data Science / BI", 2024)] == 0  # zero-filled for every loaded year
+    assert got[("Supply Chain / Logistics", 2024)] == 5
+    assert got[(ANALYTICS_LABEL, 2024)] == 3  # OR only
+    assert got[(ANALYTICS_LABEL, 2025)] == 6  # OR 2 + DS 4
+    assert not any(k[0] == "Other" for k in got)
