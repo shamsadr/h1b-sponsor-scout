@@ -44,7 +44,38 @@ FY2025 quarterly LCA files (`LCA_Disclosure_Data_FY2025_Q1..Q4.xlsx`) unless sta
   Engineers and Ergonomists 297, other 6. SOC 13-1081 has 2,922 rows: Logisticians 1,426,
   Logistics Analysts 998, Logistics Engineers 497, other 1. Under the earlier mapping both codes
   were in the "Industrial Engineering" family (13,741 rows).
-- **Rows by `soc_family` (current mapping):** Other 300,760; Software (context) 180,149;
+- **Rows by `soc_family` (mapping before the 17-2112.02 and 11-3071 changes):** Other 300,760; Software (context) 180,149;
   Data Science / BI 33,346; IT Systems Analyst (context) 13,932; Quant / Finance 13,581;
   Business / Mgmt Analyst 12,215; Industrial Engineering 10,819; Operations Research 7,996;
   Statistics / Decision Science 4,903; Supply Chain / Logistics 2,922.
+
+## 2026-09-24 — SOC detail codes and FY2024 schema
+
+- **17-2112 detail codes (FY2025, all statuses, 10,819 rows):**
+
+  | `SOC_CODE` | Rows | `SOC_TITLE` |
+  |---|---|---|
+  | 17-2112.00 | 5,749 | Industrial Engineers |
+  | 17-2112.01 | 297 | Human Factors Engineers and Ergonomists |
+  | 17-2112.02 | 2,548 | Validation Engineers (2,546), Validation Engineer (2) |
+  | 17-2112.03 | 2,192 | Manufacturing Engineers |
+  | 17-2112 (no suffix) | 32 | Industrial Engineers 28, Industrial Engineer 2, INDUSTRIAL ENGINEER 1, Quality Engineer 1 |
+  | 17-21121.00 (malformed) | 1 | Industrial Engineers |
+
+- **11-3071 (1,427 rows):** 11-3071.04 has 1,101 rows (Supply Chain Managers 1,098, plus 3 with other
+  spellings or titles), 11-3071.00 has 325 (Transportation, Storage, and Distribution Managers),
+  and 11-3071 with no suffix has 1.
+- **13-1081 (2,922 rows):** 13-1081.00 has 1,415 (Logisticians), 13-1081.01 has 498 (Logistics
+  Engineers), 13-1081.02 has 999 (Logistics Analysts 998, Logisticians 1), and 13-1081 with no
+  suffix has 10 (Logisticians).
+- **Rows by `soc_family` (current mapping, all statuses):** Other 299,333; Software (context)
+  180,149; Data Science / BI 33,346; IT Systems Analyst (context) 13,932; Quant / Finance 13,581;
+  Business / Mgmt Analyst 12,215; Industrial Engineering 8,271; Operations Research 7,996;
+  Statistics / Decision Science 4,903; Supply Chain / Logistics 4,349; Validation Eng (context)
+  2,548.
+- **`clean` is reproducible.** Re-cleaning FY2025 from `data/interim/lca_raw_fy2025.parquet`
+  (596,552 rows) twice gave identical 580,623-row output (same row hash both times).
+- **FY2024 Q1 schema.** `LCA_Disclosure_Data_FY2024_Q1.xlsx` has 97 columns and FY2025 Q4 has 98.
+  The only header in FY2025 Q4 but not FY2024 Q1 is `LAWFIRM_BUSINESS_FEIN`. FY2024 Q1 has all 7
+  `REQUIRED_COLS` and all 17 `OPTIONAL_COLS`, so `COLUMN_ALIASES` is still empty. Only this one
+  FY2024 file was inspected.
