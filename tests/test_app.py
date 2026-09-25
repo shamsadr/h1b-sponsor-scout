@@ -35,6 +35,11 @@ def footer(at) -> str:
     return at.caption[-1].value
 
 
+def status(at) -> str:
+    """The 'Showing N employers · ...' line on Find sponsors."""
+    return next(m.value for m in at.markdown if m.value.startswith("Showing"))
+
+
 def test_every_page_runs_and_shows_the_footer(app):
     assert app.title[0].value == "Find sponsors"
     assert footer(app).startswith("Source: U.S. DOL OFLC LCA disclosure data, FY2024–FY2025.")
@@ -44,12 +49,29 @@ def test_every_page_runs_and_shows_the_footer(app):
         assert "Not legal or immigration advice." in footer(app), page
 
 
-def test_find_sponsors_table_and_consistent_checkbox(app):
+def test_find_sponsors_defaults_status_line_and_columns(app):
+    assert app.selectbox[0].value == "Analytics (combined)"
+    assert app.slider[0].value == 5
+    assert status(app).startswith("Showing **")
     table = app.dataframe[0].value
-    assert table.columns[:2].tolist() == ["display_name", "cases"]
+    assert "parent_group" not in table.columns  # users never see the internal key
     app.checkbox[0].check().run()
     assert not app.exception
-    assert len(app.dataframe[0].value) <= len(table)
+    assert "consistent only · min 5 cases/year" in status(app)
+
+
+def test_find_sponsors_empty_state_and_reset(app):
+    app.slider[0].set_value(100).run()
+    app.checkbox[0].check().run()
+    assert not app.exception
+    assert status(app).startswith("Showing **0 employers**")
+    assert "No employers match these filters" in app.info[0].value
+    assert not app.dataframe
+    [b for b in app.button if b.label == "Reset filters"][0].click().run()
+    assert not app.exception
+    assert app.slider[0].value == 5 and app.checkbox[0].value is False
+    assert len(app.dataframe) == 1
+    assert "Not legal or immigration advice." in footer(app)
 
 
 def test_employer_lookup_search(app):

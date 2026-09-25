@@ -4,63 +4,139 @@ import re
 
 import streamlit as st
 
-from app_data import ANALYTICS_LABEL, STATE_ALL, as_percent, filter_sponsors, years_label
+from app_data import (
+    ALL_OCCUPATIONS_LABEL,
+    ANALYTICS_LABEL,
+    FAMILY_DESCRIPTIONS,
+    FAMILY_ORDER,
+    STATE_ALL,
+    as_percent,
+    consistent_definition,
+    filter_sponsors,
+    state_label,
+    state_options,
+    status_line,
+    year_columns,
+)
 from ui import NONE_CAPTION, count_col, data, money_col, pct_col, text_col
 
 DATA = data()
-META = DATA["meta"]
-N_YEARS = len(META["fiscal_years"])
+YEARS = DATA["meta"]["fiscal_years"]
+SPONSORS = DATA["sponsors"]
+DEFAULTS = {"family": ANALYTICS_LABEL, "state": STATE_ALL, "min_cases": 5, "consistent": False}
+EMPTY_MESSAGE = (
+    "No employers match these filters. Try lowering the minimum cases or unchecking "
+    "'Consistent sponsors only'."
+)
+
+
+def reset_filters() -> None:
+    """Put every filter back to its default (button callback)."""
+    for key, value in DEFAULTS.items():
+        st.session_state[key] = value
+
+
+def family_label(family: str) -> str:
+    if family == ALL_OCCUPATIONS_LABEL:
+        return "All occupations (any H-1B role) · broad view"
+    return family
+
+
+def column_config(year_cols: list[str]) -> dict:
+    """Headers, units, formats and help text for every sponsor column."""
+    config = {
+        "display_name": text_col(
+            "Employer",
+            "Brand-level group; see Employer lookup for legal entities",
+            pinned=True,
+        ),
+        "cases": count_col(
+            "Certified LCAs",
+            "Certified labor condition applications, i.e. intent to hire, not hires",
+        ),
+        "median_wage_floor": money_col(
+            "Median offered wage ($/yr)",
+            "Median lower bound of the offered pay range, annualized",
+        ),
+        "pct_above_pw": pct_col(
+            "Pays above prevailing wage",
+            "Share of LCAs offering >1% above the DOL prevailing wage",
+        ),
+        "level2plus_pct": pct_col(
+            "Level II+ share",
+            "Share at wage Level II–IV. From FY2027 these get more lottery entries",
+        ),
+        "withdrawn_pct": pct_col(
+            "Withdrawn",
+            "Share of all filings later withdrawn. The latest year is low because its cases "
+            "have had less time to be withdrawn.",
+        ),
+        "n_leveled": count_col("LCAs with a wage level", "Denominator for the Level II+ share"),
+        "top_soc_title": text_col("Top SOC title", "Most common occupation code title"),
+        "n_entities": count_col("Filing names", "Employer names in this group that filed here"),
+        "n_feins": count_col(
+            "Legal entities (FEINs)", "Distinct employer tax IDs (FEINs) on these LCAs"
+        ),
+        "positions": count_col(
+            "Worker positions", "Positions requested on these LCAs; one LCA can cover many"
+        ),
+    }
+    for col in year_cols:
+        config[col] = count_col(col.replace("cases_", "").upper(), "Certified LCAs by fiscal year")
+    return config
+
+
+families = [f for f in FAMILY_ORDER if f in set(SPONSORS["family"])]
+for key, value in DEFAULTS.items():
+    st.session_state.setdefault(key, value)
+if st.session_state["family"] not in families:
+    st.session_state["family"] = families[0]
 
 st.title("Find sponsors")
-sponsors = DATA["sponsors"]
-families = sorted(sponsors["family"].unique())
-default = families.index(ANALYTICS_LABEL) if ANALYTICS_LABEL in families else 0
 c1, c2, c3, c4 = st.columns([3, 2, 2, 2])
-family = c1.selectbox("Role family", families, index=default)
-states = sorted(sponsors.loc[sponsors["family"] == family, "state"].unique())
-states = [STATE_ALL] + [s for s in states if s != STATE_ALL]
+family = c1.selectbox("Role family", families, key="family", format_func=family_label)
+c1.caption(FAMILY_DESCRIPTIONS.get(family, ""))
 state = c2.selectbox(
-    "Worksite state", states, format_func=lambda s: "All states" if s == STATE_ALL else s
+    "Worksite state",
+    state_options(SPONSORS["state"].unique()),
+    key="state",
+    format_func=state_label,
 )
-min_cases = c3.number_input("Minimum certified cases", min_value=1, value=5, step=1)
+c2.caption("Worksite state of the job, not company headquarters.")
+min_cases = c3.slider("Minimum certified LCAs", min_value=1, max_value=100, key="min_cases")
+definition = consistent_definition(min_cases, YEARS)
 c4.write("")  # align the checkbox with the inputs
-consistent = c4.checkbox(
-    "Consistent sponsors only",
-    help=f"Certified cases in every loaded year ({years_label(META['fiscal_years'])}).",
-)
-table = filter_sponsors(sponsors, family, state, int(min_cases), consistent, N_YEARS)
-shown = as_percent(table).drop(columns="parent_group")
-st.caption(
-    f"{len(shown):,} employer groups, ranked by certified LCA cases. State is the worksite "
-    "state. The latest year's withdrawn rate is low because recent cases have had less "
-    "time to be withdrawn."
-)
-st.dataframe(
-    shown,
-    hide_index=True,
-    width="stretch",
-    column_config={
-        "display_name": text_col("Employer", pinned=True),
-        "cases": count_col("Cases"),
-        **{c: count_col(c.replace("cases_fy", "FY")) for c in shown if c.startswith("cases_fy")},
-        "years_active": count_col("Years active"),
-        "median_wage_floor": money_col("Median wage floor"),
-        "pct_above_pw": pct_col("Above prevailing wage"),
-        "level2plus_pct": pct_col("Level II+"),
-        "n_leveled": count_col("Cases with a level"),
-        "withdrawn_pct": pct_col("Withdrawn"),
-        "positions": count_col("Positions"),
-        "n_entities": count_col("Filing names"),
-        "n_feins": count_col("Legal entities (FEINs)"),
-        "top_soc_title": text_col("Top SOC title"),
-        "top_state": text_col("Top state"),
-    },
-)
-st.caption(NONE_CAPTION)
-slug = re.sub(r"[^a-z0-9]+", "_", f"{family} {state}".lower()).strip("_")
-st.download_button(
-    "Download CSV",
-    shown.to_csv(index=False),
-    file_name=f"sponsors_{slug}.csv",
-    mime="text/csv",
-)
+consistent = c4.checkbox("Consistent sponsors only", key="consistent", help=definition)
+c4.caption(definition)
+
+table = filter_sponsors(SPONSORS, family, state, min_cases, consistent)
+st.markdown(status_line(len(table), family, state, consistent, min_cases))
+if table.empty:
+    st.info(EMPTY_MESSAGE)
+    st.button("Reset filters", on_click=reset_filters, type="primary")
+else:
+    shown = as_percent(table).drop(columns="parent_group")
+    years = year_columns(shown)
+    default_cols = ["display_name", "cases", *years, "median_wage_floor"]
+    default_cols += ["pct_above_pw", "level2plus_pct"]
+    advanced_cols = ["withdrawn_pct", "n_leveled", "top_soc_title", "n_entities", "n_feins"]
+    advanced_cols += ["positions"]
+    t1, t2 = st.columns([4, 1])
+    advanced = t1.toggle("Show advanced columns")
+    t2.button("Reset filters", on_click=reset_filters)
+    cols = default_cols + (advanced_cols if advanced else [])
+    st.dataframe(
+        shown,
+        hide_index=True,
+        width="stretch",
+        column_order=cols,
+        column_config=column_config(years),
+    )
+    st.caption(NONE_CAPTION)
+    slug = re.sub(r"[^a-z0-9]+", "_", f"{family} {state}".lower()).strip("_")
+    st.download_button(
+        "Download CSV",
+        shown[default_cols + advanced_cols].to_csv(index=False),
+        file_name=f"sponsors_{slug}.csv",
+        mime="text/csv",
+    )

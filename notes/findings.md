@@ -310,3 +310,31 @@ per-year case columns, filing-FEIN counts, display names, and lookup tables for 
   case and punctuation) got a state or FEIN suffix. The separate employer normalized to `CITI`
   shows as "CITI Inc", next to the "Citi" brand group.
 - Analytics (combined), all states: Amazon 7,411 certified cases (4,021 in FY2024, 3,390 in FY2025).
+
+## 2026-09-25 — Why consistent analytics sponsors went from 483 to 477
+
+Both counts use the same rule (at least 10 certified Analytics (combined) cases in each of FY2024
+and FY2025) on the same deduped FY2024 + FY2025 rows. 483 counts normalized employer names
+(`employer_norm`), and 477 counts employer groups (`parent_group`) with the current overrides.
+All 469 groups that contain a qualifying name also qualify, so 483 − 14 + 8 = 477.
+
+- **−14: several qualifying names became one group.** 16 names in 7 groups each qualified on their
+  own. Amazon had 5 (Amazon.com Services, AWS, Amazon Data Services, Amazon Development Center,
+  Amazon Advertising). Goldman Sachs had 4 (Goldman Sachs & Co, GS Bank USA, GS Services, Ayco).
+  Deloitte had 4 (Consulting, & Touche, Tax, Transactions and Business Analytics). Capital One, Bank
+  of America (N.A. + BofA Securities), Citi (Citibank + Citigroup Global Markets) and Morgan
+  Stanley (& Co + Services Group) had 2 each.
+- **+8: groups that qualify only after combining names.** Each has a name that dropped below 10 in
+  one year and a renamed or d/b/a variant that took over:
+  - Beacon Hill Staffing Group (with Beacon Hill Solutions Group)
+  - BeiGene USA (with BeOne Medicines USA)
+  - Fidelity Management and Research (with its "d/b/a Fidelity Investments" name)
+  - FMR (with "FMR d/b/a Fidelity Investments": 21 + 0 and 5 + 30 cases, neither reaching 10 in
+    both years on its own)
+  - Guru Consulting Services (with GuruSchools)
+  - Indiana University (with its Indianapolis campus names)
+  - National Financial Services (with its Fidelity d/b/a name)
+  - Syneos Health (with Syneos Health US)
+- **To review:** Fidelity is still three separate groups (FMR, Fidelity Management and Research,
+  National Financial Services), a candidate for a "Fidelity" override. GuruSchools joined Guru
+  Consulting Services through a shared FEIN.

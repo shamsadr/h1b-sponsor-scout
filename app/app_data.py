@@ -14,8 +14,58 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
 STATE_ALL = "ALL"  # must match h1b/publish.py
-ANALYTICS_LABEL = "Analytics (combined)"  # must match h1b/config.py
-TABLES = ["sponsors", "employer_breakdown", "employer_levels", "members"]
+ANALYTICS_LABEL = "Analytics (combined)"  # these three must match h1b/config.py
+ALL_TARGET_LABEL = "All target roles"
+ALL_OCCUPATIONS_LABEL = "All occupations"
+TABLES = ["sponsors", "groups", "employer_breakdown", "employer_levels", "members"]
+
+# Role-family dropdown: order and one-line descriptions (SOC codes from h1b/config.py).
+FAMILY_ORDER = [
+    ANALYTICS_LABEL,
+    "Operations Research",
+    "Statistics / Decision Science",
+    "Data Science / BI",
+    "Quant / Finance",
+    "Industrial Engineering",
+    "Supply Chain / Logistics",
+    "Business / Mgmt Analyst",
+    ALL_TARGET_LABEL,
+    ALL_OCCUPATIONS_LABEL,
+]
+FAMILY_DESCRIPTIONS = {
+    ANALYTICS_LABEL: "Operations Research + Statistics + Data Science/BI + Quant/Finance "
+    "SOC codes.",
+    "Operations Research": "Operations research analysts (SOC 15-2031).",
+    "Statistics / Decision Science": "Statisticians (15-2041) and actuaries (15-2011).",
+    "Data Science / BI": "Data scientists and business intelligence analysts (15-2051).",
+    "Quant / Finance": "Financial and investment analysts (13-2051), financial risk specialists "
+    "(13-2054) and quantitative analysts (13-2099.01).",
+    "Industrial Engineering": "Industrial, human factors and manufacturing engineers (17-2112; "
+    "validation engineers excluded).",
+    "Supply Chain / Logistics": "Logisticians (13-1081) and transportation, storage, distribution "
+    "and supply chain managers (11-3071).",
+    "Business / Mgmt Analyst": "Management analysts (13-1111) and market research analysts "
+    "(13-1161).",
+    ALL_TARGET_LABEL: "All seven target families above combined.",
+    ALL_OCCUPATIONS_LABEL: "Broad view: every H-1B LCA, including software developers and roles "
+    "outside the target families.",
+}
+
+STATE_NAMES = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California",
+    "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware", "DC": "District of Columbia",
+    "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois",
+    "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana",
+    "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota",
+    "MS": "Mississippi", "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada",
+    "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York",
+    "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma", "OR": "Oregon",
+    "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina", "SD": "South Dakota",
+    "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont", "VA": "Virginia",
+    "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming",
+    "GU": "Guam", "MP": "Northern Mariana Islands", "PR": "Puerto Rico",
+    "VI": "U.S. Virgin Islands",
+}  # fmt: skip
 SHARE_COLS = ["share_above_pw", "level2plus_share", "withdrawn_rate"]
 
 
@@ -53,25 +103,66 @@ def footer_text(meta: dict) -> str:
     )
 
 
+def year_columns(df: pd.DataFrame) -> list[str]:
+    """The published per-year case columns, oldest first: ['cases_fy2024', 'cases_fy2025']."""
+    return sorted(c for c in df.columns if re.fullmatch(r"cases_fy\d{4}", c))
+
+
+def state_label(code: str) -> str:
+    """'AZ' -> 'Arizona (AZ)'; STATE_ALL -> 'All states'; unknown codes stay as they are."""
+    if code == STATE_ALL:
+        return "All states"
+    return f"{STATE_NAMES[code]} ({code})" if code in STATE_NAMES else code
+
+
+def state_options(codes) -> list[str]:
+    """STATE_ALL first, then the codes sorted by full state name."""
+    rest = sorted({c for c in codes if c != STATE_ALL}, key=lambda c: (state_label(c), c))
+    return [STATE_ALL] + rest
+
+
+def consistent_definition(min_cases: int, years: list[int]) -> str:
+    """The one wording of 'consistent' used in the tooltip, caption and README."""
+    fys = " and ".join(f"FY{y}" for y in sorted(years))
+    return (
+        f"Filed at least {min_cases} certified LCAs in this role group in every loaded "
+        f"fiscal year ({fys})."
+    )
+
+
 def filter_sponsors(
     sponsors: pd.DataFrame,
     family: str,
     state: str = STATE_ALL,
     min_cases: int = 5,
     consistent_only: bool = False,
-    n_years: int = 1,
 ) -> pd.DataFrame:
-    """Ranked sponsors for one family group and state.
+    """Ranked sponsors for one role group and state.
 
-    consistent_only keeps groups with certified cases in every loaded year
-    (years_active == n_years).
+    Without consistent_only, keep groups with at least min_cases certified LCAs in total.
+    With it, keep groups with at least min_cases in EVERY loaded fiscal year (each
+    cases_fy{year} column), the same rule as reports/consistent_sponsors.csv (N = 10).
     """
     d = sponsors[(sponsors["family"] == family) & (sponsors["state"] == state)]
-    d = d[d["cases"] >= min_cases]
     if consistent_only:
-        d = d[d["years_active"] == n_years]
-    d = d.sort_values(["cases", "parent_group"], ascending=[False, True])
+        d = d[(d[year_columns(d)] >= min_cases).all(axis=1)]
+    else:
+        d = d[d["cases"] >= min_cases]
+    d = d.sort_values(["cases", "display_name"], ascending=[False, True])
     return d.drop(columns=["family", "state"]).reset_index(drop=True)
+
+
+def status_line(n: int, family: str, state: str, consistent_only: bool, min_cases: int) -> str:
+    """'Showing **312 employers** · Analytics (combined) · Arizona · consistent only · min 5
+    cases/year' (markdown)."""
+    noun = "employer" if n == 1 else "employers"
+    parts = [f"Showing **{n:,} {noun}**", family]
+    parts.append("All states" if state == STATE_ALL else STATE_NAMES.get(state, state))
+    if consistent_only:
+        parts += ["consistent only", f"min {min_cases} cases/year"]
+    else:
+        parts.append(f"min {min_cases} cases")
+    return " · ".join(parts)
 
 
 def as_percent(df: pd.DataFrame) -> pd.DataFrame:

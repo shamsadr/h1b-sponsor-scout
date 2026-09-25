@@ -60,9 +60,18 @@ Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share
 streamlit run app/streamlit_app.py    # reads data/app/ only (about 2.6 MB, committed)
 ```
 Pages:
-- **Find sponsors:** a ranked table for a role family (or Analytics combined) and a worksite state,
-  with a minimum-cases filter and a "Consistent sponsors only" option (certified cases in every
-  loaded year). It can be downloaded as CSV.
+- **Find sponsors:** a ranked table for a role group and a worksite state. Role groups are
+  Analytics (combined) (the default), each target family, "All target roles" and "All occupations
+  (any H-1B role)". A status line shows the result count and filters, and an empty result
+  offers **Reset filters**. The default columns are certified LCAs (total and per fiscal year),
+  median offered wage, share above the prevailing wage and Level II+ share. Withdrawn rate, filing
+  names, legal entities (FEINs) and more are behind "Show advanced columns". The table can be
+  downloaded as CSV.
+
+  **Consistent sponsors** (one definition, used by the app and `reports/consistent_sponsors.csv`):
+  *filed at least N certified LCAs in this role group in every loaded fiscal year (FY2024 and
+  FY2025)*. In the app, N is the "Minimum certified LCAs" slider. Without the checkbox, N applies
+  to the total. The report uses N = 10.
 - **Employer lookup:** search a group or any member name to see certified cases by family and year,
   the wage-level mix and the member names.
 - **Trends:** certified cases per family and year, with the SOC-substitution and withdrawal caveats.
@@ -204,7 +213,7 @@ Written to `reports/` by `run` and `scorecard` (git-ignored, regenerate any time
 | family_trends.csv | certified cases per family and fiscal year, plus an "Analytics (combined)" rollup of OR, Statistics / Decision Science, Data Science / BI and Quant / Finance |
 | parent_groups.csv | one row per `employer_norm`: parent_group, primary_fein, primary_state, rows, link (`name` / `fein` / `override` / `none`) |
 | merge_review.csv | one row per member of a multi-name group: name_sim, link, state_mismatch, looks_like_person_or_title, row_share, reviewed, risk_flags |
-| consistent_sponsors.csv | employers with ≥10 certified cases in every loaded year, per family and for the analytics rollup, with one `cases_fy{year}` column per year |
+| consistent_sponsors.csv | employer groups with ≥10 certified cases in every loaded year (the "Consistent sponsors" definition with N = 10), per family and for the analytics rollup, with one `cases_fy{year}` column per year |
 
 ## Limitations
 - An LCA is an employer's intent to hire. It is not a petition, an approval, or a hire.
