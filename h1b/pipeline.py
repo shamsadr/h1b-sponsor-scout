@@ -5,6 +5,7 @@ python -m h1b.pipeline run --input data/raw/<file>.xlsx --fy 2025
 python -m h1b.pipeline run --demo
 python -m h1b.pipeline clean [--fy 2025]     # rebuild data/processed from data/interim
 python -m h1b.pipeline scorecard
+python -m h1b.pipeline publish [--demo]     # slim tables for the Streamlit app -> data/app/
 """
 
 import argparse
@@ -15,6 +16,7 @@ import pandas as pd
 
 from h1b.clean import clean_lca
 from h1b.config import (
+    APP_DIR,
     DEMO_DIR,
     INTERIM_DIR,
     OVERRIDES_FILE,
@@ -24,6 +26,7 @@ from h1b.config import (
 )
 from h1b.groups import add_parent_group, build_parent_groups, load_overrides, merge_review
 from h1b.ingest import ingest, normalize_col, read_raw
+from h1b.publish import publish_app_data
 from h1b.scorecard import (
     analysis_groups,
     consistent_sponsors,
@@ -99,6 +102,33 @@ def process_files(
     return clean_interim(interim_dir, out_dir, fy=fy)[0]
 
 
+def load_grouped(
+    processed_dir: Path, overrides_path: Path | None
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """All processed years, deduped across years, with a parent_group column.
+
+    Returns (rows, parent_groups). Groups use every row of every year, so they don't
+    depend on any family filter.
+    """
+    files = sorted(processed_dir.glob("lca_fy*.parquet"))
+    if not files:
+        raise FileNotFoundError(f"No processed files in {processed_dir}. Run `run` first.")
+    df = dedupe_across_years(pd.concat([pd.read_parquet(f) for f in files], ignore_index=True))
+    parent_groups = build_parent_groups(df, load_overrides(overrides_path))
+    return add_parent_group(df, parent_groups), parent_groups
+
+
+def publish(
+    processed_dir: Path = PROCESSED_DIR,
+    out_dir: Path = APP_DIR,
+    overrides_path: Path | None = OVERRIDES_FILE,
+) -> dict[str, Path]:
+    """Processed parquet -> slim precomputed tables for the Streamlit app."""
+    df, parent_groups = load_grouped(processed_dir, overrides_path)
+    groups = analysis_groups(TARGET_FAMILIES)
+    return publish_app_data(df, parent_groups, groups, out_dir, overrides_path)
+
+
 def build_scorecard(
     processed_dir: Path = PROCESSED_DIR,
     reports_dir: Path = REPORTS_DIR,
@@ -106,17 +136,11 @@ def build_scorecard(
     overrides_path: Path | None = OVERRIDES_FILE,
 ) -> pd.DataFrame:
     """Combine all processed years, group employers, and write the report CSVs."""
-    files = sorted(processed_dir.glob("lca_fy*.parquet"))
-    if not files:
-        raise FileNotFoundError(f"No processed files in {processed_dir}. Run `run` first.")
-    df = dedupe_across_years(pd.concat([pd.read_parquet(f) for f in files], ignore_index=True))
+    df, parent_groups = load_grouped(processed_dir, overrides_path)
     reports_dir.mkdir(parents=True, exist_ok=True)
-    # Groups use every row of every year, so they don't depend on the family filter.
-    parent_groups = build_parent_groups(df, load_overrides(overrides_path))
     parent_groups.to_csv(reports_dir / "parent_groups.csv", index=False)
     review = merge_review(parent_groups)
     review.to_csv(reports_dir / "merge_review.csv", index=False)
-    df = add_parent_group(df, parent_groups)
     card = employer_scorecard(df, families=families)
     out = reports_dir / "scorecard_target_roles.csv"
     card.to_csv(out, index=False)
@@ -183,6 +207,8 @@ def main(argv: list[str] | None = None) -> None:
     s_clean.add_argument("--fy", type=int, help="only this fiscal year (default: all)")
     s_clean.add_argument("--demo", action="store_true", help="use the demo folders")
     sub.add_parser("scorecard", help="rebuild scorecard from processed parquet")
+    s_pub = sub.add_parser("publish", help="write slim app tables to data/app/")
+    s_pub.add_argument("--demo", action="store_true", help="use demo data -> data/app/demo/")
     args = p.parse_args(argv)
 
     if args.cmd == "inspect":
@@ -202,6 +228,11 @@ def main(argv: list[str] | None = None) -> None:
         proc = PROCESSED_DIR / "demo" if args.demo else PROCESSED_DIR
         interim = INTERIM_DIR / "demo" if args.demo else INTERIM_DIR
         clean_interim(interim, proc, fy=args.fy)
+    elif args.cmd == "publish":
+        if args.demo:
+            publish(PROCESSED_DIR / "demo", APP_DIR / "demo")
+        else:
+            publish()
     else:
         build_scorecard()
 

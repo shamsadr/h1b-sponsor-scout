@@ -269,3 +269,20 @@ TALEBNEJAD and IRIS CAPITAL.
 - **`merge_review.csv`.** 7,048 members; 45 placed by overrides are `reviewed=True` with
   `risk_flags=0`. 1,187 members have at least one warning (1: 1,001, 2: 183, 3: 3).
 - **Consistent sponsors** are unchanged from the previous entry.
+
+## 2026-09-25 — App data (first publish)
+
+`python -m h1b.pipeline publish` on FY2024 + FY2025 (1,118,768 deduped rows, 156,586 in the target
+families). It took about 1 min 50 s, most of it building the family × state scorecards.
+
+| File | Rows | Size |
+|---|---|---|
+| sponsors.parquet (8 family groups × 55 worksite states + ALL) | 131,028 | 1.08 MB |
+| employer_breakdown.parquet | 45,618 | 0.37 MB |
+| employer_levels.parquet | 47,975 | 0.35 MB |
+| members.parquet | 27,933 | 0.82 MB |
+| family_trends.csv, meta.json | 16, 1 | < 1 KB |
+
+Total 2.62 MB. On Find sponsors (Analytics (combined), all states, at least 5 cases) there are 2,641
+employer groups, and 2,449 of them have certified cases in both years ("Consistent sponsors
+only"). For Texas with the same settings: 326 consistent groups.

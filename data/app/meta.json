@@ -1,0 +1,11 @@
+{
+  "fiscal_years": [
+    2024,
+    2025
+  ],
+  "built_at": "2026-09-25",
+  "git_commit": "02a8854-dirty",
+  "source_rows": 1118768,
+  "target_rows": 156586,
+  "overrides_sha256": "20c84dda0ed8de986ab0d6d4e60043540dadcc78b1f917bb268cf3287a3dea5e"
+}

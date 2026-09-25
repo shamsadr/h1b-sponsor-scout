@@ -10,6 +10,8 @@ DEMO_DIR = ROOT / "data" / "demo"
 REPORTS_DIR = ROOT / "reports"
 REFERENCE_DIR = ROOT / "data" / "reference"  # small hand-made files, committed to git
 OVERRIDES_FILE = REFERENCE_DIR / "employer_overrides.csv"
+APP_DIR = ROOT / "data" / "app"  # slim precomputed tables for the Streamlit app, committed
+MAX_APP_MB = 20  # publish fails if data/app/ would be bigger than this
 
 # Columns the pipeline needs. Names are the *normalized* form
 # (uppercase, non-alphanumerics -> "_"), e.g. "H-1B_DEPENDENT" -> "H_1B_DEPENDENT".

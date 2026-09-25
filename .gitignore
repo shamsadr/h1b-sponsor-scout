@@ -16,3 +16,6 @@ __pycache__/
 # generated scorecards (keep the folder tracked via .gitkeep)
 reports/*.csv
 !reports/.gitkeep
+
+# demo publish output (the real data/app/ IS committed)
+data/app/demo/

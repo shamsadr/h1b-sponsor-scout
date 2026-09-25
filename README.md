@@ -11,9 +11,9 @@ Supply Chain/Logistics, Business Analyst; IT systems analysts and software are k
 "(context)" families, outside the target roles), and produces a transparent employer scorecard. Each metric is shown
 separately; there is no single black-box score.
 
-**Status.** Phase 1 of 5: ingest → clean → scorecard, running on synthetic demo data.
-Next phases: real FY2019–FY2026 data, the USCIS Employer Data Hub join, PERM
-green-card data, and a Streamlit app.
+**Status.** Real FY2024–FY2025 data runs through ingest → clean → employer grouping →
+scorecard, and a Streamlit app reads precomputed tables from it. Next: earlier fiscal years
+(FY2019–FY2023), the USCIS Employer Data Hub join and PERM green-card data.
 
 **Results.** _TBD: filled in after real data is loaded._ Demo output is synthetic.
 
@@ -30,8 +30,32 @@ python -m h1b.pipeline inspect data/raw/LCA_Disclosure_Data_FY2025_Q4.xlsx
 python -m h1b.pipeline run --input data/raw/LCA_Disclosure_Data_FY2025_Q*.xlsx
 python -m h1b.pipeline clean          # re-clean from data/interim without re-reading the xlsx
 python -m h1b.pipeline scorecard      # rebuild the scorecards from data/processed
+python -m h1b.pipeline publish        # slim tables for the app -> data/app/ (commit them)
 ```
 Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share one year).
+
+## Streamlit app
+```bash
+streamlit run app/streamlit_app.py    # reads data/app/ only (about 2.6 MB, committed)
+```
+Pages:
+- **Find sponsors:** a ranked table for a role family (or Analytics combined) and a worksite state,
+  with a minimum-cases filter and a "Consistent sponsors only" option (certified cases in every
+  loaded year). It can be downloaded as CSV.
+- **Employer lookup:** search a group or any member name to see certified cases by family and year,
+  the wage-level mix and the member names.
+- **Trends:** certified cases per family and year, with the SOC-substitution and withdrawal caveats.
+- **Methodology & limitations:** rendered from this README.
+
+`publish` precomputes the scorecard for every family group × worksite state (plus all states)
+with the same functions as the reports, so the app does no heavy computation. It fails if
+`data/app/` would exceed 20 MB, and `meta.json` records the fiscal years, build date and the commit
+the data was built from (`-dirty` if the code had uncommitted edits).
+
+**Deploy (Streamlit Community Cloud):** repo `shamsadr/h1b-sponsor-scout`, branch `main`, main
+file `app/streamlit_app.py`, Python 3.12. Cloud installs the lean `app/requirements.txt`
+(streamlit ≥ 1.51, pandas ≥ 2.1.4, pyarrow ≥ 14.0.2, the tested minimums). To update the site,
+run `publish`, commit `data/app/`, and push.
 
 ## Scorecard columns
 One row per `parent_group` (see "Employer grouping" below). `employer_scorecard(..., key="employer_norm")`
@@ -165,7 +189,11 @@ h1b/ingest.py      read xlsx/csv, standardize headers
 h1b/clean.py       dedupe, filter, annualize, normalize, map SOC
 h1b/groups.py      parent-company grouping (name + FEIN graph, overrides)
 h1b/scorecard.py   employer aggregation
+h1b/publish.py     slim precomputed tables for the app
 h1b/pipeline.py    CLI entry point
+app/streamlit_app.py   navigation + footer; pages in app/views/, shared charts in app/ui.py
+app/app_data.py        pure helpers: load, filter, search, README sections
+data/app/              published app tables (committed)
 data/reference/employer_overrides.csv   manual merges and splits
 scripts/make_demo_data.py
 tests/
