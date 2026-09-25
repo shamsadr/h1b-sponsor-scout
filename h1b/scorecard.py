@@ -22,8 +22,9 @@ def employer_scorecard(
         return pd.DataFrame()
 
     status = d["CASE_STATUS"].astype("string").str.strip()
-    certified = d[status.str.startswith("Certified").fillna(False)]
+    certified = d[status.eq("Certified").fillna(False)]  # excludes 'Certified - Withdrawn'
     denied = status.eq("Denied").fillna(False)
+    withdrawn = status.isin({"Withdrawn", "Certified - Withdrawn"})
 
     # Denial rate uses all decided cases (certified + denied).
     decided = d[status.str.startswith("Certified").fillna(False) | denied]
@@ -50,6 +51,7 @@ def employer_scorecard(
         leveled.assign(_hi=leveled["pw_level"] != "I").groupby("employer_norm")["_hi"].mean()
     )
     card["denial_rate"] = denial
+    card["withdrawn_rate"] = withdrawn.groupby(d["employer_norm"]).mean()
     card["h1b_dependent"] = g["h1b_dependent"].any()
     card["willful_violator"] = g["willful_violator"].any()
 
