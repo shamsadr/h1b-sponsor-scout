@@ -24,7 +24,12 @@ def test_demo_end_to_end(tmp_path):
     assert list(trends.columns) == ["family", "fiscal_year", "cases"]
     assert set(trends["fiscal_year"]) == {2024, 2025}
     sponsors = pd.read_csv(tmp_path / "consistent_sponsors.csv")
-    assert {"group", "employer_norm", "cases_fy2024", "cases_fy2025"} <= set(sponsors.columns)
+    assert {"group", "parent_group", "cases_fy2024", "cases_fy2025"} <= set(sponsors.columns)
+    groups = pd.read_csv(tmp_path / "parent_groups.csv")
+    assert {"parent_group", "employer_norm", "primary_fein", "link"} <= set(groups.columns)
+    assert groups["employer_norm"].is_unique
+    assert (tmp_path / "risky_name_merges.csv").exists()
+    assert "n_entities" in card.columns
     assert 1 <= len(card) <= 5  # 5 fake employers in demo data
     assert card["positions"].gt(0).all()
     assert card["years_active"].between(1, 2).all()

@@ -14,7 +14,15 @@ from pathlib import Path
 import pandas as pd
 
 from h1b.clean import clean_lca
-from h1b.config import DEMO_DIR, INTERIM_DIR, PROCESSED_DIR, REPORTS_DIR, TARGET_FAMILIES
+from h1b.config import (
+    DEMO_DIR,
+    INTERIM_DIR,
+    OVERRIDES_FILE,
+    PROCESSED_DIR,
+    REPORTS_DIR,
+    TARGET_FAMILIES,
+)
+from h1b.groups import add_parent_group, build_parent_groups, load_overrides, risky_name_merges
 from h1b.ingest import ingest, normalize_col, read_raw
 from h1b.scorecard import (
     analysis_groups,
@@ -95,14 +103,21 @@ def build_scorecard(
     processed_dir: Path = PROCESSED_DIR,
     reports_dir: Path = REPORTS_DIR,
     families: list[str] | None = TARGET_FAMILIES,
+    overrides_path: Path | None = OVERRIDES_FILE,
 ) -> pd.DataFrame:
-    """Combine all processed years; write the target-role and per-family scorecard CSVs."""
+    """Combine all processed years, group employers, and write the report CSVs."""
     files = sorted(processed_dir.glob("lca_fy*.parquet"))
     if not files:
         raise FileNotFoundError(f"No processed files in {processed_dir}. Run `run` first.")
     df = dedupe_across_years(pd.concat([pd.read_parquet(f) for f in files], ignore_index=True))
-    card = employer_scorecard(df, families=families)
     reports_dir.mkdir(parents=True, exist_ok=True)
+    # Groups use every row of every year, so they don't depend on the family filter.
+    parent_groups = build_parent_groups(df, load_overrides(overrides_path))
+    parent_groups.to_csv(reports_dir / "parent_groups.csv", index=False)
+    risky = risky_name_merges(parent_groups)
+    risky.to_csv(reports_dir / "risky_name_merges.csv", index=False)
+    df = add_parent_group(df, parent_groups)
+    card = employer_scorecard(df, families=families)
     out = reports_dir / "scorecard_target_roles.csv"
     card.to_csv(out, index=False)
     by_family = family_scorecards(df, families if families is not None else TARGET_FAMILIES)
@@ -112,9 +127,13 @@ def build_scorecard(
     sponsors = consistent_sponsors(df, groups)
     sponsors.to_csv(reports_dir / "consistent_sponsors.csv", index=False)
     years = sorted(df["fiscal_year"].unique().tolist())
-    print(f"[ok] scorecard: {len(card):,} employers, FY {years} -> {out}")
+    n_names, n_groups = len(parent_groups), parent_groups["parent_group"].nunique()
+    print(f"[ok] parent groups: {n_names:,} employer names -> {n_groups:,} groups")
+    print_risky_merges(risky)
+    print(f"[ok] scorecard: {len(card):,} employer groups, FY {years} -> {out}")
     cols = [
-        "employer_name",
+        "parent_group",
+        "n_entities",
         "cases",
         "new_hire_positions",
         "positions_per_case",
@@ -122,6 +141,20 @@ def build_scorecard(
     ]
     print(card[cols].head(10).to_string(index=False))
     return card
+
+
+def print_risky_merges(risky: pd.DataFrame, top_n: int = 20) -> None:
+    """Print the largest groups held together by name edges only (for review by eye)."""
+    groups = risky.groupby("parent_group", sort=False)
+    print(
+        f"[review] {groups.ngroups:,} groups joined only by name edges across FEINs "
+        f"(reports/risky_name_merges.csv); top {top_n} by rows:"
+    )
+    for name, g in list(groups)[:top_n]:
+        members = "; ".join(
+            f"{r.employer_norm} ({r.primary_fein}, {r.rows})" for r in g.itertuples()
+        )
+        print(f"  {name} [{g['rows'].sum():,} rows]: {members}")
 
 
 def _fy_from_name(path: Path) -> int:

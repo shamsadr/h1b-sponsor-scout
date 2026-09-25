@@ -33,6 +33,7 @@ def make_rows(n: int = 1, **overrides) -> pd.DataFrame:
         "willful_violator": False,
     }
     base.update(overrides)
+    base.setdefault("parent_group", base["employer_norm"])  # one group per name by default
     return pd.DataFrame({k: v if isinstance(v, list) else [v] * n for k, v in base.items()})
 
 
@@ -100,8 +101,8 @@ def test_sorted_by_cases_then_new_hires_with_bulk_filer_flag():
     c = make_rows(3, employer_norm="C", EMPLOYER_NAME="C", new_hire_positions=[5.0, 5.0, 5.0])
     card = employer_scorecard(pd.concat([a, b, c], ignore_index=True))
 
-    assert card["employer_norm"].tolist() == ["C", "B", "A"]  # cases desc, then new hires desc
-    by = card.set_index("employer_norm")
+    assert card["parent_group"].tolist() == ["C", "B", "A"]  # cases desc, then new hires desc
+    by = card.set_index("parent_group")
     assert by.loc["A", "positions_per_case"] == 40
     assert by.loc["A", "bulk_filer"]
     assert by.loc["B", "positions_per_case"] == 1
@@ -225,7 +226,7 @@ def test_consistent_sponsors_need_min_cases_in_every_loaded_year():
     out = consistent_sponsors(df, groups, min_cases=10)
 
     def names(group):
-        return out[out["group"] == group]["employer_norm"].tolist()
+        return out[out["group"] == group]["parent_group"].tolist()
 
     assert names("Operations Research") == ["STEADY"]
     assert names("Data Science / BI") == []
@@ -234,9 +235,21 @@ def test_consistent_sponsors_need_min_cases_in_every_loaded_year():
     assert (row["cases_fy2024"], row["cases_fy2025"], row["total_cases"]) == (12, 15, 27)
     assert list(out.columns) == [
         "group",
-        "employer_norm",
+        "parent_group",
         "employer_name",
         "cases_fy2024",
         "cases_fy2025",
         "total_cases",
     ]
+
+
+def test_scorecard_rolls_up_names_in_one_parent_group():
+    a = make_rows(3, employer_norm="ACME ANALYTICS", parent_group="ACME")
+    b = make_rows(2, employer_norm="ACME DATA", parent_group="ACME")
+    df = pd.concat([a, b], ignore_index=True)
+
+    row = employer_scorecard(df).iloc[0]
+    assert (row["parent_group"], row["cases"], row["n_entities"]) == ("ACME", 5, 2)
+    by_name = employer_scorecard(df, key="employer_norm")  # per-name view still available
+    assert sorted(by_name["employer_norm"]) == ["ACME ANALYTICS", "ACME DATA"]
+    assert by_name["n_entities"].eq(1).all()

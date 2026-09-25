@@ -1,0 +1,31 @@
+action,employer_norm,parent_group,note
+merge,AMAZON COM SERVICES,AMAZON,hiring brand Amazon (Twitch/Zappos/Whole Foods stay separate)
+merge,AMAZON WEB SERVICES,AMAZON,hiring brand Amazon
+merge,AMAZON DATA SERVICES,AMAZON,hiring brand Amazon
+merge,AMAZON DEVELOPMENT CENTER U S,AMAZON,hiring brand Amazon
+merge,AMAZON ADVERTISING,AMAZON,hiring brand Amazon
+merge,GOLDMAN SACHS AND,GOLDMAN SACHS,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS BANK USA,GOLDMAN SACHS,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS SERVICES,GOLDMAN SACHS,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS WEALTH SERVICES L P,GOLDMAN SACHS,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS TRUST,GOLDMAN SACHS,hiring brand Goldman Sachs
+merge,DELOITTE,DELOITTE,hiring brand Deloitte
+merge,DELOITTE CONSULTING,DELOITTE,hiring brand Deloitte
+merge,DELOITTE AND TOUCHE,DELOITTE,hiring brand Deloitte
+merge,DELOITTE TAX,DELOITTE,hiring brand Deloitte
+merge,DELOITTE SERVICES,DELOITTE,hiring brand Deloitte
+merge,DELOITTE TRANSACTIONS AND BUSINESS ANALYTICS,DELOITTE,hiring brand Deloitte
+merge,DELOITTE TOUCHE TOHMATSU SERVICES,DELOITTE,hiring brand Deloitte
+merge,DELOITTE CORPORATE FINANCE,DELOITTE,hiring brand Deloitte
+merge,DELOITTE FINANCIAL ADVISORY SERVICES,DELOITTE,hiring brand Deloitte
+merge,CAPITAL ONE NATIONAL ASSOCIATION,CAPITAL ONE,hiring brand Capital One
+merge,CAPITAL ONE SERVICES,CAPITAL ONE,hiring brand Capital One
+merge,ERNST AND YOUNG U S,EY,hiring brand EY
+merge,ERNST AND YOUNG INFRASTRUCTURE ADVISORS,EY,hiring brand EY
+merge,ERNST AND YOUNG EY GUAM,EY,hiring brand EY
+merge,EY GOVERNMENT SERVICES,EY,hiring brand EY
+merge,EY INTERNATIONAL SERVICES,EY,hiring brand EY
+merge,RELX,RELX / LEXISNEXIS,FEIN 52-1471842 is cut by the unrelated-names cap
+merge,LEXISNEXIS USA,RELX / LEXISNEXIS,same FEIN as RELX
+merge,REED ELSEVIER TECHNOLOGY SERVICES,RELX / LEXISNEXIS,same FEIN as RELX
+split,MY529,,Utah college savings plan; shares the State of Utah FEIN 87-6000545

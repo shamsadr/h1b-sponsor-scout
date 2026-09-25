@@ -8,6 +8,8 @@ INTERIM_DIR = ROOT / "data" / "interim"
 PROCESSED_DIR = ROOT / "data" / "processed"
 DEMO_DIR = ROOT / "data" / "demo"
 REPORTS_DIR = ROOT / "reports"
+REFERENCE_DIR = ROOT / "data" / "reference"  # small hand-made files, committed to git
+OVERRIDES_FILE = REFERENCE_DIR / "employer_overrides.csv"
 
 # Columns the pipeline needs. Names are the *normalized* form
 # (uppercase, non-alphanumerics -> "_"), e.g. "H-1B_DEPENDENT" -> "H_1B_DEPENDENT".
@@ -90,3 +92,16 @@ ANALYTICS_COMBINED = [
     "Data Science / BI",
     "Quant / Finance",
 ]
+
+# Parent-company grouping (h1b/groups.py).
+# FEINs used as placeholders on filings for unrelated employers: never link on them.
+PLACEHOLDER_FEINS = {"12-3456789"}
+FEIN_PATTERN = r"^\d{2}-\d{7}$"  # anything else (e.g. '1231231231') is ignored
+# Don't link on a FEIN whose names form more than this many unrelated clusters
+# (state university systems, law-firm FEINs typed on client filings).
+MAX_UNRELATED_PER_FEIN = 2
+NAME_SIMILARITY = 0.85  # difflib ratio at or above which two names count as related
+# Dropped from employer_norm when building the name key used for name edges.
+GENERIC_NAME_TOKENS = {"US", "USA", "AMERICA", "AMERICAS", "NA", "SERVICES", "GROUP", "HOLDINGS"}
+# No name edge for short/generic keys ('GLOBAL SERVICES' -> 'GLOBAL').
+MIN_NAME_KEY_TOKENS, MIN_NAME_KEY_CHARS = 2, 6

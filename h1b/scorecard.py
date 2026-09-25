@@ -31,11 +31,15 @@ def _mode(s: pd.Series):
 
 
 def employer_scorecard(
-    df: pd.DataFrame, families: list[str] | None = None, min_positions: int = 1
+    df: pd.DataFrame,
+    families: list[str] | None = None,
+    min_positions: int = 1,
+    key: str = "parent_group",
 ) -> pd.DataFrame:
-    """Aggregate cleaned LCA rows to one row per normalized employer.
+    """Aggregate cleaned LCA rows to one row per employer group.
 
     families: keep only these soc_family values (None = all).
+    key: 'parent_group' (see h1b/groups.py) or 'employer_norm' (one row per name).
     """
     d = df if families is None else df[df["soc_family"].isin(families)]
     if d.empty:
@@ -48,16 +52,17 @@ def employer_scorecard(
 
     # Denial rate uses all decided cases (certified + denied).
     decided = d[status.str.startswith("Certified").fillna(False) | denied]
-    denial = decided.assign(_den=denied).groupby("employer_norm")["_den"].mean()
+    denial = decided.assign(_den=denied).groupby(key)["_den"].mean()
 
     clean_wage = certified[certified["full_time"] & ~certified["wage_outlier"]]
     premium = clean_wage[clean_wage["wage_premium"].notna()]
     leveled = certified[certified["pw_level"].isin(LEVELS)]
 
-    g = certified.groupby("employer_norm")
+    g = certified.groupby(key)
     card = pd.DataFrame(
         {
             "employer_name": g["EMPLOYER_NAME"].agg(_mode),
+            "n_entities": g["employer_norm"].nunique(),
             "cases": g.size(),
             "positions": g["positions"].sum(),
             "new_hire_positions": g["new_hire_positions"].sum(),
@@ -68,21 +73,19 @@ def employer_scorecard(
         }
     )
     # FROM is the pay floor; TO is only filled by some employers (see range_share).
-    card["median_wage_floor"] = clean_wage.groupby("employer_norm")["annual_wage"].median()
+    card["median_wage_floor"] = clean_wage.groupby(key)["annual_wage"].median()
     # Medians of the premium collapse to 0 (many pay exactly the PW), so use a share.
     card["share_above_pw"] = (
-        premium.assign(_above=premium["wage_premium"] > 0.01)
-        .groupby("employer_norm")["_above"]
-        .mean()
+        premium.assign(_above=premium["wage_premium"] > 0.01).groupby(key)["_above"].mean()
     )
     card["range_share"] = g["annual_wage_to"].agg(lambda s: s.notna().mean())
-    card["n_leveled"] = leveled.groupby("employer_norm").size()
+    card["n_leveled"] = leveled.groupby(key).size()
     card["n_leveled"] = card["n_leveled"].fillna(0).astype(int)
     card["level2plus_share"] = (
-        leveled.assign(_hi=leveled["pw_level"] != "I").groupby("employer_norm")["_hi"].mean()
+        leveled.assign(_hi=leveled["pw_level"] != "I").groupby(key)["_hi"].mean()
     )
     card["denial_rate"] = denial
-    card["withdrawn_rate"] = withdrawn.groupby(d["employer_norm"]).mean()
+    card["withdrawn_rate"] = withdrawn.groupby(d[key]).mean()
     # Flags are per-filing self-attestations, so report share/count, not a label.
     card["h1b_dependent_share"] = g["h1b_dependent"].mean()
     card["willful_violator_count"] = g["willful_violator"].sum()
@@ -95,11 +98,13 @@ def employer_scorecard(
     return card.sort_values(["cases", "new_hire_positions"], ascending=False).reset_index()
 
 
-def family_scorecards(df: pd.DataFrame, families: list[str], top_n: int = 25) -> pd.DataFrame:
+def family_scorecards(
+    df: pd.DataFrame, families: list[str], top_n: int = 25, key: str = "parent_group"
+) -> pd.DataFrame:
     """Top `top_n` employers by cases within each family, stacked with a 'family' column."""
     parts = []
     for fam in families:
-        card = employer_scorecard(df, families=[fam]).head(top_n)
+        card = employer_scorecard(df, families=[fam], key=key).head(top_n)
         if not card.empty:
             parts.append(card.assign(family=fam))
     if not parts:
@@ -132,11 +137,14 @@ def family_trends(df: pd.DataFrame, groups: dict[str, list[str]]) -> pd.DataFram
 
 
 def consistent_sponsors(
-    df: pd.DataFrame, groups: dict[str, list[str]], min_cases: int = 10
+    df: pd.DataFrame,
+    groups: dict[str, list[str]],
+    min_cases: int = 10,
+    key: str = "parent_group",
 ) -> pd.DataFrame:
     """Employers with >= min_cases certified cases in EVERY loaded year, per group.
 
-    Columns: group, employer_norm, employer_name, cases_fy{year}..., total_cases.
+    Columns: group, <key>, employer_name, cases_fy{year}..., total_cases.
     """
     status = df["CASE_STATUS"].astype("string").str.strip()
     certified = df[status.eq("Certified").fillna(False)]
@@ -145,17 +153,17 @@ def consistent_sponsors(
     parts = []
     for name, fams in groups.items():
         c = certified[certified["soc_family"].isin(fams)]
-        per_year = c.groupby(["employer_norm", "fiscal_year"]).size().unstack(fill_value=0)
+        per_year = c.groupby([key, "fiscal_year"]).size().unstack(fill_value=0)
         per_year = per_year.reindex(columns=years, fill_value=0)
         keep = per_year[(per_year >= min_cases).all(axis=1)]
         if keep.empty:
             continue
         out = keep.set_axis(year_cols, axis=1)
         out["total_cases"] = out.sum(axis=1)
-        out.insert(0, "employer_name", c.groupby("employer_norm")["EMPLOYER_NAME"].agg(_mode))
+        out.insert(0, "employer_name", c.groupby(key)["EMPLOYER_NAME"].agg(_mode))
         out.insert(0, "group", name)
         parts.append(out.sort_values("total_cases", ascending=False).reset_index())
-    columns = ["group", "employer_norm", "employer_name"] + year_cols + ["total_cases"]
+    columns = ["group", key, "employer_name"] + year_cols + ["total_cases"]
     if not parts:
         return pd.DataFrame(columns=columns)
     return pd.concat(parts, ignore_index=True)[columns]

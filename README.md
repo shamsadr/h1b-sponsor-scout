@@ -34,6 +34,8 @@ python -m h1b.pipeline scorecard      # rebuild the scorecards from data/process
 Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share one year).
 
 ## Scorecard columns
+One row per `parent_group` (see "Employer grouping" below). `employer_scorecard(..., key="employer_norm")`
+still gives one row per normalized name.
 Positions, wages and levels use strict `CASE_STATUS == 'Certified'` rows only.
 The table is sorted by `cases`, then `new_hire_positions`.
 `reports/scorecard_by_family.csv` has the same columns for the top 25 employers by cases in each
@@ -41,6 +43,9 @@ target family, with a leading `family` column.
 
 | column | meaning |
 |---|---|
+| parent_group | employer group label (a hiring brand, e.g. `AMAZON`, or the group's largest name) |
+| employer_name | most common raw `EMPLOYER_NAME` in the group's certified cases |
+| n_entities | number of normalized employer names in the group with certified cases |
 | cases | certified LCAs in target role families |
 | positions | certified LCA worker positions in target role families |
 | top_soc_title | most common SOC title among the employer's certified cases |
@@ -57,6 +62,29 @@ target family, with a leading `family` column.
 | withdrawn_rate | (Withdrawn + Certified-Withdrawn) ÷ all rows, any status |
 | h1b_dependent_share | share of certified cases where the employer checked H-1B dependent |
 | willful_violator_count | number of certified cases where the employer checked willful violator |
+
+## Employer grouping
+Each normalized employer name (`employer_norm`) is a node in a graph (`h1b/groups.py`). Groups
+are the connected components, and their label is the `parent_group` column.
+
+- **Name edge:** two names have the same name key, i.e. `employer_norm` without generic words (US,
+  USA, America, NA, Services, Group, Holdings, a trailing "and") and without spaces. So
+  `GOLDMAN SACHS SERVICES` and `GOLDMAN SACHS AND` (from "& Co.") match. A key with fewer than
+  2 words or 6 letters never links, so `GLOBAL SERVICES` and `GLOBAL GROUP` stay apart.
+- **FEIN edge:** two names share a *primary* FEIN (the one each name uses most), so a stray FEIN
+  on a few filings can't bridge two companies. No edge for placeholder FEINs (`12-3456789`),
+  malformed ones, or a FEIN whose names form more than 2 unrelated clusters (names are related if
+  they share a first word or are ≥ 0.85 similar by `difflib`). This cuts state university
+  systems and law-firm FEINs typed on client filings.
+- **Manual overrides:** `data/reference/employer_overrides.csv` (committed) holds `merge` rows
+  (join a name to a `parent_group` label) and `split` rows (the name gets no automatic edges).
+- **Merge rule: one hiring brand a candidate would apply to, not corporate ownership.** Amazon
+  therefore covers Amazon.com Services, AWS, Amazon Data Services, Amazon Development Center and
+  Amazon Advertising, but not Twitch, Zappos or Whole Foods. Subsidiaries file under their own
+  FEINs, so brand groups like these come only from overrides.
+- **Review files:** `reports/parent_groups.csv` lists every name with its group and the edge types
+  that linked it. `reports/risky_name_merges.csv` lists groups held together only by name edges
+  across different primary FEINs; the largest 20 are printed after each run.
 
 ## Methodology decisions
 - **Quarterly files are not cumulative.** The FY2025 Q4 file's `DECISION_DATE` runs only
@@ -103,12 +131,16 @@ Written to `reports/` by `run` and `scorecard` (git-ignored, regenerate any time
 | scorecard_target_roles.csv | one row per employer, columns above, target families only |
 | scorecard_by_family.csv | same columns, top 25 employers by cases in each target family |
 | family_trends.csv | certified cases per family and fiscal year, plus an "Analytics (combined)" rollup of OR, Statistics / Decision Science, Data Science / BI and Quant / Finance |
+| parent_groups.csv | one row per `employer_norm`: parent_group, primary_fein, rows, link (`name` / `fein` / `override` / `none`) |
+| risky_name_merges.csv | members of groups joined only by name edges whose names have different primary FEINs |
 | consistent_sponsors.csv | employers with ≥10 certified cases in every loaded year, per family and for the analytics rollup, with one `cases_fy{year}` column per year |
 
 ## Limitations
 - An LCA is an employer's intent to hire. It is not a petition, an approval, or a hire.
 - Wage level depends on the SOC code the employer chose. It is not a measure of skill.
-- Employer names are normalized by rules only (no fuzzy matching or parent-company grouping yet).
+- Employer groups come from name rules, shared FEINs and a hand-kept overrides file. Only a few
+  brands are merged by hand so far, and names in years without `EMPLOYER_FEIN` can join only
+  through name edges.
 - The demo data is synthetic, with fake employers.
 
 ## Layout
@@ -118,8 +150,10 @@ Data layers: `data/raw` (DOL xlsx) → `data/interim` (standardized, uncleaned p
 h1b/config.py      constants: columns, SOC families, wage units
 h1b/ingest.py      read xlsx/csv, standardize headers
 h1b/clean.py       dedupe, filter, annualize, normalize, map SOC
+h1b/groups.py      parent-company grouping (name + FEIN graph, overrides)
 h1b/scorecard.py   employer aggregation
 h1b/pipeline.py    CLI entry point
+data/reference/employer_overrides.csv   manual merges and splits
 scripts/make_demo_data.py
 tests/
 ```

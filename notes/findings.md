@@ -166,3 +166,54 @@ Source: `lca_fy2024.parquet` + `lca_fy2025.parquet`, deduped on `CASE_NUMBER` (l
   15-2031 1,283 → 541; 15-2041 402 → 229; 15-2051 1,394 → 1,810; 13-1082 21 → 235. Its analytics
   rollup total was 3,118 → 2,682.
 - **Employers in the scorecard:** 26,778 for FY2024 + FY2025, down from 26,958 before the dedupe.
+
+## 2026-09-25 — Parent-company grouping
+
+Source: `lca_fy2024.parquet` + `lca_fy2025.parquet` after the cross-year dedupe (1,118,768 rows),
+grouped by `h1b/groups.py` with the seed `data/reference/employer_overrides.csv`.
+
+- **FEINs.** `EMPLOYER_FEIN` is filled on every row of both years. There are 85,766 distinct values
+  and 88,665 distinct `employer_norm` values.
+  - Placeholders: `12-3456789` is on 86 rows across 15 names, including Amazon.com Services 19,
+    Amazon Web Services 8 and Twitch Interactive 6. `1231231231` and `1231231232` (one row each)
+    are not in `##-#######` form.
+  - Law-firm FEINs appear on client filings: `13-2726464` (Fragomen) is also on Kirkland & Ellis,
+    AllTrails, BridgeBio Services and Shennel Trading, and `33-3776396` (Murthy Law Firm) is also
+    on Keyweb Technologies and Tech Mahendra.
+  - Job titles typed as employer names: FEIN `42-1631761` (Natsoft) includes the names
+    "SYSTEMS ANALYST" and "SOFTWARE ENGINEER".
+- **Subsidiaries file under separate FEINs**, so FEIN edges do not group brands:
+  - Amazon.com Services 82-0544687, Amazon Web Services 20-4938068, Amazon Development Center
+    20-8424306, Amazon Data Services 91-1986543
+  - Deloitte: 9 names with 9 different FEINs
+  - Goldman Sachs & Co 13-5108880, GS Services 13-3937419, GS Bank USA 13-3571598
+  - Capital One N.A. 72-0210640, Capital One Services 54-1780389
+- **Grouping result.**
+  - 88,665 names form 84,922 groups; 3,293 groups have more than one name.
+  - Edge types per name: none 81,630, fein 6,111, fein+name 575, name 320, and 29 with an override.
+  - Target-family employers: 26,778 names become 26,212 groups. Analytics (combined): 17,966
+    become 17,591.
+- **Risky name merges.** 174 groups (396 names, 11,677 rows) are joined only by name edges across
+  different primary FEINs. The largest are Morgan Stanley (Services Group 26-0116361, & Co
+  13-2655998; 1,819 rows), Bank of America N.A. (1,330), NTT Data (983), People Tech Group (904)
+  and Juniper Networks (650). Two joins that look wrong: "TALEBNEJAD" (1 row) shares Bank of
+  America N.A.'s FEIN 94-1687665, and "IRIS CAPITAL" joins Iris Software through the shared FEIN
+  93-4004615 of "IRIS SOFTWARE AND SERVICES".
+- **Five brands, certified target-family cases (before = largest single name):**
+
+  | Group | Before: names, largest | After: cases, names with certified cases |
+  |---|---|---|
+  | AMAZON | 10 names, Amazon.com Services 8,166 | 10,192, 5 |
+  | EY | 2 names, Ernst & Young U.S. 5,023 | 5,025, 2 |
+  | GOLDMAN SACHS | 7 names, Goldman Sachs & Co 1,422 | 1,907, 7 |
+  | DELOITTE | 9 names, Deloitte Consulting 969 | 1,513, 9 |
+  | CAPITAL ONE | 2 names, Capital One N.A. 618 | 1,144, 2 |
+
+  Amazon Payments 12, Capital Services 6, Retail 5, Amazon.com CA 4 and Studios 2 are not in the
+  AMAZON override. Ayco (32 cases) joins Goldman Sachs through the FEIN 33-1187432 it shares with
+  Goldman Sachs Wealth Services.
+- **Consistent sponsors** (≥10 certified cases in both years, by `parent_group`): Analytics
+  (combined) 479, Business / Mgmt Analyst 54, Data Science / BI 217, Industrial Engineering 56,
+  Operations Research 53, Quant / Finance 108, Statistics / Decision Science 63, Supply Chain /
+  Logistics 19. The largest in the analytics rollup are Amazon (4,007 + 3,381), EY (2,447 + 1,899),
+  Microsoft (861 + 1,022) and Goldman Sachs (890 + 989).
