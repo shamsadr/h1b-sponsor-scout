@@ -102,10 +102,14 @@ Pages:
 
 **Accessibility.** Every chart has a "Table" view with the same numbers (a test checks this on
 every page). Color is never the only signal: charts have legends or axis labels, the reference bar
-is labelled "reference", and grayed rows carry a note. Colors depend on the viewer's light or dark
-theme so that bars clear 3:1 and muted text 4.5:1 against the background (WCAG 2.1 AA; a test
-checks every color). The default Find sponsors columns fit a 1280-px laptop screen without
-horizontal scrolling.
+is labelled "reference", and grayed rows carry a note. Viewers can pick Light, Dark or System in
+the ⋮ menu. Chart colors are fixed rather than theme-dependent, because Streamlit reports a theme
+change to the app only on the next rerun. Every bar color clears 3:1 against both backgrounds, and
+grayed text is 4.35:1 on both, the most a single gray can reach (WCAG 2.1 AA asks 4.5:1 for text;
+the meaning is also in words). The primary color is set per theme in `.streamlit/config.toml`
+(`[theme.light]` and `[theme.dark]`), because a `primaryColor` under `[theme]` hides the theme
+chooser. The default Find sponsors columns fit a 1280-px laptop screen without horizontal
+scrolling.
 
 `publish` precomputes the scorecard for every role group × worksite state (plus all states)
 with the same functions as the reports, so the app does no heavy computation. The role groups are
@@ -271,7 +275,7 @@ h1b/publish.py     slim precomputed tables for the app
 h1b/pipeline.py    CLI entry point
 app/streamlit_app.py   navigation + footer; pages in app/views/, shared charts in app/ui.py
 app/app_data.py        pure helpers: load, filter, search, README sections
-.streamlit/config.toml theme (primary color = the charts' blue)
+.streamlit/config.toml theme: primary color per light/dark theme (keeps the theme chooser)
 data/app/              published app tables (committed)
 data/reference/employer_overrides.csv   manual merges and splits
 scripts/make_demo_data.py

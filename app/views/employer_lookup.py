@@ -20,6 +20,7 @@ from app_data import (
     years_label,
 )
 from ui import (
+    MUTED_GRAY,
     count_col,
     data,
     family_totals_chart,
@@ -27,7 +28,6 @@ from ui import (
     fmt_money,
     fmt_pct,
     level_chart,
-    muted_text,
     open_employer,
     pct_col,
     sponsor_column_config,
@@ -80,7 +80,7 @@ def set_comparison(set_name: str, members: list[str], family: str) -> None:
     cols = ["display_name", "cases", *years, "median_wage_floor", "pct_above_pw"]
     cols += ["level2plus_pct", "note"]
     zero = shown["cases"].eq(0)
-    gray = muted_text()  # de-emphasized, but still 4.5:1 in either theme
+    gray = MUTED_GRAY  # de-emphasized; the Note column says why
     styled = shown[cols].style.apply(
         lambda r: [f"color: {gray}" if zero[r.name] else "" for _ in r], axis=1
     )

@@ -9,34 +9,21 @@ import streamlit as st
 
 from app_data import FILTER_DEFAULTS, data_dir, encode_query, load_tables, parse_query
 
-# Colors. Every bar color clears 3:1 against its theme's background (WCAG 1.4.11) and every
-# text color clears 4.5:1 (WCAG 1.4.3), so ramps and muted text depend on the theme.
-SERIES_BLUE = "#2a78d6"  # 4.4:1 on white, 4.3:1 on Streamlit's dark background
-# Ordinal ramps for fiscal years (older -> lighter), per theme: steps 400-600 on light
-# (3.6-8.1:1 on white), steps 250-500 on dark (9.0-3.5:1 on #0e1117).
-YEAR_RAMPS = {
-    "light": ["#3987e5", "#2a78d6", "#256abf", "#1c5cab", "#184f95"],
-    "dark": ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf"],
-}
-MUTED_TEXT = {"light": "#6b6a66", "dark": "#a3a29c"}  # 5.4:1 and 7.4:1
+# Colors. The app offers a Light / Dark chooser, and st.context.theme reports a theme change
+# only on the next rerun (Streamlit issue #11920), so colors do NOT depend on the theme:
+# every bar color clears 3:1 against both the light (#ffffff) and dark (#0e1117)
+# backgrounds (WCAG 1.4.11). tests/test_formatting.py checks each one.
+SERIES_BLUE = "#2a78d6"  # 4.4:1 on white, 4.3:1 on dark
+# Fiscal years, older -> lighter: steps 400, 450, 500 of the blue ramp, the only steps that
+# clear 3:1 on both backgrounds (#3987e5 3.6 / 5.2, #256abf 5.4 / 3.5).
+YEAR_RAMP = ["#3987e5", "#2a78d6", "#256abf"]
+# De-emphasized text (grayed table rows). No single gray reaches 4.5:1 on both backgrounds;
+# #797979 is the best possible (4.35:1 on each), and the meaning is also in words.
+MUTED_GRAY = "#797979"
 REFERENCE_GRAY = "#898781"  # bars only (3.6:1 light, 5.3:1 dark): a reference, not a series
 CONTEXT_GRAY = REFERENCE_GRAY
 LEVEL_COLORS = {level: SERIES_BLUE for level in ["I", "II", "III", "IV"]}
 LEVEL_COLORS["Not leveled"] = REFERENCE_GRAY  # the axis names each bar; gray = no level
-
-
-def theme() -> str:
-    """'light' or 'dark', the viewer's active Streamlit theme (light if unknown)."""
-    try:
-        kind = st.context.theme.type
-    except AttributeError:
-        kind = None
-    return kind if kind in ("light", "dark") else "light"
-
-
-def muted_text() -> str:
-    """Gray for de-emphasized text that still clears 4.5:1 in the current theme."""
-    return MUTED_TEXT[theme()]
 
 
 @st.cache_data
@@ -202,8 +189,8 @@ def reset_filters() -> None:
 
 
 def year_ramp(years: list[int]) -> list[str]:
-    """One ramp step per fiscal year, spread across the current theme's ramp."""
-    steps = YEAR_RAMPS[theme()]
+    """One ramp step per fiscal year, spread across YEAR_RAMP (2 years: its two ends)."""
+    steps = YEAR_RAMP
     if len(years) == 1:
         return [SERIES_BLUE]
     idx = [round(i * (len(steps) - 1) / (len(years) - 1)) for i in range(len(years))]
@@ -282,7 +269,9 @@ def pct_change_chart(d: pd.DataFrame, reference: str, first: int, last: int) -> 
     pos = base.transform_filter("datum.pct_change >= 0").mark_text(align="left", dx=4)
     neg = base.transform_filter("datum.pct_change < 0").mark_text(align="right", dx=-4)
     labels = alt.layer(
-        *[layer.encode(text="text:N", color=alt.value(muted_text())) for layer in (pos, neg)]
+        # Altair text marks do not follow Streamlit's theme text color, so use the gray that
+        # reads on both backgrounds (4.35:1).
+        *[layer.encode(text="text:N", color=alt.value(MUTED_GRAY)) for layer in (pos, neg)]
     )
     rule = alt.Chart(pd.DataFrame({"x": [0]})).mark_rule(color=REFERENCE_GRAY).encode(x="x:Q")
     return (bars + labels + rule).properties(height=alt.Step(26))

@@ -19,3 +19,7 @@ reports/*.csv
 
 # demo publish output (the real data/app/ IS committed)
 data/app/demo/
+
+# local agent tooling (skills, settings) - not part of the project
+.claude/
+.agents/

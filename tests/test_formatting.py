@@ -1,9 +1,12 @@
 """The shared formatting helpers in app/ui.py."""
 
+import tomllib
+
 import pandas as pd
 import pytest
 
 import ui
+from h1b.config import ROOT
 
 
 @pytest.mark.parametrize(
@@ -64,15 +67,26 @@ def contrast(a: str, b: str) -> float:
 
 
 def test_colors_clear_wcag_contrast_in_both_themes():
+    # Colors cannot depend on the theme (st.context.theme lags a theme switch by one rerun),
+    # so every color must work on both backgrounds.
     for mode, bg in BACKGROUNDS.items():
-        for color in ui.YEAR_RAMPS[mode]:
+        bars = [*ui.YEAR_RAMP, ui.SERIES_BLUE, ui.REFERENCE_GRAY, *ui.LEVEL_COLORS.values()]
+        for color in bars:
             assert contrast(color, bg) >= 3, (mode, color)  # graphics: 3:1
-        for color in [ui.SERIES_BLUE, ui.REFERENCE_GRAY, *ui.LEVEL_COLORS.values()]:
-            assert contrast(color, bg) >= 3, (mode, color)
-        assert contrast(ui.MUTED_TEXT[mode], bg) >= 4.5, mode  # text: 4.5:1
+        assert contrast(ui.MUTED_GRAY, bg) >= 4.3, mode  # best one gray can do on both: 4.35
 
 
-def test_year_ramp_uses_the_theme_ramp_endpoints():
-    light = ui.YEAR_RAMPS["light"]
-    assert ui.year_ramp([2024, 2025]) == [light[0], light[-1]]  # no theme in tests -> light
+def test_year_ramp_uses_the_ramp_endpoints():
+    assert ui.year_ramp([2024, 2025]) == [ui.YEAR_RAMP[0], ui.YEAR_RAMP[-1]]
     assert ui.year_ramp([2025]) == [ui.SERIES_BLUE]
+
+
+def test_primary_color_is_per_theme_so_the_theme_chooser_stays():
+    config = tomllib.loads((ROOT / ".streamlit" / "config.toml").read_text())
+    theme = config.get("theme", {})
+    # A primaryColor directly under [theme] hides the Light / Dark / System chooser.
+    assert "primaryColor" not in theme
+    for mode, bg in BACKGROUNDS.items():
+        primary = theme[mode]["primaryColor"]
+        assert contrast(primary, bg) >= 3, mode  # widgets (slider, checkbox) vs background
+        assert contrast(primary, "#ffffff") >= 4.5, mode  # white text on primary buttons

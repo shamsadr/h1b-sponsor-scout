@@ -1,7 +1,15 @@
 # Streamlit settings (read from the repo root locally and on Streamlit Community Cloud).
-[theme]
-# Series blue from the chart palette (app/ui.py), so buttons, sliders and checkboxes match.
-primaryColor = "#2a78d6"
+#
+# The primary color is set per theme in [theme.light] and [theme.dark], NOT in [theme]:
+# a primaryColor under [theme] hides the Light / Dark / System chooser in the app's
+# Settings menu (checked in Streamlit 1.64; see notes/findings.md, 2026-09-25).
+# #256abf: 5.4:1 against white and 3.5:1 against the dark background (widgets need 3:1),
+# and white button text on it is 5.4:1 (text needs 4.5:1). tests/test_formatting.py checks.
+[theme.light]
+primaryColor = "#256abf"
+
+[theme.dark]
+primaryColor = "#256abf"
 
 [browser]
 gatherUsageStats = false

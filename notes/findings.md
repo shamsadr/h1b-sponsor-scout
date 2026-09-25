@@ -373,3 +373,29 @@ Source: FY2024 + FY2025, republished once with the new overrides.
   each of FY2024 and FY2025, by `parent_group`). All 9 fewer come from the Phase C merges
   collapsing groups that each qualified on their own: PwC (5 → 1), Fidelity Investments (3 → 1),
   Barclays (3 → 1) and Home Depot (2 → 1). No group newly qualified or dropped out.
+
+## 2026-09-25 — Streamlit theme chooser and primary color
+
+Checked in Streamlit 1.64.0 (the installed version) in headless Chrome. The app's minimum, 1.55,
+also has the `[theme.light]` / `[theme.dark]` sections.
+
+- **The theme chooser is inline in the ⋮ menu** (System / Light / Dark) in 1.64, not behind a
+  Settings item.
+- **A `primaryColor` under `[theme]` hides the chooser.** Three configs were compared:
+  - no theme settings: chooser shown
+  - `primaryColor` under `[theme.light]` and `[theme.dark]`: chooser shown, and choosing Light or
+    Dark switches the background (`#ffffff` or `#0e1117`) while primary buttons stay `#256abf`
+  - `primaryColor = "#256abf"` under `[theme]`: chooser gone, and the page shows only the light theme
+
+  `.streamlit/config.toml` now sets `#256abf` in `[theme.light]` and `[theme.dark]`. It is 5.4:1
+  against white and 3.5:1 against the dark background (widgets need 3:1), and white button text
+  on it is 5.4:1. The earlier `#2a78d6` gave white text only 4.42:1.
+- **`st.context.theme` lags a theme switch by one rerun.** A probe page showed "dark" right after
+  choosing Light, and "light" only after the next rerun. Streamlit documents this (issue #11920).
+  So the app no longer picks colors by theme:
+  - fiscal years use `#3987e5` and `#256abf`, the blue steps that clear 3:1 on both backgrounds
+    (the palette validator passes this pair as an ordinal ramp in both modes)
+  - grayed text uses `#797979`, 4.35:1 on both. This is the most any single gray can reach on both
+    backgrounds (WCAG AA asks 4.5:1 for text), and the meaning is also given in words.
+- **Altair text marks ignore Streamlit's theme text color.** They render near-black, nearly
+  invisible on dark, so the % change labels use `#797979`.
