@@ -17,6 +17,7 @@ def make_rows(n: int = 1, **overrides) -> pd.DataFrame:
         "full_time": True,
         "wage_outlier": False,
         "annual_wage": 100_000.0,
+        "annual_wage_to": float("nan"),
         "wage_premium": 0.10,
         "pw_level": "II",
         "h1b_dependent": False,
@@ -38,7 +39,7 @@ def test_only_certified_counts_and_withdrawn_rate():
     row = employer_scorecard(df).iloc[0]
     assert row["cases"] == 2  # only strict 'Certified'
     assert row["positions"] == 3
-    assert row["median_wage"] == 110_000  # withdrawn/denied wages ignored
+    assert row["median_wage_floor"] == 110_000  # withdrawn/denied wages ignored
     assert row["level2plus_share"] == 0.5  # levels from certified rows only
     assert row["withdrawn_rate"] == 2 / 5  # (Withdrawn + Certified - Withdrawn) / all rows
     assert row["denial_rate"] == 1 / 4  # Denied / (Certified* + Denied), unchanged
@@ -54,3 +55,22 @@ def test_flags_are_share_and_count_not_any():
     assert row["willful_violator_count"] == 1  # one 'Yes' row, not a blanket True
     assert row["h1b_dependent_share"] == 0.25
     assert "willful_violator" not in employer_scorecard(df).columns
+
+
+def test_share_above_pw_is_zero_when_paying_exactly_pw():
+    df = make_rows(10, wage_premium=0.0)
+    assert employer_scorecard(df).iloc[0]["share_above_pw"] == 0
+
+    mixed = make_rows(4, wage_premium=[0.0, 0.005, 0.02, 0.30])  # 1% threshold
+    assert employer_scorecard(mixed).iloc[0]["share_above_pw"] == 0.5
+
+
+def test_range_share_and_n_leveled():
+    df = make_rows(
+        4,
+        annual_wage_to=[120_000.0, float("nan"), float("nan"), 130_000.0],
+        pw_level=["I", "II", None, None],
+    )
+    row = employer_scorecard(df).iloc[0]
+    assert row["range_share"] == 0.5  # share of rows with a TO wage
+    assert row["n_leveled"] == 2  # rows with a wage level I-IV

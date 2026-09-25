@@ -15,7 +15,7 @@ def test_demo_end_to_end(tmp_path):
     assert 1 <= len(card) <= 5  # 5 fake employers in demo data
     assert card["positions"].gt(0).all()
     assert card["years_active"].between(1, 2).all()
-    assert card["median_wage"].between(20_000, 1_000_000).all()  # outlier excluded
+    assert card["median_wage_floor"].between(20_000, 1_000_000).all()  # outlier excluded
     assert card["level2plus_share"].dropna().between(0, 1).all()
 
 

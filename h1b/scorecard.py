@@ -31,6 +31,7 @@ def employer_scorecard(
     denial = decided.assign(_den=denied).groupby("employer_norm")["_den"].mean()
 
     clean_wage = certified[certified["full_time"] & ~certified["wage_outlier"]]
+    premium = clean_wage[clean_wage["wage_premium"].notna()]
     leveled = certified[certified["pw_level"].isin(LEVELS)]
 
     g = certified.groupby("employer_norm")
@@ -45,8 +46,17 @@ def employer_scorecard(
             "top_state": g["WORKSITE_STATE"].agg(_mode),
         }
     )
-    card["median_wage"] = clean_wage.groupby("employer_norm")["annual_wage"].median()
-    card["median_wage_premium"] = clean_wage.groupby("employer_norm")["wage_premium"].median()
+    # FROM is the pay floor; TO is only filled by some employers (see range_share).
+    card["median_wage_floor"] = clean_wage.groupby("employer_norm")["annual_wage"].median()
+    # Medians of the premium collapse to 0 (many pay exactly the PW), so use a share.
+    card["share_above_pw"] = (
+        premium.assign(_above=premium["wage_premium"] > 0.01)
+        .groupby("employer_norm")["_above"]
+        .mean()
+    )
+    card["range_share"] = g["annual_wage_to"].agg(lambda s: s.notna().mean())
+    card["n_leveled"] = leveled.groupby("employer_norm").size()
+    card["n_leveled"] = card["n_leveled"].fillna(0).astype(int)
     card["level2plus_share"] = (
         leveled.assign(_hi=leveled["pw_level"] != "I").groupby("employer_norm")["_hi"].mean()
     )

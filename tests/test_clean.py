@@ -60,3 +60,23 @@ def test_clean_dedupes_and_filters_visa():
     assert len(out) == 1  # A deduped, B dropped (not H-1B)
     assert out.loc[0, "CASE_STATUS"] == "Certified - Withdrawn"  # latest kept
     assert out.loc[0, "employer_norm"] == "X"
+
+
+def test_clean_annualizes_wage_to():
+    raw = pd.DataFrame(
+        {
+            "CASE_NUMBER": ["A", "B"],
+            "CASE_STATUS": ["Certified"] * 2,
+            "DECISION_DATE": ["2025-01-01"] * 2,
+            "VISA_CLASS": ["H-1B"] * 2,
+            "EMPLOYER_NAME": ["X"] * 2,
+            "SOC_CODE": ["15-2031.00"] * 2,
+            "WAGE_RATE_OF_PAY_FROM": ["50", "100000"],
+            "WAGE_RATE_OF_PAY_TO": ["60", None],
+            "WAGE_UNIT_OF_PAY": ["Hour", "Year"],
+        }
+    )
+    std, _ = standardize_columns(raw)
+    out = clean_lca(std, 2025).set_index("CASE_NUMBER")
+    assert out.loc["A", "annual_wage_to"] == 60 * 2080
+    assert math.isnan(out.loc["B", "annual_wage_to"])  # blank TO stays NaN

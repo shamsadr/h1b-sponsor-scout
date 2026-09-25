@@ -24,6 +24,7 @@ REQUIRED_COLS = [
 # (e.g. EMPLOYER_FEIN is absent from older LCA files).
 OPTIONAL_COLS = [
     "DECISION_DATE",
+    "WAGE_RATE_OF_PAY_TO",
     "JOB_TITLE",
     "SOC_TITLE",
     "FULL_TIME_POSITION",

@@ -62,6 +62,7 @@ def clean_lca(df: pd.DataFrame, fiscal_year: int) -> pd.DataFrame:
 
     # 3) Wages.
     out["annual_wage"] = annualize(out["WAGE_RATE_OF_PAY_FROM"], out["WAGE_UNIT_OF_PAY"])
+    out["annual_wage_to"] = annualize(out["WAGE_RATE_OF_PAY_TO"], out["WAGE_UNIT_OF_PAY"])
     out["annual_pw"] = annualize(out["PREVAILING_WAGE"], out["PW_UNIT_OF_PAY"])
     out["wage_premium"] = out["annual_wage"] / out["annual_pw"] - 1
     out["full_time"] = _flag(out["FULL_TIME_POSITION"])
