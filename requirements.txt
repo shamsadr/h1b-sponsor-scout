@@ -1,0 +1,7 @@
+pandas>=2.1
+numpy
+pyarrow
+openpyxl
+pytest
+black
+ruff

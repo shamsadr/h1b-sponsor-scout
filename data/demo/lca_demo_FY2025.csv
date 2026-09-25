@@ -1,0 +1,202 @@
+CASE_NUMBER,CASE_STATUS,DECISION_DATE,VISA_CLASS,JOB_TITLE,SOC_CODE,SOC_TITLE,FULL_TIME_POSITION,TOTAL_WORKER_POSITIONS,NEW_EMPLOYMENT,CHANGE_EMPLOYER,EMPLOYER_NAME,EMPLOYER_FEIN,EMPLOYER_STATE,WORKSITE_CITY,WORKSITE_STATE,WAGE_RATE_OF_PAY_FROM,WAGE_UNIT_OF_PAY,PREVAILING_WAGE,PW_UNIT_OF_PAY,PW_WAGE_LEVEL,H-1B_DEPENDENT,WILLFUL_VIOLATOR
+I-200-2025-00000,Certified,2025-01-14,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,50.0,Hour,109000.0,Year,I,N,N
+I-200-2025-00001,Certified,2025-04-16,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,9000000.0,Year,75400.0,Year,,N,N
+I-200-2025-00002,Certified,2024-11-25,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,133900.0,Year,112400.0,Year,IV,N,N
+I-200-2025-00003,Denied,2024-11-12,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,67400.0,Year,54600.0,Year,IV,N,N
+I-200-2025-00004,Denied,2025-02-10,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,115100.0,Year,99700.0,Year,IV,N,N
+I-200-2025-00005,Denied,2025-01-07,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,93400.0,Year,88600.0,Year,II,N,N
+I-200-2025-00006,Certified,2024-12-26,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,123600.0,Year,99500.0,Year,IV,N,N
+I-200-2025-00007,Certified,2025-07-03,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,88000.0,Year,71300.0,Year,III,N,N
+I-200-2025-00008,Certified,2024-11-14,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,131500.0,Year,122500.0,Year,II,N,N
+I-200-2025-00009,Certified,2025-02-06,E-3 Australian,Software Developer,15-1252.00,Software Developers,Y,2,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,111000.0,Year,108400.0,Year,,N,N
+I-200-2025-00010,Certified,2025-09-16,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,70500.0,Year,62600.0,Year,,N,N
+I-200-2025-00011,Certified,2025-07-24,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,65500.0,Year,60600.0,Year,,N,N
+I-200-2025-00012,Denied,2025-07-17,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,98700.0,Year,84000.0,Year,,N,N
+I-200-2025-00013,Certified,2025-06-19,E-3 Australian,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,130900.0,Year,111900.0,Year,IV,N,N
+I-200-2025-00014,Certified,2025-01-18,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,107500.0,Year,96200.0,Year,I,N,N
+I-200-2025-00015,Certified,2025-05-17,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,106300.0,Year,89700.0,Year,II,N,N
+I-200-2025-00016,Certified,2025-03-11,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,100300.0,Year,89300.0,Year,IV,N,N
+I-200-2025-00017,Certified,2024-11-24,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,119800.0,Year,99400.0,Year,,N,N
+I-200-2025-00018,Certified,2024-10-03,E-3 Australian,Software Developer,15-1252.00,Software Developers,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,112500.0,Year,110800.0,Year,II,N,N
+I-200-2025-00019,Certified,2025-03-12,E-3 Australian,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,110600.0,Year,102800.0,Year,II,N,N
+I-200-2025-00020,Certified - Withdrawn,2025-01-11,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,85300.0,Year,69800.0,Year,,N,N
+I-200-2025-00021,Certified - Withdrawn,2025-08-13,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,128800.0,Year,108000.0,Year,IV,N,N
+I-200-2025-00022,Certified,2025-03-06,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,132300.0,Year,127800.0,Year,III,N,N
+I-200-2025-00023,Certified - Withdrawn,2025-05-16,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,79000.0,Year,69100.0,Year,,N,N
+I-200-2025-00024,Certified,2025-04-21,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,151000.0,Year,128700.0,Year,II,N,N
+I-200-2025-00025,Certified,2024-10-25,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,119500.0,Year,96200.0,Year,IV,N,N
+I-200-2025-00026,Withdrawn,2025-04-30,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,95200.0,Year,89000.0,Year,II,N,N
+I-200-2025-00027,Certified,2025-03-30,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,66900.0,Year,61200.0,Year,I,N,N
+I-200-2025-00028,Certified,2025-09-22,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,118100.0,Year,114300.0,Year,IV,N,N
+I-200-2025-00029,Certified,2025-03-18,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,116200.0,Year,96900.0,Year,II,N,N
+I-200-2025-00030,Certified,2025-01-27,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,93100.0,Year,88500.0,Year,II,N,N
+I-200-2025-00031,Certified,2025-03-25,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,69200.0,Year,66800.0,Year,IV,N,N
+I-200-2025-00032,Certified,2025-07-27,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,127500.0,Year,123000.0,Year,IV,N,N
+I-200-2025-00033,Certified,2025-02-27,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,93200.0,Year,88500.0,Year,IV,N,N
+I-200-2025-00034,Certified,2025-09-12,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,1,Desert Health System,00-0000004,AZ,Demo City,AZ,95600.0,Year,84900.0,Year,III,N,N
+I-200-2025-00035,Certified,2025-07-20,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,161900.0,Year,131100.0,Year,,N,N
+I-200-2025-00036,Withdrawn,2024-10-30,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,147600.0,Year,137100.0,Year,IV,N,N
+I-200-2025-00037,Certified,2025-04-10,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,124100.0,Year,99900.0,Year,IV,N,N
+I-200-2025-00038,Certified,2025-04-11,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,95900.0,Year,78400.0,Year,,N,N
+I-200-2025-00039,Certified,2025-08-05,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,118000.0,Year,104100.0,Year,IV,N,N
+I-200-2025-00040,Certified,2025-07-20,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,59400.0,Year,49000.0,Year,,N,N
+I-200-2025-00041,Certified,2025-09-09,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,107100.0,Year,95400.0,Year,,N,N
+I-200-2025-00042,Certified - Withdrawn,2025-03-05,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,89800.0,Year,87100.0,Year,IV,N,N
+I-200-2025-00043,Certified,2025-08-19,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,79300.0,Year,66200.0,Year,,N,N
+I-200-2025-00044,Certified,2025-09-06,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,73300.0,Year,70300.0,Year,III,N,N
+I-200-2025-00045,Certified,2025-07-05,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,115500.0,Year,115400.0,Year,II,N,N
+I-200-2025-00046,Certified,2024-12-15,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,106800.0,Year,86200.0,Year,IV,N,N
+I-200-2025-00047,Denied,2024-10-08,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,108200.0,Year,95700.0,Year,,N,N
+I-200-2025-00048,Certified,2025-07-28,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,1,Desert Health System,00-0000004,AZ,Demo City,AZ,121800.0,Year,114700.0,Year,II,N,N
+I-200-2025-00049,Certified,2024-10-01,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,88100.0,Year,83400.0,Year,,N,N
+I-200-2025-00050,Certified,2025-05-26,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,80300.0,Year,68700.0,Year,I,N,N
+I-200-2025-00051,Certified,2024-12-01,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,69500.0,Year,66800.0,Year,I,N,N
+I-200-2025-00052,Certified,2025-06-09,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,98300.0,Year,85900.0,Year,IV,N,N
+I-200-2025-00053,Certified,2025-04-05,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,120200.0,Year,101000.0,Year,III,N,N
+I-200-2025-00054,Certified,2024-10-30,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,102000.0,Year,92200.0,Year,I,N,N
+I-200-2025-00055,Certified,2025-01-16,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,117800.0,Year,108700.0,Year,III,N,N
+I-200-2025-00056,Certified,2024-12-25,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,81400.0,Year,78800.0,Year,,N,N
+I-200-2025-00057,Certified,2024-11-17,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,95600.0,Year,89200.0,Year,III,N,N
+I-200-2025-00058,Certified,2025-08-09,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,89700.0,Year,73300.0,Year,,N,N
+I-200-2025-00059,Certified,2025-08-30,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,80000.0,Year,73200.0,Year,,N,N
+I-200-2025-00060,Certified,2024-11-04,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,142200.0,Year,123500.0,Year,I,N,N
+I-200-2025-00061,Certified,2025-03-04,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,122000.0,Year,114800.0,Year,I,N,N
+I-200-2025-00062,Certified,2025-09-17,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,89800.0,Year,72600.0,Year,I,N,N
+I-200-2025-00063,Certified,2024-12-11,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,1,Desert Health System,00-0000004,AZ,Demo City,AZ,89700.0,Year,83600.0,Year,I,N,N
+I-200-2025-00064,Certified,2025-09-16,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,103900.0,Year,99600.0,Year,,N,N
+I-200-2025-00065,Certified,2025-04-03,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,76200.0,Year,61600.0,Year,IV,N,N
+I-200-2025-00066,Certified,2025-07-17,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,113700.0,Year,91300.0,Year,,N,N
+I-200-2025-00067,Withdrawn,2025-09-19,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,2,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,79100.0,Year,77400.0,Year,II,N,N
+I-200-2025-00068,Certified,2025-04-30,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,97600.0,Year,95600.0,Year,,N,N
+I-200-2025-00069,Certified,2025-06-18,E-3 Australian,Software Developer,15-1252.00,Software Developers,Y,1,0,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,84500.0,Year,70600.0,Year,III,N,N
+I-200-2025-00070,Certified,2024-10-02,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,95400.0,Year,93900.0,Year,IV,N,N
+I-200-2025-00071,Withdrawn,2025-08-29,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,78400.0,Year,69100.0,Year,I,N,N
+I-200-2025-00072,Certified,2024-12-12,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,73500.0,Year,66400.0,Year,II,N,N
+I-200-2025-00073,Certified,2024-11-11,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,85700.0,Year,76600.0,Year,,N,N
+I-200-2025-00074,Certified - Withdrawn,2025-03-21,E-3 Australian,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,91400.0,Year,79200.0,Year,II,N,N
+I-200-2025-00075,Certified,2025-06-24,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,99100.0,Year,96800.0,Year,III,N,N
+I-200-2025-00076,Certified,2025-04-02,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,106400.0,Year,98100.0,Year,IV,N,N
+I-200-2025-00077,Certified,2025-01-30,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,1,Desert Health System,00-0000004,AZ,Demo City,AZ,135500.0,Year,133700.0,Year,I,N,N
+I-200-2025-00078,Certified,2025-08-05,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,1,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,121200.0,Year,112000.0,Year,I,N,N
+I-200-2025-00079,Certified,2025-02-07,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,99900.0,Year,98400.0,Year,,N,N
+I-200-2025-00080,Certified,2025-02-20,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,119500.0,Year,107900.0,Year,I,N,N
+I-200-2025-00081,Certified,2025-03-14,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,2,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,91200.0,Year,81600.0,Year,III,N,N
+I-200-2025-00082,Certified,2025-07-10,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,134000.0,Year,122500.0,Year,IV,N,N
+I-200-2025-00083,Certified,2025-03-16,E-3 Australian,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,116000.0,Year,92900.0,Year,II,N,N
+I-200-2025-00084,Withdrawn,2025-02-25,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,77900.0,Year,74300.0,Year,III,N,N
+I-200-2025-00085,Withdrawn,2025-07-12,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,120100.0,Year,99400.0,Year,I,N,N
+I-200-2025-00086,Certified,2025-08-14,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,121300.0,Year,119900.0,Year,IV,N,N
+I-200-2025-00087,Certified,2025-01-15,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,51300.0,Year,41500.0,Year,I,N,N
+I-200-2025-00088,Certified,2024-10-21,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,90000.0,Year,84700.0,Year,III,N,N
+I-200-2025-00089,Certified,2025-03-16,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,95500.0,Year,91100.0,Year,,N,N
+I-200-2025-00090,Certified,2025-02-25,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,66400.0,Year,60300.0,Year,II,N,N
+I-200-2025-00091,Certified,2025-03-05,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,83700.0,Year,68600.0,Year,I,N,N
+I-200-2025-00092,Withdrawn,2024-12-15,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,86000.0,Year,82800.0,Year,III,N,N
+I-200-2025-00093,Certified,2025-05-13,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,115100.0,Year,99500.0,Year,II,N,N
+I-200-2025-00094,Certified,2025-05-11,E-3 Australian,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,111000.0,Year,95200.0,Year,,N,N
+I-200-2025-00095,Certified,2025-04-20,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,157500.0,Year,147800.0,Year,III,N,N
+I-200-2025-00096,Certified,2025-06-28,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,97100.0,Year,96600.0,Year,II,N,N
+I-200-2025-00097,Certified,2024-10-18,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,128100.0,Year,104900.0,Year,I,N,N
+I-200-2025-00098,Certified,2024-11-16,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,106600.0,Year,94600.0,Year,III,N,N
+I-200-2025-00099,Certified - Withdrawn,2025-08-04,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,110400.0,Year,103200.0,Year,IV,N,N
+I-200-2025-00100,Certified,2024-10-26,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,81800.0,Year,70000.0,Year,II,N,N
+I-200-2025-00101,Certified,2025-05-20,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,66800.0,Year,65800.0,Year,IV,N,N
+I-200-2025-00102,Certified,2025-09-19,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,89700.0,Year,82600.0,Year,,N,N
+I-200-2025-00103,Certified,2024-11-24,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,120200.0,Year,98000.0,Year,IV,N,N
+I-200-2025-00104,Certified,2024-10-20,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,136700.0,Year,113600.0,Year,I,N,N
+I-200-2025-00105,Certified,2025-03-28,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,117100.0,Year,97000.0,Year,II,N,N
+I-200-2025-00106,Certified,2025-05-21,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,115000.0,Year,102500.0,Year,III,N,N
+I-200-2025-00107,Certified,2025-08-21,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,88200.0,Year,86600.0,Year,II,N,N
+I-200-2025-00108,Certified,2025-07-12,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,135700.0,Year,111600.0,Year,,N,N
+I-200-2025-00109,Certified,2025-08-14,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,131900.0,Year,109500.0,Year,IV,N,N
+I-200-2025-00110,Certified,2024-12-08,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,94400.0,Year,79500.0,Year,IV,N,N
+I-200-2025-00111,Certified,2025-02-23,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,104100.0,Year,95200.0,Year,,N,N
+I-200-2025-00112,Certified,2025-01-07,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,85100.0,Year,75400.0,Year,II,N,N
+I-200-2025-00113,Certified,2024-12-25,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,134300.0,Year,118700.0,Year,III,N,N
+I-200-2025-00114,Certified,2024-11-25,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,113100.0,Year,93800.0,Year,III,N,N
+I-200-2025-00115,Denied,2025-09-08,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,103100.0,Year,99500.0,Year,,N,N
+I-200-2025-00116,Denied,2025-04-19,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,113100.0,Year,101300.0,Year,IV,N,N
+I-200-2025-00117,Certified,2025-06-22,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,113800.0,Year,110700.0,Year,I,N,N
+I-200-2025-00118,Certified,2024-10-15,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,96800.0,Year,78000.0,Year,,N,N
+I-200-2025-00119,Certified,2025-05-27,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,80200.0,Year,71500.0,Year,IV,N,N
+I-200-2025-00120,Certified,2025-02-03,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,79300.0,Year,69300.0,Year,III,N,N
+I-200-2025-00121,Certified,2025-02-25,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,70200.0,Year,68000.0,Year,II,N,N
+I-200-2025-00122,Denied,2025-01-09,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,114200.0,Year,107200.0,Year,I,N,N
+I-200-2025-00123,Certified - Withdrawn,2025-08-08,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,149400.0,Year,135100.0,Year,II,N,N
+I-200-2025-00124,Certified,2024-12-13,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,71000.0,Year,59100.0,Year,IV,N,N
+I-200-2025-00125,Certified,2024-12-09,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,107800.0,Year,101000.0,Year,I,N,N
+I-200-2025-00126,Certified,2025-07-11,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,113200.0,Year,110800.0,Year,III,N,N
+I-200-2025-00127,Certified,2025-07-26,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,85300.0,Year,81500.0,Year,,N,N
+I-200-2025-00128,Certified,2025-04-30,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,109100.0,Year,108400.0,Year,III,N,N
+I-200-2025-00129,Certified,2025-07-16,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,83100.0,Year,76300.0,Year,I,N,N
+I-200-2025-00130,Certified,2024-11-27,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,0,Desert Health System,00-0000004,AZ,Demo City,AZ,129000.0,Year,111300.0,Year,,N,N
+I-200-2025-00131,Certified,2025-04-07,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,93100.0,Year,78600.0,Year,II,N,N
+I-200-2025-00132,Certified,2024-12-18,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,107000.0,Year,102700.0,Year,II,N,N
+I-200-2025-00133,Certified,2025-02-09,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,1,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,118700.0,Year,114200.0,Year,II,N,N
+I-200-2025-00134,Certified,2025-03-23,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,2,1,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,96400.0,Year,89400.0,Year,III,N,N
+I-200-2025-00135,Certified,2025-06-05,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,69200.0,Year,66200.0,Year,III,N,N
+I-200-2025-00136,Certified,2025-01-05,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,94400.0,Year,84700.0,Year,,N,N
+I-200-2025-00137,Certified,2025-02-17,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,120300.0,Year,116700.0,Year,,N,N
+I-200-2025-00138,Certified,2025-02-12,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,103300.0,Year,97000.0,Year,I,N,N
+I-200-2025-00139,Certified,2025-02-26,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,109600.0,Year,93000.0,Year,I,N,N
+I-200-2025-00140,Certified,2025-05-17,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,83400.0,Year,76500.0,Year,,N,N
+I-200-2025-00141,Certified,2025-01-06,E-3 Australian,Data Scientist,15-2051.00,Data Scientists,Y,1,1,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,107900.0,Year,100500.0,Year,I,N,N
+I-200-2025-00142,Certified,2025-08-17,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,119600.0,Year,100500.0,Year,,N,N
+I-200-2025-00143,Certified,2025-07-09,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,105700.0,Year,104300.0,Year,II,N,N
+I-200-2025-00144,Certified,2025-09-25,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,143200.0,Year,137600.0,Year,I,N,N
+I-200-2025-00145,Certified,2024-11-25,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,100800.0,Year,83600.0,Year,,N,N
+I-200-2025-00146,Certified,2025-02-06,E-3 Australian,Software Developer,15-1252.00,Software Developers,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,84200.0,Year,71100.0,Year,III,N,N
+I-200-2025-00147,Certified,2025-03-28,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,72600.0,Year,58100.0,Year,,N,N
+I-200-2025-00148,Certified,2025-03-29,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,2,0,1,Desert Health System,00-0000004,AZ,Demo City,AZ,128000.0,Year,126400.0,Year,II,N,N
+I-200-2025-00149,Certified,2025-03-09,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,103800.0,Year,86700.0,Year,,N,N
+I-200-2025-00150,Certified,2024-12-27,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,125200.0,Year,121000.0,Year,I,N,N
+I-200-2025-00151,Certified,2025-09-20,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,114200.0,Year,103000.0,Year,III,N,N
+I-200-2025-00152,Certified,2025-09-18,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,137500.0,Year,111600.0,Year,I,N,N
+I-200-2025-00153,Certified,2024-11-09,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,130300.0,Year,109700.0,Year,I,N,N
+I-200-2025-00154,Certified,2025-09-23,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,97400.0,Year,82900.0,Year,I,N,N
+I-200-2025-00155,Certified,2025-04-22,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,110500.0,Year,105300.0,Year,IV,N,N
+I-200-2025-00156,Denied,2025-05-21,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,126700.0,Year,110700.0,Year,I,N,N
+I-200-2025-00157,Certified,2024-12-19,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,80300.0,Year,66500.0,Year,II,N,N
+I-200-2025-00158,Denied,2025-07-27,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,2,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,134000.0,Year,132600.0,Year,,N,N
+I-200-2025-00159,Certified,2025-09-08,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,129200.0,Year,116700.0,Year,I,N,N
+I-200-2025-00160,Certified,2025-06-17,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,124700.0,Year,101400.0,Year,III,N,N
+I-200-2025-00161,Certified,2024-11-15,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,101000.0,Year,100500.0,Year,II,N,N
+I-200-2025-00162,Denied,2024-12-01,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,111000.0,Year,103800.0,Year,I,N,N
+I-200-2025-00163,Certified,2025-08-26,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,82700.0,Year,73500.0,Year,IV,N,N
+I-200-2025-00164,Certified,2025-07-20,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,0,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,106200.0,Year,88100.0,Year,IV,N,N
+I-200-2025-00165,Certified,2025-05-21,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,93300.0,Year,87600.0,Year,III,N,N
+I-200-2025-00166,Certified,2025-06-12,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,106700.0,Year,87400.0,Year,,N,N
+I-200-2025-00167,Certified,2024-12-08,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,2,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,95100.0,Year,93900.0,Year,IV,N,N
+I-200-2025-00168,Certified,2025-08-18,E-3 Australian,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,110700.0,Year,105200.0,Year,I,N,N
+I-200-2025-00169,Certified,2025-02-27,E-3 Australian,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,128600.0,Year,121200.0,Year,IV,N,N
+I-200-2025-00170,Certified,2025-01-14,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,78800.0,Year,75200.0,Year,,N,N
+I-200-2025-00171,Certified,2025-01-08,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,123500.0,Year,120100.0,Year,III,N,N
+I-200-2025-00172,Certified,2025-05-05,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,65200.0,Year,58300.0,Year,IV,N,N
+I-200-2025-00173,Certified,2025-03-21,H-1B,Software Developer,15-1252.00,Software Developers,Y,2,0,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,61800.0,Year,59500.0,Year,III,N,N
+I-200-2025-00174,Certified,2024-12-17,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,102600.0,Year,84300.0,Year,III,N,N
+I-200-2025-00175,Certified - Withdrawn,2025-07-24,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,105100.0,Year,98800.0,Year,IV,N,N
+I-200-2025-00176,Certified,2025-03-08,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,113900.0,Year,108200.0,Year,II,N,N
+I-200-2025-00177,Certified,2025-03-23,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,1,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,72100.0,Year,60700.0,Year,IV,N,N
+I-200-2025-00178,Certified,2025-05-14,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,103800.0,Year,85400.0,Year,IV,N,N
+I-200-2025-00179,Certified,2025-09-20,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,107500.0,Year,105700.0,Year,IV,N,N
+I-200-2025-00180,Certified,2025-03-25,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,130100.0,Year,127300.0,Year,I,N,N
+I-200-2025-00181,Certified,2025-08-25,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,102900.0,Year,84600.0,Year,II,N,N
+I-200-2025-00182,Withdrawn,2025-03-14,H-1B,Software Developer,15-1252.00,Software Developers,Y,1,1,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,115600.0,Year,106100.0,Year,,N,N
+I-200-2025-00183,Certified,2024-12-17,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,1,0,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,85500.0,Year,71500.0,Year,II,N,N
+I-200-2025-00184,Withdrawn,2025-05-27,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,0,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,101200.0,Year,85100.0,Year,III,N,N
+I-200-2025-00185,Certified,2024-11-17,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,96100.0,Year,94700.0,Year,IV,N,N
+I-200-2025-00186,Certified,2025-01-14,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,1,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,119100.0,Year,111100.0,Year,IV,N,N
+I-200-2025-00187,Certified,2025-06-04,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,1,0,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,85200.0,Year,81100.0,Year,IV,N,N
+I-200-2025-00188,Certified,2025-05-04,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,0,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,88300.0,Year,75600.0,Year,III,N,N
+I-200-2025-00189,Certified,2025-02-07,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,116500.0,Year,111300.0,Year,IV,N,N
+I-200-2025-00190,Certified,2024-10-28,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,140800.0,Year,131500.0,Year,,N,N
+I-200-2025-00191,Denied,2025-01-04,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,2,1,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,112700.0,Year,98000.0,Year,II,N,N
+I-200-2025-00192,Certified,2025-04-24,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,111100.0,Year,99900.0,Year,II,N,N
+I-200-2025-00193,Certified,2025-08-30,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,0,1,Quantfield Capital L.P.,00-0000002,NY,Demo City,NY,98100.0,Year,83400.0,Year,I,N,N
+I-200-2025-00194,Certified,2025-09-01,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,1,Northstar Consulting Corp,00-0000003,IL,Demo City,IL,126800.0,Year,116500.0,Year,II,N,N
+I-200-2025-00195,Certified,2025-04-27,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,115800.0,Year,97000.0,Year,IV,N,N
+I-200-2025-00196,Certified,2024-11-19,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,Desert Health System,00-0000004,AZ,Demo City,AZ,139700.0,Year,124300.0,Year,II,N,N
+I-200-2025-00197,Certified,2025-01-05,H-1B,Data Scientist,15-2051.00,Data Scientists,Y,2,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,111600.0,Year,108400.0,Year,I,N,N
+I-200-2025-00198,Certified,2025-02-10,H-1B,Operations Research Analyst,15-2031.00,Operations Research Analysts,Y,1,1,1,Desert Health System,00-0000004,AZ,Demo City,AZ,86000.0,Year,80100.0,Year,III,N,N
+I-200-2025-00199,Certified,2025-04-21,H-1B,Financial and Investment Analyst,13-2051.00,Financial and Investment Analysts,Y,1,1,0,Blue River Logistics LLC,00-0000001,TX,Demo City,TX,93600.0,Year,86200.0,Year,IV,N,N
+I-200-2025-00002,Certified,2024-11-30,H-1B,Industrial Engineer,17-2112.00,Industrial Engineers,Y,1,1,0,"Acme Analytics, Inc.",00-0000000,AZ,Demo City,AZ,133900.0,Year,112400.0,Year,IV,N,N
