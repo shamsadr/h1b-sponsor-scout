@@ -87,7 +87,7 @@ Pages:
   Quant, Consulting (Big 4 / MBB), Analytics consultancies, Manufacturing / EV and Retail &
   Consumer. **Curated rule:** a set lists only employers with at least 25 certified target-role
   LCAs in FY2024–FY2025 (a test checks this). Picking a set shows a comparison table of its members
-  in the current role family (members with no filings there come last, grayed), and selecting a
+  in the current role family (members with no filings there come last, with a note), and selecting a
   row opens that employer. A searchable list of employers also matches legal-entity names, so
   typing "Merrill" finds Bank of America. The summary card shows certified LCAs in the role
   family and in all roles, years active, median offered wage and Level II+ share. Below it are
@@ -102,14 +102,16 @@ Pages:
 
 **Accessibility.** Every chart has a "Table" view with the same numbers (a test checks this on
 every page). Color is never the only signal: charts have legends or axis labels, the reference bar
-is labelled "reference", and grayed rows carry a note. Viewers can pick Light, Dark or System in
-the ⋮ menu. Chart colors are fixed rather than theme-dependent, because Streamlit reports a theme
-change to the app only on the next rerun. Every bar color clears 3:1 against both backgrounds, and
-grayed text is 4.35:1 on both, the most a single gray can reach (WCAG 2.1 AA asks 4.5:1 for text;
-the meaning is also in words). The primary color is set per theme in `.streamlit/config.toml`
-(`[theme.light]` and `[theme.dark]`), because a `primaryColor` under `[theme]` hides the theme
-chooser. The default Find sponsors columns fit a 1280-px laptop screen without horizontal
-scrolling.
+is labelled "reference", and members with no filings carry a note. Viewers can pick Light, Dark or
+System in the ⋮ menu. Chart colors are fixed rather than theme-dependent, because Streamlit
+reports a theme change to the app only on the next rerun. Every bar color clears 3:1 against both
+backgrounds (WCAG 2.1 AA for graphics). Table text uses the theme's own text color. The only text
+with a custom color is the % change labels on Trends: they are bold and 19 px (WCAG "large
+text", at least 14 pt bold), so their threshold is 3:1, and their gray `#797979` reaches 4.35:1
+on both backgrounds. Tests check every color and the label size and weight. The primary color is
+set per theme in `.streamlit/config.toml` (`[theme.light]` and `[theme.dark]`), because a
+`primaryColor` under `[theme]` hides the theme chooser. The default Find sponsors columns fit a
+1280-px laptop screen without horizontal scrolling.
 
 `publish` precomputes the scorecard for every role group × worksite state (plus all states)
 with the same functions as the reports, so the app does no heavy computation. The role groups are

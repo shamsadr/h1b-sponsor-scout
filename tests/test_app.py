@@ -221,3 +221,39 @@ def test_every_chart_has_a_table_view(app):
         assert len(tables) == charts, (page, charts, len(tables))
         seen.add(charts > 0)
     assert seen == {True, False}  # guards against counting the wrong element type
+
+
+def test_set_table_zero_rows_last_with_note_and_plain_text(demo_app_data, monkeypatch, tmp_path):
+    """Zero-filing members keep their place and note, in the theme's normal text color."""
+    import shutil
+
+    import pandas as pd
+
+    import app_data
+
+    # Demo employers file in every family, so remove one employer's rows for one family.
+    data = tmp_path / "app"
+    shutil.copytree(demo_app_data, data)
+    sponsors = pd.read_parquet(data / "sponsors.parquet")
+    family, absent, present = "Operations Research", "ACME ANALYTICS", "DESERT HEALTH SYSTEM"
+    drop = (sponsors["family"] == family) & (sponsors["parent_group"] == absent)
+    assert drop.any()
+    sponsors[~drop].to_parquet(data / "sponsors.parquet", index=False)
+    curated = tmp_path / "sets.csv"
+    curated.write_text(
+        f"set_name,parent_group,display_name\nDemo set,{absent},x\nDemo set,{present},y\n"
+    )
+    monkeypatch.setattr(app_data, "CURATED_SETS", curated)
+    monkeypatch.setenv("H1B_APP_DATA", str(data))
+    at = AppTest.from_file(APP, default_timeout=60)
+    at.query_params["role"] = family
+    at.run()
+    at.switch_page("views/employer_lookup.py").run()
+    at.get("button_group")[1].set_value("Demo set").run()
+    assert not at.exception
+    table = at.dataframe[0]
+    rows = table.value
+    assert rows["display_name"].tolist() == ["Desert Health System", "Acme Analytics"]
+    assert rows["cases"].tolist()[-1] == 0  # the zero-filing member is last ...
+    assert rows["note"].tolist()[-1] == f"No {family} filings"  # ... with its note
+    assert not table.proto.arrow_data.HasField("styler")  # no custom (gray) text color

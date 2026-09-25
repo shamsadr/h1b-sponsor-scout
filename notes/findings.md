@@ -399,3 +399,9 @@ also has the `[theme.light]` / `[theme.dark]` sections.
     backgrounds (WCAG AA asks 4.5:1 for text), and the meaning is also given in words.
 - **Altair text marks ignore Streamlit's theme text color.** They render near-black, nearly
   invisible on dark, so the % change labels use `#797979`.
+- **Contrast gap closed (same day).** Set-table rows for members with no filings no longer use a
+  custom gray. They keep their place (last) and the "No [family] filings" note, in the theme's
+  normal text color. The % change labels are now bold and 19 px, which makes them WCAG large text
+  (at least 14 pt bold, threshold 3:1), so `#797979` at 4.35:1 passes on both backgrounds. At
+  1280 px in both themes, the labels (+35% to −8%) fit without overlap or clipping. The x axis gets
+  15% padding past the longest bars, and rows are 32 px tall for the 19 px labels.

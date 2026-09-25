@@ -17,9 +17,13 @@ SERIES_BLUE = "#2a78d6"  # 4.4:1 on white, 4.3:1 on dark
 # Fiscal years, older -> lighter: steps 400, 450, 500 of the blue ramp, the only steps that
 # clear 3:1 on both backgrounds (#3987e5 3.6 / 5.2, #256abf 5.4 / 3.5).
 YEAR_RAMP = ["#3987e5", "#2a78d6", "#256abf"]
-# De-emphasized text (grayed table rows). No single gray reaches 4.5:1 on both backgrounds;
-# #797979 is the best possible (4.35:1 on each), and the meaning is also in words.
+# Chart value labels (Altair text does not follow Streamlit's theme text color). No single
+# gray reaches the 4.5:1 normal-text threshold on both backgrounds (#797979 is the best: 4.35:1
+# on each), so labels in this gray are bold and at least 14 pt (18.7 px): WCAG "large text",
+# whose threshold is 3:1.
 MUTED_GRAY = "#797979"
+LABEL_FONT_PX = 19  # >= 18.7 px (14 pt) ...
+LABEL_FONT_WEIGHT = "bold"  # ... and bold = large text
 REFERENCE_GRAY = "#898781"  # bars only (3.6:1 light, 5.3:1 dark): a reference, not a series
 CONTEXT_GRAY = REFERENCE_GRAY
 LEVEL_COLORS = {level: SERIES_BLUE for level in ["I", "II", "III", "IV"]}
@@ -242,12 +246,16 @@ def pct_change_chart(d: pd.DataFrame, reference: str, first: int, last: int) -> 
         text=d["pct_change"].map(lambda v: f"{v:+.0%}"),
     )
     order = d.sort_values("pct_change", ascending=False)["label"].tolist()
+    # Room past the longest bars for the large labels, so none is clipped at the chart edge.
+    lo, hi = min(0.0, d["pct_change"].min()), max(0.0, d["pct_change"].max())
+    pad = 0.15 * (hi - lo or 1)
     base = alt.Chart(d).encode(
         y=alt.Y("label:N", sort=order, title=None, axis=alt.Axis(labelLimit=320)),
         x=alt.X(
             "pct_change:Q",
             title=f"Change in certified LCAs, FY{first} → FY{last}",
             axis=alt.Axis(format="+.0%"),
+            scale=alt.Scale(domain=[lo - (pad if lo < 0 else 0), hi + pad]),
         ),
     )
     bars = base.mark_bar(cornerRadiusEnd=4, height={"band": 0.7}).encode(
@@ -266,15 +274,14 @@ def pct_change_chart(d: pd.DataFrame, reference: str, first: int, last: int) -> 
         ],
     )
     # Value labels just past each bar's end: right of positive bars, left of negative ones.
-    pos = base.transform_filter("datum.pct_change >= 0").mark_text(align="left", dx=4)
-    neg = base.transform_filter("datum.pct_change < 0").mark_text(align="right", dx=-4)
-    labels = alt.layer(
-        # Altair text marks do not follow Streamlit's theme text color, so use the gray that
-        # reads on both backgrounds (4.35:1).
-        *[layer.encode(text="text:N", color=alt.value(MUTED_GRAY)) for layer in (pos, neg)]
-    )
+    # Large text (bold, 19 px) in MUTED_GRAY: 4.35:1 on both backgrounds, above the 3:1
+    # large-text threshold.
+    style = {"fontSize": LABEL_FONT_PX, "fontWeight": LABEL_FONT_WEIGHT, "color": MUTED_GRAY}
+    pos = base.transform_filter("datum.pct_change >= 0").mark_text(align="left", dx=6, **style)
+    neg = base.transform_filter("datum.pct_change < 0").mark_text(align="right", dx=-6, **style)
+    labels = alt.layer(*[layer.encode(text="text:N") for layer in (pos, neg)])
     rule = alt.Chart(pd.DataFrame({"x": [0]})).mark_rule(color=REFERENCE_GRAY).encode(x="x:Q")
-    return (bars + labels + rule).properties(height=alt.Step(26))
+    return (bars + labels + rule).properties(height=alt.Step(32))  # rows taller than the labels
 
 
 def family_totals_chart(by: pd.DataFrame, target_families: list[str]) -> alt.Chart:

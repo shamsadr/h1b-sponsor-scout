@@ -73,7 +73,8 @@ def test_colors_clear_wcag_contrast_in_both_themes():
         bars = [*ui.YEAR_RAMP, ui.SERIES_BLUE, ui.REFERENCE_GRAY, *ui.LEVEL_COLORS.values()]
         for color in bars:
             assert contrast(color, bg) >= 3, (mode, color)  # graphics: 3:1
-        assert contrast(ui.MUTED_GRAY, bg) >= 4.3, mode  # best one gray can do on both: 4.35
+        # MUTED_GRAY is only used for large text (bold, >= 18.7 px): WCAG threshold 3:1.
+        assert contrast(ui.MUTED_GRAY, bg) >= 3, mode
 
 
 def test_year_ramp_uses_the_ramp_endpoints():
@@ -90,3 +91,37 @@ def test_primary_color_is_per_theme_so_the_theme_chooser_stays():
         primary = theme[mode]["primaryColor"]
         assert contrast(primary, bg) >= 3, mode  # widgets (slider, checkbox) vs background
         assert contrast(primary, "#ffffff") >= 4.5, mode  # white text on primary buttons
+
+
+def text_marks(spec) -> list[dict]:
+    """Every mark definition of type 'text' in an Altair/Vega-Lite spec (any nesting)."""
+    found = []
+    if isinstance(spec, dict):
+        mark = spec.get("mark")
+        if isinstance(mark, dict) and mark.get("type") == "text":
+            found.append(mark)
+        for value in spec.values():
+            found += text_marks(value)
+    elif isinstance(spec, list):
+        for value in spec:
+            found += text_marks(value)
+    return found
+
+
+def test_pct_change_labels_are_wcag_large_text():
+    d = pd.DataFrame(
+        {
+            "family": ["A", "B", "Ref"],
+            "first": [100, 200, 300],
+            "last": [135, 180, 350],
+            "pct_change": [0.35, -0.10, 0.17],
+        }
+    )
+    marks = text_marks(ui.pct_change_chart(d, "Ref", 2024, 2025).to_dict())
+    assert len(marks) == 2  # positive and negative labels
+    for mark in marks:
+        # Large text = at least 14 pt (18.7 px) and bold; its contrast threshold is 3:1.
+        assert mark["fontSize"] >= 18.7 and mark["fontWeight"] == "bold"
+        assert mark["color"] == ui.MUTED_GRAY
+        for bg in BACKGROUNDS.values():
+            assert contrast(mark["color"], bg) >= 3

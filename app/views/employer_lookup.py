@@ -20,7 +20,6 @@ from app_data import (
     years_label,
 )
 from ui import (
-    MUTED_GRAY,
     count_col,
     data,
     family_totals_chart,
@@ -79,14 +78,9 @@ def set_comparison(set_name: str, members: list[str], family: str) -> None:
     years = year_columns(shown)
     cols = ["display_name", "cases", *years, "median_wage_floor", "pct_above_pw"]
     cols += ["level2plus_pct", "note"]
-    zero = shown["cases"].eq(0)
-    gray = MUTED_GRAY  # de-emphasized; the Note column says why
-    styled = shown[cols].style.apply(
-        lambda r: [f"color: {gray}" if zero[r.name] else "" for _ in r], axis=1
-    )
     config = sponsor_column_config(years) | {"note": text_col("Note", width="medium")}
     event = st.dataframe(
-        styled,
+        shown[cols],  # zero-filing rows: last, 0 LCAs and a note, in the normal text color
         hide_index=True,
         width="stretch",
         height=35 * (len(shown) + 1) + 3,  # every member visible, no inner scroll
