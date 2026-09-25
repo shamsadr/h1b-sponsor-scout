@@ -1,5 +1,7 @@
 # H-1B Sponsor Scout
 
+**Live app:** <URL — add after deploy>
+
 **Problem.** International students (F-1 → OPT → H-1B) need to know which employers
 *actually* sponsor H-1B in their target roles, at what wage level, and consistently
 over time. The official data is split across agencies and hard to use raw.
@@ -15,7 +17,26 @@ separately; there is no single black-box score.
 scorecard, and a Streamlit app reads precomputed tables from it. Next: earlier fiscal years
 (FY2019–FY2023), the USCIS Employer Data Hub join and PERM green-card data.
 
-**Results.** _TBD: filled in after real data is loaded._ Demo output is synthetic.
+**Results** (DOL LCA data for FY2024–FY2025; how each number was measured is in
+`notes/findings.md`):
+- **Records processed:** 561,037 LCA rows for FY2024 and 596,552 for FY2025, from eight quarterly
+  DOL files. After removing duplicates and keeping only H-1B filings, 1,118,768 unique cases remain
+  across both years.
+- **Employer names → groups:** across FY2024–FY2025, 88,665 distinct employer names collapse into
+  84,911 employer groups, using shared tax IDs (FEINs), matching names and a hand-checked overrides
+  file. For example, 10 Amazon names, including Amazon.com Services and AWS, become one AMAZON group.
+- **Analytics hiring grew:** certified LCAs in analytics roles (operations research, statistics,
+  data science / BI, quant) rose from 47,051 in FY2024 to 55,734 in FY2025, +18.5%. Read FY2025 as
+  an upper bound: its cases have had less time to be withdrawn.
+- **Consistent sponsors:** 477 employer groups had at least 10 certified analytics cases in both
+  FY2024 and FY2025.
+- **Many offers sit exactly at the prevailing wage:** in FY2025, about 35% of certified H-1B filings
+  (185,025 of the 536,249 that could be compared, all roles) offered exactly the prevailing wage.
+- **Job codes shift, so trends are partly labeling:** Amazon.com Services' certified cases rose from
+  14,249 in FY2024 to 15,192 in FY2025, yet its Operations Research cases fell from 1,283 to 541
+  and Statistics from 402 to 229, while Business Intelligence Analyst cases rose from 1,394 to 1,810.
+- **What these numbers are not:** an LCA shows an employer's intent to hire. It is not a hire or a
+  visa approval.
 
 ## How to run
 ```bash
