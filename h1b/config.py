@@ -88,6 +88,9 @@ TARGET_FAMILIES = sorted(f for f in set(SOC_FAMILIES.values()) if not f.endswith
 
 # Rollup of the analytics-flavored target families, reported alongside each family.
 ANALYTICS_LABEL = "Analytics (combined)"
+# Broader views offered in the app (h1b/publish.py): every target family, and every family.
+ALL_TARGET_LABEL = "All target roles"
+ALL_OCCUPATIONS_LABEL = "All occupations"
 ANALYTICS_COMBINED = [
     "Operations Research",
     "Statistics / Decision Science",

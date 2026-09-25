@@ -46,7 +46,7 @@ def test_every_page_runs_and_shows_the_footer(app):
 
 def test_find_sponsors_table_and_consistent_checkbox(app):
     table = app.dataframe[0].value
-    assert table.columns[:2].tolist() == ["parent_group", "cases"]
+    assert table.columns[:2].tolist() == ["display_name", "cases"]
     app.checkbox[0].check().run()
     assert not app.exception
     assert len(app.dataframe[0].value) <= len(table)

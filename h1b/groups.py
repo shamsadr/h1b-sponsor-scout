@@ -27,7 +27,7 @@ from h1b.config import (
     TITLE_WORDS,
 )
 
-OVERRIDE_COLS = ["action", "employer_norm", "parent_group", "note"]
+OVERRIDE_COLS = ["action", "employer_norm", "parent_group", "display_name", "note"]
 
 
 class _UnionFind:
@@ -74,13 +74,17 @@ def _mode_per_name(names: pd.Series, values: pd.Series) -> pd.Series:
     return counts.drop_duplicates("employer_norm").set_index("employer_norm")["v"].astype(str)
 
 
+def usable_feins(fein: pd.Series) -> pd.Series:
+    """FEINs with placeholders and malformed values replaced by NA."""
+    f = fein.astype("string").str.strip()
+    return f.where(f.str.match(FEIN_PATTERN).fillna(False) & ~f.isin(PLACEHOLDER_FEINS))
+
+
 def primary_feins(df: pd.DataFrame) -> pd.Series:
     """employer_norm -> its most common usable FEIN (ties: smallest FEIN)."""
     if "EMPLOYER_FEIN" not in df.columns:
         return pd.Series(dtype="object")
-    fein = df["EMPLOYER_FEIN"].astype("string").str.strip()
-    usable = fein.str.match(FEIN_PATTERN).fillna(False) & ~fein.isin(PLACEHOLDER_FEINS)
-    return _mode_per_name(df["employer_norm"], fein.where(usable))
+    return _mode_per_name(df["employer_norm"], usable_feins(df["EMPLOYER_FEIN"]))
 
 
 def primary_states(df: pd.DataFrame) -> pd.Series:
@@ -112,12 +116,13 @@ def load_overrides(path: Path | None) -> pd.DataFrame:
 
     merge: join employer_norm to every other row with the same parent_group label.
     split: give employer_norm no automatic edges (it stands alone, or joins parent_group).
+    display_name (optional): how the app shows that parent_group, e.g. 'Goldman Sachs'.
     """
     if path is None or not Path(path).exists():
         return pd.DataFrame(columns=OVERRIDE_COLS)
     ov = pd.read_csv(path, dtype=str).reindex(columns=OVERRIDE_COLS)
-    for c in ["action", "employer_norm", "parent_group"]:
-        ov[c] = ov[c].str.strip()
+    for c in ["action", "employer_norm", "parent_group", "display_name"]:
+        ov[c] = ov[c].astype("string").str.strip()  # a missing column comes in all-NA
     bad = ov[~ov["action"].isin({"merge", "split"})]
     if len(bad):
         raise ValueError(f"{path}: action must be 'merge' or 'split', got {bad['action'].tolist()}")
@@ -126,7 +131,19 @@ def load_overrides(path: Path | None) -> pd.DataFrame:
         raise ValueError(
             f"{path}: merge rows need a parent_group: {no_label['employer_norm'].tolist()}"
         )
+    names = ov.dropna(subset=["parent_group", "display_name"])
+    clash = names.groupby("parent_group")["display_name"].nunique()
+    if (clash > 1).any():
+        raise ValueError(
+            f"{path}: one parent_group has several display_names: {clash[clash > 1].index.tolist()}"
+        )
     return ov
+
+
+def override_display_names(overrides: pd.DataFrame) -> dict[str, str]:
+    """{parent_group label: display_name} from the overrides file."""
+    d = overrides.dropna(subset=["parent_group", "display_name"])
+    return dict(zip(d["parent_group"], d["display_name"], strict=True))
 
 
 def build_parent_groups(df: pd.DataFrame, overrides: pd.DataFrame | None = None) -> pd.DataFrame:

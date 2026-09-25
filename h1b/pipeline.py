@@ -26,7 +26,7 @@ from h1b.config import (
 )
 from h1b.groups import add_parent_group, build_parent_groups, load_overrides, merge_review
 from h1b.ingest import ingest, normalize_col, read_raw
-from h1b.publish import publish_app_data
+from h1b.publish import app_family_groups, publish_app_data
 from h1b.scorecard import (
     analysis_groups,
     consistent_sponsors,
@@ -125,7 +125,7 @@ def publish(
 ) -> dict[str, Path]:
     """Processed parquet -> slim precomputed tables for the Streamlit app."""
     df, parent_groups = load_grouped(processed_dir, overrides_path)
-    groups = analysis_groups(TARGET_FAMILIES)
+    groups = app_family_groups(sorted(df["soc_family"].unique()))
     return publish_app_data(df, parent_groups, groups, out_dir, overrides_path)
 
 

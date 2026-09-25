@@ -8,6 +8,7 @@ from h1b.groups import (
     looks_like_person_or_title,
     merge_review,
     name_key,
+    override_display_names,
     primary_feins,
 )
 
@@ -237,3 +238,22 @@ def test_merge_review_name_only_state_and_title_signals():
 )
 def test_looks_like_person_or_title(norm, expected):
     assert looks_like_person_or_title(norm) is expected
+
+
+def test_load_overrides_reads_display_names_and_rejects_two_per_group(tmp_path):
+    good = tmp_path / "ok.csv"
+    good.write_text(
+        "action,employer_norm,parent_group,display_name,note\n"
+        "merge,AMAZON COM SERVICES,AMAZON,Amazon,\n"
+        "merge,AMAZON WEB SERVICES,AMAZON,Amazon,\n"
+        "split,MY529,,,\n"
+    )
+    assert override_display_names(load_overrides(good)) == {"AMAZON": "Amazon"}
+    bad = tmp_path / "bad.csv"
+    bad.write_text(
+        "action,employer_norm,parent_group,display_name,note\n"
+        "merge,AMAZON COM SERVICES,AMAZON,Amazon,\n"
+        "merge,AMAZON WEB SERVICES,AMAZON,AWS,\n"
+    )
+    with pytest.raises(ValueError, match="display_name"):
+        load_overrides(bad)

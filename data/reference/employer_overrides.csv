@@ -1,49 +1,49 @@
-action,employer_norm,parent_group,note
-merge,AMAZON COM SERVICES,AMAZON,hiring brand Amazon (Twitch/Zappos/Whole Foods stay separate)
-merge,AMAZON WEB SERVICES,AMAZON,hiring brand Amazon
-merge,AMAZON DATA SERVICES,AMAZON,hiring brand Amazon
-merge,AMAZON DEVELOPMENT CENTER U S,AMAZON,hiring brand Amazon
-merge,AMAZON ADVERTISING,AMAZON,hiring brand Amazon
-merge,AMAZON PAYMENTS,AMAZON,hiring brand Amazon
-merge,AMAZON CAPITAL SERVICES,AMAZON,hiring brand Amazon
-merge,AMAZON RETAIL,AMAZON,hiring brand Amazon
-merge,AMAZON COM CA,AMAZON,hiring brand Amazon
-merge,AMAZON STUDIOS,AMAZON,hiring brand Amazon
-merge,GOLDMAN SACHS AND,GOLDMAN SACHS,hiring brand Goldman Sachs
-merge,GOLDMAN SACHS BANK USA,GOLDMAN SACHS,hiring brand Goldman Sachs
-merge,GOLDMAN SACHS SERVICES,GOLDMAN SACHS,hiring brand Goldman Sachs
-merge,GOLDMAN SACHS WEALTH SERVICES L P,GOLDMAN SACHS,hiring brand Goldman Sachs
-merge,GOLDMAN SACHS TRUST,GOLDMAN SACHS,hiring brand Goldman Sachs
-merge,DELOITTE,DELOITTE,hiring brand Deloitte
-merge,DELOITTE CONSULTING,DELOITTE,hiring brand Deloitte
-merge,DELOITTE AND TOUCHE,DELOITTE,hiring brand Deloitte
-merge,DELOITTE TAX,DELOITTE,hiring brand Deloitte
-merge,DELOITTE SERVICES,DELOITTE,hiring brand Deloitte
-merge,DELOITTE TRANSACTIONS AND BUSINESS ANALYTICS,DELOITTE,hiring brand Deloitte
-merge,DELOITTE TOUCHE TOHMATSU SERVICES,DELOITTE,hiring brand Deloitte
-merge,DELOITTE CORPORATE FINANCE,DELOITTE,hiring brand Deloitte
-merge,DELOITTE FINANCIAL ADVISORY SERVICES,DELOITTE,hiring brand Deloitte
-merge,CAPITAL ONE NATIONAL ASSOCIATION,CAPITAL ONE,hiring brand Capital One
-merge,CAPITAL ONE SERVICES,CAPITAL ONE,hiring brand Capital One
-merge,ERNST AND YOUNG U S,EY,hiring brand EY
-merge,ERNST AND YOUNG INFRASTRUCTURE ADVISORS,EY,hiring brand EY
-merge,ERNST AND YOUNG EY GUAM,EY,hiring brand EY
-merge,EY GOVERNMENT SERVICES,EY,hiring brand EY
-merge,EY INTERNATIONAL SERVICES,EY,hiring brand EY
-merge,RELX,RELX / LEXISNEXIS,FEIN 52-1471842 is cut by the unrelated-names cap
-merge,LEXISNEXIS USA,RELX / LEXISNEXIS,same FEIN as RELX
-merge,REED ELSEVIER TECHNOLOGY SERVICES,RELX / LEXISNEXIS,same FEIN as RELX
-split,MY529,,Utah college savings plan; shares the State of Utah FEIN 87-6000545
-merge,BANK OF AMERICA N A,BANK OF AMERICA,hiring brand Bank of America
-merge,BOFA SECURITIES,BANK OF AMERICA,hiring brand Bank of America
-merge,CITIBANK N A,CITI,hiring brand Citi
-merge,CITIGROUP GLOBAL MARKETS,CITI,hiring brand Citi
-split,TALEBNEJAD,,1 row on Bank of America N.A.'s FEIN 94-1687665
-split,IRIS CAPITAL,,shares FEIN 93-4004615 with Iris Software and Services; different company
-merge,CITIGROUP TECHNOLOGY,CITI,hiring brand Citi
-merge,CITIGROUP ENERGY,CITI,hiring brand Citi
-merge,CITIMORTGAGE,CITI,hiring brand Citi
-merge,CITI FUND SERVICES OHIO,CITI,hiring brand Citi
-merge,CITI VENTURES,CITI,hiring brand Citi
-merge,MERRILL LYNCH,BANK OF AMERICA,BofA subsidiary since 2009; hires via BofA careers
-merge,MERRILL LYNCH COMMODITIES,BANK OF AMERICA,BofA subsidiary since 2009; hires via BofA careers
+action,employer_norm,parent_group,display_name,note
+merge,AMAZON COM SERVICES,AMAZON,Amazon,hiring brand Amazon (Twitch/Zappos/Whole Foods stay separate)
+merge,AMAZON WEB SERVICES,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON DATA SERVICES,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON DEVELOPMENT CENTER U S,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON ADVERTISING,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON PAYMENTS,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON CAPITAL SERVICES,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON RETAIL,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON COM CA,AMAZON,Amazon,hiring brand Amazon
+merge,AMAZON STUDIOS,AMAZON,Amazon,hiring brand Amazon
+merge,GOLDMAN SACHS AND,GOLDMAN SACHS,Goldman Sachs,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS BANK USA,GOLDMAN SACHS,Goldman Sachs,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS SERVICES,GOLDMAN SACHS,Goldman Sachs,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS WEALTH SERVICES L P,GOLDMAN SACHS,Goldman Sachs,hiring brand Goldman Sachs
+merge,GOLDMAN SACHS TRUST,GOLDMAN SACHS,Goldman Sachs,hiring brand Goldman Sachs
+merge,DELOITTE,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE CONSULTING,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE AND TOUCHE,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE TAX,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE SERVICES,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE TRANSACTIONS AND BUSINESS ANALYTICS,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE TOUCHE TOHMATSU SERVICES,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE CORPORATE FINANCE,DELOITTE,Deloitte,hiring brand Deloitte
+merge,DELOITTE FINANCIAL ADVISORY SERVICES,DELOITTE,Deloitte,hiring brand Deloitte
+merge,CAPITAL ONE NATIONAL ASSOCIATION,CAPITAL ONE,Capital One,hiring brand Capital One
+merge,CAPITAL ONE SERVICES,CAPITAL ONE,Capital One,hiring brand Capital One
+merge,ERNST AND YOUNG U S,EY,EY,hiring brand EY
+merge,ERNST AND YOUNG INFRASTRUCTURE ADVISORS,EY,EY,hiring brand EY
+merge,ERNST AND YOUNG EY GUAM,EY,EY,hiring brand EY
+merge,EY GOVERNMENT SERVICES,EY,EY,hiring brand EY
+merge,EY INTERNATIONAL SERVICES,EY,EY,hiring brand EY
+merge,RELX,RELX / LEXISNEXIS,RELX,FEIN 52-1471842 is cut by the unrelated-names cap
+merge,LEXISNEXIS USA,RELX / LEXISNEXIS,RELX,same FEIN as RELX
+merge,REED ELSEVIER TECHNOLOGY SERVICES,RELX / LEXISNEXIS,RELX,same FEIN as RELX
+split,MY529,,,Utah college savings plan; shares the State of Utah FEIN 87-6000545
+merge,BANK OF AMERICA N A,BANK OF AMERICA,Bank of America,hiring brand Bank of America
+merge,BOFA SECURITIES,BANK OF AMERICA,Bank of America,hiring brand Bank of America
+merge,CITIBANK N A,CITI,Citi,hiring brand Citi
+merge,CITIGROUP GLOBAL MARKETS,CITI,Citi,hiring brand Citi
+split,TALEBNEJAD,,,1 row on Bank of America N.A.'s FEIN 94-1687665
+split,IRIS CAPITAL,,,shares FEIN 93-4004615 with Iris Software and Services; different company
+merge,CITIGROUP TECHNOLOGY,CITI,Citi,hiring brand Citi
+merge,CITIGROUP ENERGY,CITI,Citi,hiring brand Citi
+merge,CITIMORTGAGE,CITI,Citi,hiring brand Citi
+merge,CITI FUND SERVICES OHIO,CITI,Citi,hiring brand Citi
+merge,CITI VENTURES,CITI,Citi,hiring brand Citi
+merge,MERRILL LYNCH,BANK OF AMERICA,Bank of America,BofA subsidiary since 2009; hires via BofA careers
+merge,MERRILL LYNCH COMMODITIES,BANK OF AMERICA,Bank of America,BofA subsidiary since 2009; hires via BofA careers

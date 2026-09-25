@@ -286,3 +286,27 @@ families). It took about 1 min 50 s, most of it building the family × state sco
 Total 2.62 MB. On Find sponsors (Analytics (combined), all states, at least 5 cases) there are 2,641
 employer groups, and 2,449 of them have certified cases in both years ("Consistent sponsors
 only"). For Texas with the same settings: 326 consistent groups.
+
+## 2026-09-25 — App data v2 (UX spec step 2)
+
+`publish` on FY2024 + FY2025 with the new role groups ("All target roles", "All occupations"),
+per-year case columns, filing-FEIN counts, display names, and lookup tables for every group.
+
+| File | Before (bytes) | After (bytes) |
+|---|---|---|
+| sponsors.parquet | 1,076,957 | 6,238,228 |
+| groups.parquet (new) | — | 1,900,469 |
+| employer_breakdown.parquet | 374,738 | 1,356,562 |
+| employer_levels.parquet | 350,057 | 1,242,241 |
+| members.parquet | 817,528 | 2,451,653 |
+| family_trends.csv | 546 | 546 |
+| meta.json | 249 | 290 |
+| **Total** | **2.62 MB** | **13.19 MB** |
+
+- "All occupations" is published in full (no minimum-cases cap); the total stays under 20 MB.
+- `publish` took 5 min 59 s, up from about 1 min 50 s.
+- `meta.json`: 88,665 names, 84,911 groups, 1,118,768 source rows, 156,586 target-family rows.
+- Display names: all 84,911 are unique; 38 look-alike names (same letters and digits ignoring
+  case and punctuation) got a state or FEIN suffix. The separate employer normalized to `CITI`
+  shows as "CITI Inc", next to the "Citi" brand group.
+- Analytics (combined), all states: Amazon 7,411 certified cases (4,021 in FY2024, 3,390 in FY2025).

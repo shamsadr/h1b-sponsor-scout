@@ -4,8 +4,10 @@
     2025
   ],
   "built_at": "2026-09-25",
-  "git_commit": "02a8854-dirty",
+  "git_commit": "853eea9-dirty",
   "source_rows": 1118768,
   "target_rows": 156586,
-  "overrides_sha256": "20c84dda0ed8de986ab0d6d4e60043540dadcc78b1f917bb268cf3287a3dea5e"
+  "n_names": 88665,
+  "n_groups": 84911,
+  "overrides_sha256": "d8131d52cbf1c155dbf82316c61538b04b88f2ec5a9643ba5595149ffe033dc7"
 }
