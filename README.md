@@ -26,20 +26,46 @@ pytest -q                               # tests
 With real data (download from DOL OFLC "Performance Data" → Disclosure Data → LCA):
 ```bash
 python -m h1b.pipeline inspect data/raw/LCA_Disclosure_Data_FY2025_Q4.xlsx
-python -m h1b.pipeline run --input data/raw/LCA_Disclosure_Data_FY2025_Q4.xlsx
+python -m h1b.pipeline run --input data/raw/LCA_Disclosure_Data_FY2025_Q*.xlsx
 ```
+Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share one year).
 
 ## Scorecard columns
+Positions, wages and levels use strict `CASE_STATUS == 'Certified'` rows only.
+
 | column | meaning |
 |---|---|
+| cases | certified LCAs in target role families |
 | positions | certified LCA worker positions in target role families |
 | new_hire_positions | positions flagged new employment or change of employer |
 | years_active | number of fiscal years with ≥1 certified LCA |
-| median_wage | median annualized offered wage (full-time, outliers excluded) |
-| median_wage_premium | offered wage ÷ prevailing wage − 1 |
+| median_wage_floor | median annualized offered wage from `WAGE_RATE_OF_PAY_FROM` (full-time, outliers excluded) |
+| share_above_pw | share of those cases with offered wage more than 1% above the prevailing wage |
+| range_share | share of certified cases with a filled-in `WAGE_RATE_OF_PAY_TO` |
+| n_leveled | certified cases with a wage level I–IV (the denominator for level2plus_share) |
 | level2plus_share | share of leveled cases at wage Level II–IV (these get more lottery entries from FY2027) |
-| denial_rate | Denied ÷ (Certified + Denied) |
-| h1b_dependent / willful_violator | any LCA flagged Y |
+| denial_rate | Denied ÷ (Certified + Certified-Withdrawn + Denied) |
+| withdrawn_rate | (Withdrawn + Certified-Withdrawn) ÷ all rows, any status |
+| h1b_dependent_share | share of certified cases where the employer checked H-1B dependent |
+| willful_violator_count | number of certified cases where the employer checked willful violator |
+
+## Methodology decisions
+- **Quarterly files are not cumulative.** The FY2025 Q4 file's `DECISION_DATE` runs only
+  2025-07-01 to 2025-09-30, so a fiscal year needs all its quarterly files. `run` groups
+  input files by fiscal year, concatenates them, and dedupes on `CASE_NUMBER` into one
+  `lca_fy{fy}.parquet`.
+- **Only strict `Certified` counts.** `Withdrawn` and `Certified - Withdrawn` cases are
+  reported separately as `withdrawn_rate` because an LCA that was withdrawn is weaker
+  evidence of intent to hire; `denial_rate` is kept as before.
+- **`FROM` is the pay floor; `TO` is filled inconsistently.** Some employers always fill
+  `WAGE_RATE_OF_PAY_TO` and others never do, so wages use `FROM` (`median_wage_floor`) and
+  `range_share` shows how often a range is given.
+- **`share_above_pw` replaces the median premium.** Many employers pay exactly the
+  prevailing wage, so the median premium collapses to 0 and hides differences; the share
+  of cases paying more than 1% above the prevailing wage separates them.
+- **Flags are self-attestations, not employer labels.** `H_1B_DEPENDENT` and
+  `WILLFUL_VIOLATOR` are answered on each filing and can differ between an employer's
+  cases, so they are reported as a share or a count instead of a yes/no for the employer.
 
 ## Limitations
 - An LCA is an employer's intent to hire. It is not a petition, an approval, or a hire.
