@@ -249,6 +249,36 @@ def load_curated_sets(path: Path, known_groups) -> dict[str, list[str]]:
     return out
 
 
+TARGET_FAMILIES = FAMILY_ORDER[1:8]  # the seven target families (no rollups)
+
+
+def plural(n: int, singular: str, plural_form: str | None = None) -> str:
+    """plural(1, 'legal entity', 'legal entities') -> '1 legal entity'; 3 -> '3 legal entities'."""
+    word = singular if n == 1 else (plural_form or singular + "s")
+    return f"{n:,} {word}"
+
+
+def curated_table(
+    sponsors: pd.DataFrame, names: pd.Series, set_members: list[str], family: str
+) -> pd.DataFrame:
+    """One row per member of a curated set, for `family` across all states.
+
+    Sorted by certified LCAs (largest first); members with no LCAs in `family` come last
+    (alphabetical), with 0 LCAs, no metrics and note 'No <family> filings'.
+    """
+    d = sponsors[(sponsors["family"] == family) & (sponsors["state"] == STATE_ALL)]
+    d = d.set_index("parent_group")
+    out = pd.DataFrame({"parent_group": list(dict.fromkeys(set_members))})
+    out = out.join(d.drop(columns=["family", "state", "display_name"]), on="parent_group")
+    out.insert(1, "display_name", out["parent_group"].map(names).fillna(out["parent_group"]))
+    counts = ["cases"] + year_columns(d)
+    out[counts] = out[counts].fillna(0).astype(int)
+    out["note"] = out["cases"].eq(0).map({True: f"No {family} filings", False: ""})
+    out["_has"] = out["cases"] > 0
+    out = out.sort_values(["_has", "cases", "display_name"], ascending=[False, False, True])
+    return out.drop(columns="_has").reset_index(drop=True)
+
+
 def lookup_options(
     sponsors: pd.DataFrame, groups: pd.DataFrame, members: pd.DataFrame, family: str
 ) -> tuple[list[str], dict[str, str]]:

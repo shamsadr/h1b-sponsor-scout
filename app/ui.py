@@ -73,8 +73,8 @@ def count_col(label: str, help: str | None = None):
     return st.column_config.NumberColumn(label, format=COUNT_FORMAT, help=help)
 
 
-def text_col(label: str, help: str | None = None, pinned: bool = False):
-    return st.column_config.TextColumn(label, help=help, pinned=pinned)
+def text_col(label: str, help: str | None = None, pinned: bool = False, width=None):
+    return st.column_config.TextColumn(label, help=help, pinned=pinned, width=width)
 
 
 NONE_CAPTION = "None = not enough full-time or leveled LCAs to compute that value."
@@ -116,11 +116,60 @@ def sync_url() -> None:
         del st.query_params["employer"]
 
 
-def open_employer(group: str) -> None:
-    """Show `group` in Employer lookup (click-through from a table row)."""
+def open_employer(group: str, switch: bool = True) -> None:
+    """Show `group` in Employer lookup (click-through from a table row).
+
+    switch=False when already on Employer lookup (call it before the employer selectbox).
+    """
     st.session_state["employer"] = group
     st.session_state["lookup_choice"] = group
-    st.switch_page("views/employer_lookup.py")
+    if switch:
+        st.switch_page("views/employer_lookup.py")
+
+
+def sponsor_column_config(year_cols: list[str]) -> dict:
+    """Headers, units, formats and help text for every sponsor column."""
+    config = {
+        "display_name": text_col(
+            "Employer",
+            "Brand-level group; see Employer lookup for legal entities",
+            pinned=True,
+            width="medium",
+        ),
+        "cases": count_col(
+            "Certified LCAs",
+            "Certified labor condition applications, i.e. intent to hire, not hires",
+        ),
+        "median_wage_floor": money_col(
+            "Median offered wage ($/yr)",
+            "Median lower bound of the offered pay range, annualized",
+        ),
+        "pct_above_pw": pct_col(
+            "Pays above prevailing wage",
+            "Share of LCAs offering >1% above the DOL prevailing wage",
+        ),
+        "level2plus_pct": pct_col(
+            "Level II+ share",
+            "Share at wage Level II–IV. From FY2027 these get more lottery entries",
+        ),
+        "withdrawn_pct": pct_col(
+            "Withdrawn",
+            "Share of all filings later withdrawn. The latest year is low because its LCAs "
+            "have had less time to be withdrawn.",
+        ),
+        "n_leveled": count_col("LCAs with a wage level", "Denominator for the Level II+ share"),
+        "top_soc_title": text_col("Top SOC title", "Most common occupation code title"),
+        "n_entities": count_col("Filing names", "Employer names in this group that filed here"),
+        "n_feins": count_col(
+            "Legal entities (FEINs)", "Distinct employer tax IDs (FEINs) on these LCAs"
+        ),
+        "positions": count_col(
+            "Worker positions", "Positions requested on these LCAs; one LCA can cover many"
+        ),
+    }
+    for col in year_cols:
+        config[col] = count_col(col.replace("cases_", "").upper(), "Certified LCAs by fiscal year")
+    return config
 
 
 def reset_filters() -> None:
@@ -215,8 +264,52 @@ def pct_change_chart(d: pd.DataFrame, reference: str, first: int, last: int) -> 
     return (bars + labels + rule).properties(height=alt.Step(26))
 
 
+CONTEXT_GRAY = REFERENCE_GRAY
+
+
+def family_totals_chart(by: pd.DataFrame, target_families: list[str]) -> alt.Chart:
+    """One bar per role family (all loaded years), target families blue, others gray.
+
+    by: rows of soc_family, fiscal_year, cases. Zero rows are dropped; sorted by total.
+    """
+    wide = by.pivot_table(
+        index="soc_family", columns="fiscal_year", values="cases", aggfunc="sum", fill_value=0
+    )
+    years = sorted(wide.columns)
+    d = pd.DataFrame({"soc_family": wide.index, "total": wide.sum(axis=1).to_numpy()})
+    for y in years:
+        d[f"fy{y}"] = wide[y].to_numpy()
+    d = d[d["total"] > 0]
+    d["kind"] = (
+        d["soc_family"]
+        .isin(target_families)
+        .map({True: "Target role family", False: "Other roles (context)"})
+    )
+    order = d.sort_values("total", ascending=False)["soc_family"].tolist()
+    return (
+        alt.Chart(d)
+        .mark_bar(cornerRadiusEnd=4, height={"band": 0.7})
+        .encode(
+            y=alt.Y("soc_family:N", sort=order, title=None, axis=alt.Axis(labelLimit=260)),
+            x=alt.X("total:Q", title="Certified LCAs"),
+            color=alt.Color(
+                "kind:N",
+                scale=alt.Scale(
+                    domain=["Target role family", "Other roles (context)"],
+                    range=[BLUE_STEPS[4], CONTEXT_GRAY],
+                ),
+                legend=alt.Legend(title=None, orient="top"),
+            ),
+            tooltip=[alt.Tooltip("soc_family:N", title="Role family")]
+            + [alt.Tooltip("total:Q", title="Certified LCAs", format=",")]
+            + [alt.Tooltip(f"fy{y}:Q", title=f"FY{y}", format=",") for y in years],
+        )
+        .properties(height=alt.Step(24))
+    )
+
+
 def level_chart(levels: pd.DataFrame) -> alt.Chart:
-    """Certified LCAs by wage level I-IV plus 'Not leveled'."""
+    """Share of certified LCAs by wage level I-IV plus 'Not leveled' (counts on hover)."""
     order = list(LEVEL_COLORS)
     d = levels.groupby("level", as_index=False)["cases"].sum()
     d["share"] = d["cases"] / d["cases"].sum()
@@ -225,7 +318,7 @@ def level_chart(levels: pd.DataFrame) -> alt.Chart:
         .mark_bar(cornerRadiusEnd=4)
         .encode(
             x=alt.X("level:N", sort=order, title="Wage level", axis=alt.Axis(labelAngle=0)),
-            y=alt.Y("cases:Q", title="Certified LCAs"),
+            y=alt.Y("share:Q", title="Share", axis=alt.Axis(format="%")),
             color=alt.Color(
                 "level:N",
                 scale=alt.Scale(domain=order, range=list(LEVEL_COLORS.values())),
@@ -233,8 +326,8 @@ def level_chart(levels: pd.DataFrame) -> alt.Chart:
             ),
             tooltip=[
                 alt.Tooltip("level:N", title="Wage level"),
-                alt.Tooltip("cases:Q", title="Certified LCAs", format=","),
                 alt.Tooltip("share:Q", title="Share", format=".0%"),
+                alt.Tooltip("cases:Q", title="Certified LCAs", format=","),
             ],
         )
         .properties(height=260)

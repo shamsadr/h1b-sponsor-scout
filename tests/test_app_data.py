@@ -17,6 +17,7 @@ from app_data import (
     STATE_NAMES,
     as_percent,
     consistent_definition,
+    curated_table,
     encode_query,
     filter_sponsors,
     footer_text,
@@ -25,6 +26,7 @@ from app_data import (
     parse_query,
     pct_change_table,
     plain,
+    plural,
     readme_bullet,
     readme_sections,
     resolve_option,
@@ -278,3 +280,50 @@ def test_pct_change_table_sorts_and_leaves_zero_base_undefined():
 
 def test_plain_drops_code_and_bold_markers():
     assert plain("**Bold.** Use `withdrawn_rate` here") == "Bold. Use withdrawn_rate here"
+
+
+def test_curated_table_sorts_by_lcas_with_zero_members_last():
+    sponsors = pd.DataFrame(
+        {
+            "family": ["Quant / Finance"] * 3 + ["Operations Research"],
+            "state": [STATE_ALL] * 4,
+            "parent_group": ["CITI", "GOLDMAN SACHS", "UBS SECURITIES", "WALMART"],
+            "display_name": ["Citi", "Goldman Sachs", "UBS", "Walmart"],
+            "cases": [300, 1200, 60, 40],
+            "cases_fy2024": [100, 600, 30, 20],
+            "cases_fy2025": [200, 600, 30, 20],
+            "median_wage_floor": [150000.0, 110000.0, 140000.0, 120000.0],
+        }
+    )
+    names = pd.Series(
+        {
+            "CITI": "Citi",
+            "GOLDMAN SACHS": "Goldman Sachs",
+            "UBS SECURITIES": "UBS",
+            "WALMART": "Walmart",
+            "ACME": "Acme",
+        }
+    )
+    members = ["WALMART", "UBS SECURITIES", "GOLDMAN SACHS", "ACME", "CITI"]
+    out = curated_table(sponsors, names, members, "Quant / Finance")
+    assert out["display_name"].tolist() == ["Goldman Sachs", "Citi", "UBS", "Acme", "Walmart"]
+    zero = out[out["cases"] == 0]
+    assert zero["display_name"].tolist() == ["Acme", "Walmart"]  # last, alphabetical
+    assert (zero["note"] == "No Quant / Finance filings").all()
+    assert zero["median_wage_floor"].isna().all()  # no metrics for them
+    assert (out.loc[out["cases"] > 0, "note"] == "").all()
+    assert out.loc[0, "cases_fy2024"] == 600 and zero["cases_fy2025"].eq(0).all()
+
+
+@pytest.mark.parametrize(
+    "n, singular, plural_form, expected",
+    [
+        (1, "legal entity", "legal entities", "1 legal entity"),
+        (2, "legal entity", "legal entities", "2 legal entities"),
+        (0, "filing name", None, "0 filing names"),
+        (1, "filing name", None, "1 filing name"),
+        (1200, "filing name", None, "1,200 filing names"),
+    ],
+)
+def test_plural(n, singular, plural_form, expected):
+    assert plural(n, singular, plural_form) == expected

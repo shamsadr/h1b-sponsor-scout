@@ -81,12 +81,15 @@ Pages:
   curated sets (`data/reference/curated_sets.csv`, keyed on `parent_group`): Big Tech, Banks &
   Quant, Consulting (Big 4 / MBB), Analytics consultancies, Manufacturing / EV and Retail &
   Consumer. **Curated rule:** a set lists only employers with at least 25 certified target-role
-  LCAs in FY2024–FY2025 (a test checks this).
-  A searchable list of employers also matches legal-entity names, so typing "Merrill" finds Bank
-  of America. A summary card (certified LCAs, years active, median offered wage, Level II+ share)
-  comes first, then certified LCAs by role family and year, the wage-level mix and the member
-  names. Selecting a row in Find sponsors opens that employer here, and `?employer=<display
-  name>` links straight to it.
+  LCAs in FY2024–FY2025 (a test checks this). Picking a set shows a comparison table of its members
+  in the current role family (members with no filings there come last, grayed), and selecting a
+  row opens that employer. A searchable list of employers also matches legal-entity names, so
+  typing "Merrill" finds Bank of America. The summary card shows certified LCAs in the role
+  family and in all roles, years active, median offered wage and Level II+ share. Below it are
+  LCAs by role family (target families blue, other roles gray) and the wage-level mix as
+  percentages, with the filing names that make up the group in a "How this employer group was
+  built (technical)" section. Selecting a row in Find sponsors opens that employer here, and
+  `?employer=<display name>` links straight to it.
 - **Trends:** % change in certified LCAs FY2024 → FY2025 per role family (sorted, with Analytics
   (combined) as a gray reference bar), certified LCAs per family and year, and the SOC-substitution
   and withdrawal caveats as short summaries with details on demand.

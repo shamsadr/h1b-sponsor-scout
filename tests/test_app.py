@@ -98,8 +98,17 @@ def test_quick_pick_opens_a_summary_card(app):
     assert not app.exception
     assert app.subheader[0].value == "Acme Analytics"
     labels = [m.label for m in app.metric]
-    assert labels == ["Certified LCAs", "Years active", "Median offered wage", "Level II+ share"]
-    assert app.metric[2].value.startswith("$")
+    assert labels == [
+        "Certified LCAs in Analytics (combined)",
+        "Certified LCAs — all roles",
+        "Years active",
+        "Median offered wage",
+        "Level II+ share",
+    ]
+    assert app.metric[3].value.startswith("$")
+    card = next(c.value for c in app.caption if "filing name" in c.value)
+    assert "1 filing name · 1 legal entity (FEINs)" in card  # singular, not '1 filing names'
+    assert [e.label for e in app.expander][-1] == "How this employer group was built (technical)"
     assert app.query_params["employer"] == ["Acme Analytics"]
     app.switch_page("views/trends.py").run()
     assert "employer" not in app.query_params  # only Employer lookup keeps it

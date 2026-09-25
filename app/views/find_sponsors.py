@@ -19,13 +19,10 @@ from app_data import (
 )
 from ui import (
     NONE_CAPTION,
-    count_col,
     data,
-    money_col,
     open_employer,
-    pct_col,
     reset_filters,
-    text_col,
+    sponsor_column_config,
 )
 
 DATA = data()
@@ -42,50 +39,6 @@ def family_label(family: str) -> str:
     if family == ALL_OCCUPATIONS_LABEL:
         return "All occupations (any H-1B role) · broad view"
     return family
-
-
-def column_config(year_cols: list[str]) -> dict:
-    """Headers, units, formats and help text for every sponsor column."""
-    config = {
-        "display_name": text_col(
-            "Employer",
-            "Brand-level group; see Employer lookup for legal entities",
-            pinned=True,
-        ),
-        "cases": count_col(
-            "Certified LCAs",
-            "Certified labor condition applications, i.e. intent to hire, not hires",
-        ),
-        "median_wage_floor": money_col(
-            "Median offered wage ($/yr)",
-            "Median lower bound of the offered pay range, annualized",
-        ),
-        "pct_above_pw": pct_col(
-            "Pays above prevailing wage",
-            "Share of LCAs offering >1% above the DOL prevailing wage",
-        ),
-        "level2plus_pct": pct_col(
-            "Level II+ share",
-            "Share at wage Level II–IV. From FY2027 these get more lottery entries",
-        ),
-        "withdrawn_pct": pct_col(
-            "Withdrawn",
-            "Share of all filings later withdrawn. The latest year is low because its LCAs "
-            "have had less time to be withdrawn.",
-        ),
-        "n_leveled": count_col("LCAs with a wage level", "Denominator for the Level II+ share"),
-        "top_soc_title": text_col("Top SOC title", "Most common occupation code title"),
-        "n_entities": count_col("Filing names", "Employer names in this group that filed here"),
-        "n_feins": count_col(
-            "Legal entities (FEINs)", "Distinct employer tax IDs (FEINs) on these LCAs"
-        ),
-        "positions": count_col(
-            "Worker positions", "Positions requested on these LCAs; one LCA can cover many"
-        ),
-    }
-    for col in year_cols:
-        config[col] = count_col(col.replace("cases_", "").upper(), "Certified LCAs by fiscal year")
-    return config
 
 
 families = [f for f in FAMILY_ORDER if f in set(SPONSORS["family"])]
@@ -130,7 +83,7 @@ else:
         hide_index=True,
         width="stretch",
         column_order=cols,
-        column_config=column_config(years),
+        column_config=sponsor_column_config(years),
         height=TABLE_HEIGHT,
         on_select="rerun",
         selection_mode="single-row",
