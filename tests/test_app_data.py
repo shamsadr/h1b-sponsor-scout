@@ -23,6 +23,8 @@ from app_data import (
     load_curated_sets,
     lookup_options,
     parse_query,
+    pct_change_table,
+    plain,
     readme_bullet,
     readme_sections,
     resolve_option,
@@ -256,3 +258,23 @@ def test_every_curated_set_entry_matches_an_existing_group():
     missing = sorted(set(curated["parent_group"]) - groups)
     assert not missing, missing
     assert not curated.duplicated(["set_name", "parent_group"]).any()
+
+
+def test_pct_change_table_sorts_and_leaves_zero_base_undefined():
+    trends = pd.DataFrame(
+        {
+            "family": ["A", "A", "B", "B", "C", "C"],
+            "fiscal_year": [2024, 2025] * 3,
+            "cases": [100, 135, 200, 180, 0, 5],
+        }
+    )
+    out = pct_change_table(trends)
+    assert out["family"].tolist()[:2] == ["A", "B"]  # +35% before -10%
+    assert out.loc[0, "pct_change"] == pytest.approx(0.35)
+    assert out.loc[1, "pct_change"] == pytest.approx(-0.10)
+    assert pd.isna(out.set_index("family").loc["C", "pct_change"])  # no FY2024 base
+    assert (out.loc[0, "first"], out.loc[0, "last"]) == (100, 135)
+
+
+def test_plain_drops_code_and_bold_markers():
+    assert plain("**Bold.** Use `withdrawn_rate` here") == "Bold. Use withdrawn_rate here"

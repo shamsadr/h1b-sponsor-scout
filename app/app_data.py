@@ -318,6 +318,25 @@ def readme_sections(headings: list[str], text: str | None = None) -> dict[str, s
     return {h: found[h] for h in headings}
 
 
+def pct_change_table(trends: pd.DataFrame) -> pd.DataFrame:
+    """Certified LCAs in the first and last loaded year per family, and the % change.
+
+    Columns: family, first, last, pct_change (e.g. 0.351 for +35.1%); largest change first.
+    """
+    years = sorted(trends["fiscal_year"].unique())
+    wide = trends.pivot_table(index="family", columns="fiscal_year", values="cases", aggfunc="sum")
+    out = pd.DataFrame(
+        {"first": wide[years[0]], "last": wide[years[-1]]}, index=wide.index
+    ).reset_index()
+    out["pct_change"] = (out["last"] - out["first"]) / out["first"].where(out["first"] > 0)
+    return out.sort_values(["pct_change", "family"], ascending=[False, True]).reset_index(drop=True)
+
+
+def plain(markdown: str) -> str:
+    """README text without markdown code and bold markers, for plain-language boxes."""
+    return markdown.replace("`", "").replace("**", "")
+
+
 def readme_bullet(bold_start: str, text: str | None = None) -> str:
     """The README bullet that starts with '- **<bold_start>', joined into one paragraph."""
     text = README.read_text() if text is None else text

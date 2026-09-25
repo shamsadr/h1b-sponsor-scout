@@ -87,7 +87,9 @@ Pages:
   comes first, then certified LCAs by role family and year, the wage-level mix and the member
   names. Selecting a row in Find sponsors opens that employer here, and `?employer=<display
   name>` links straight to it.
-- **Trends:** certified cases per family and year, with the SOC-substitution and withdrawal caveats.
+- **Trends:** % change in certified LCAs FY2024 → FY2025 per role family (sorted, with Analytics
+  (combined) as a gray reference bar), certified LCAs per family and year, and the SOC-substitution
+  and withdrawal caveats as short summaries with details on demand.
 - **Methodology & limitations:** rendered from this README.
 
 `publish` precomputes the scorecard for every role group × worksite state (plus all states)
@@ -207,19 +209,19 @@ are the connected components, and their label is the `parent_group` column.
   therefore counts once, as an FY2024 case with a withdrawn status. In our data 8,662 cases
   (1,169 in target families) were recorded this way.
 - **Withdrawals are right-censored in the latest year.** DOL records a withdrawal in the file of
-  the year it happens, so cases first seen in the newest loaded year have had no time to be
-  withdrawn. Among cases first seen in FY2024, 9.0% ended up withdrawn (`Withdrawn` or
+  the year it happens, so LCAs first seen in the newest loaded year have had no time to be
+  withdrawn. Among LCAs first seen in FY2024, 9.0% ended up withdrawn (`Withdrawn` or
   `Certified - Withdrawn`), against 5.4% of those first seen in FY2025, and all 8,662 FY2024
-  cases re-recorded in FY2025 are `Certified - Withdrawn`. Compare `withdrawn_rate` across years
+  LCAs re-recorded in FY2025 are `Certified - Withdrawn`. Compare `withdrawn_rate` across years
   only once the later year's data is complete, and read the latest year's certified counts as an
   upper bound.
 - **Employers substitute SOC codes, so family trends are partly classification.** Amazon.com
-  Services had 14,249 certified cases in FY2024 and 15,192 in FY2025. Its Operations Research
-  (15-2031) cases fell from 1,283 to 541 and Statistics (15-2041) from 402 to 229, while
+  Services had 14,249 certified LCAs in FY2024 and 15,192 in FY2025. Its Operations Research
+  (15-2031) LCAs fell from 1,283 to 541 and Statistics (15-2041) from 402 to 229, while
   Business Intelligence Analysts (15-2051, Data Science / BI) rose from 1,394 to 1,810 and Project
   Management Specialists (13-1082) from 21 to 235. Moves among the four families in
   "Analytics (combined)" net out of that rollup, so use it alongside the single-family trends
-  (for Amazon the rollup went from 3,118 to 2,682 cases).
+  (for Amazon the rollup went from 3,118 to 2,682 LCAs).
 
 ## Reports
 Written to `reports/` by `run` and `scorecard` (git-ignored, regenerate any time).

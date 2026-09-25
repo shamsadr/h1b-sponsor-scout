@@ -160,3 +160,13 @@ def test_filters_persist_across_pages(app):
     app.switch_page("views/find_sponsors.py").run()
     assert app.selectbox[0].value == "Operations Research"
     assert (app.select_slider[0].value, app.checkbox[0].value) == (3, True)
+
+
+def test_trends_defaults_and_plain_caveats(app):
+    app.switch_page("views/trends.py").run()
+    assert not app.exception
+    picked = app.multiselect[0].value
+    assert len(picked) == 7 and "Analytics (combined)" not in picked  # the 7 target families
+    assert [e.label for e in app.expander].count("Details") == 2
+    for box in app.markdown:
+        assert "`" not in box.value  # caveats in plain language, no code formatting

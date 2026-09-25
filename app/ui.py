@@ -167,6 +167,54 @@ def cases_by_year_chart(df: pd.DataFrame, category: str) -> alt.Chart:
     )
 
 
+REFERENCE_GRAY = "#898781"  # muted ink: marks a reference bar, not a data series
+
+
+def pct_change_chart(d: pd.DataFrame, reference: str, first: int, last: int) -> alt.Chart:
+    """Horizontal bars of % change per family; `reference` is gray and labelled as such.
+
+    Families with no LCAs in the first year have no % change and are left out.
+    """
+    d = d.dropna(subset=["pct_change"])
+    d = d.assign(
+        label=d["family"].where(d["family"] != reference, reference + " · reference"),
+        kind=(d["family"] == reference).map({True: "Reference", False: "Role family"}),
+        text=d["pct_change"].map(lambda v: f"{v:+.0%}"),
+    )
+    order = d.sort_values("pct_change", ascending=False)["label"].tolist()
+    base = alt.Chart(d).encode(
+        y=alt.Y("label:N", sort=order, title=None, axis=alt.Axis(labelLimit=320)),
+        x=alt.X(
+            "pct_change:Q",
+            title=f"Change in certified LCAs, FY{first} → FY{last}",
+            axis=alt.Axis(format="+.0%"),
+        ),
+    )
+    bars = base.mark_bar(cornerRadiusEnd=4, height={"band": 0.7}).encode(
+        color=alt.Color(
+            "kind:N",
+            scale=alt.Scale(
+                domain=["Role family", "Reference"], range=[BLUE_STEPS[4], REFERENCE_GRAY]
+            ),
+            legend=alt.Legend(title=None, orient="top"),
+        ),
+        tooltip=[
+            alt.Tooltip("family:N", title="Role family"),
+            alt.Tooltip("first:Q", title=f"FY{first} certified LCAs", format=","),
+            alt.Tooltip("last:Q", title=f"FY{last} certified LCAs", format=","),
+            alt.Tooltip("text:N", title="Change"),
+        ],
+    )
+    # Value labels just past each bar's end: right of positive bars, left of negative ones.
+    pos = base.transform_filter("datum.pct_change >= 0").mark_text(align="left", dx=4)
+    neg = base.transform_filter("datum.pct_change < 0").mark_text(align="right", dx=-4)
+    labels = alt.layer(
+        *[layer.encode(text="text:N", color=alt.value(REFERENCE_GRAY)) for layer in (pos, neg)]
+    )
+    rule = alt.Chart(pd.DataFrame({"x": [0]})).mark_rule(color=REFERENCE_GRAY).encode(x="x:Q")
+    return (bars + labels + rule).properties(height=alt.Step(26))
+
+
 def level_chart(levels: pd.DataFrame) -> alt.Chart:
     """Certified LCAs by wage level I-IV plus 'Not leveled'."""
     order = list(LEVEL_COLORS)
