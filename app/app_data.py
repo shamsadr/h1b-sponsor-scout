@@ -220,6 +220,73 @@ def as_percent(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+CURATED_SETS = ROOT / "data" / "reference" / "curated_sets.csv"
+ALIAS_PREFIX = "alias:"  # selectbox option values for member names: 'alias:<employer_norm>'
+
+
+def top_groups(sponsors: pd.DataFrame, family: str, n: int = 8) -> list[str]:
+    """parent_groups with the most certified LCAs in `family` (all states)."""
+    d = sponsors[(sponsors["family"] == family) & (sponsors["state"] == STATE_ALL)]
+    d = d.sort_values(["cases", "display_name"], ascending=[False, True])
+    return d["parent_group"].head(n).tolist()
+
+
+def load_curated_sets(path: Path, known_groups) -> dict[str, list[str]]:
+    """{set_name: [parent_group, ...]} from curated_sets.csv, in file order.
+
+    Groups missing from the published data (e.g. the demo data) are left out; a set with
+    none left is dropped. tests/ checks that every entry exists in the real data.
+    """
+    if not Path(path).exists():
+        return {}
+    df = pd.read_csv(path, dtype=str)
+    known = set(known_groups)
+    out: dict[str, list[str]] = {}
+    for row in df.itertuples():
+        if row.parent_group in known:
+            out.setdefault(row.set_name, []).append(row.parent_group)
+    return out
+
+
+def lookup_options(
+    sponsors: pd.DataFrame, groups: pd.DataFrame, members: pd.DataFrame, family: str
+) -> tuple[list[str], dict[str, str]]:
+    """Options for the Employer lookup selectbox, and their labels.
+
+    Options are the parent_groups with certified LCAs in `family` (largest first), then one
+    alias per member name of a multi-name group ('alias:MERRILL LYNCH', labelled
+    'MERRILL LYNCH → Bank of America'), so typing a member name finds its group.
+    """
+    d = sponsors[(sponsors["family"] == family) & (sponsors["state"] == STATE_ALL)]
+    d = d.sort_values(["cases", "display_name"], ascending=[False, True])
+    keys = d["parent_group"].tolist()
+    names = groups.set_index("parent_group")["display_name"]
+    labels = {k: names.get(k, k) for k in keys}
+    m = members[members["parent_group"].isin(set(keys))]
+    multi = m.groupby("parent_group")["employer_norm"].transform("size") > 1
+    for row in m[multi].sort_values(["parent_group", "employer_norm"]).itertuples():
+        shown = labels[row.parent_group]
+        if _key(row.employer_norm) != _key(shown):
+            option = ALIAS_PREFIX + row.employer_norm
+            if option not in labels:
+                keys.append(option)
+                labels[option] = f"{row.employer_norm} → {shown}"
+    return keys, labels
+
+
+def resolve_option(option: str | None, members: pd.DataFrame) -> str | None:
+    """Selectbox option -> parent_group (aliases map to their member's group)."""
+    if option is None or not option.startswith(ALIAS_PREFIX):
+        return option
+    norm = option[len(ALIAS_PREFIX) :]
+    hit = members.loc[members["employer_norm"] == norm, "parent_group"]
+    return hit.iloc[0] if len(hit) else None
+
+
+def _key(name: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", str(name).casefold())
+
+
 def search_groups(members: pd.DataFrame, query: str, limit: int = 50) -> list[str]:
     """Groups whose label or any member name contains `query` (case-insensitive).
 

@@ -16,7 +16,16 @@ from app_data import (
     status_line,
     year_columns,
 )
-from ui import NONE_CAPTION, count_col, data, money_col, pct_col, reset_filters, text_col
+from ui import (
+    NONE_CAPTION,
+    count_col,
+    data,
+    money_col,
+    open_employer,
+    pct_col,
+    reset_filters,
+    text_col,
+)
 
 DATA = data()
 YEARS = DATA["meta"]["fiscal_years"]
@@ -114,14 +123,19 @@ else:
     advanced = t1.toggle("Show advanced columns")
     t2.button("Reset filters", on_click=reset_filters)
     cols = default_cols + (advanced_cols if advanced else [])
-    st.dataframe(
+    event = st.dataframe(
         shown,
         hide_index=True,
         width="stretch",
         column_order=cols,
         column_config=column_config(years),
+        on_select="rerun",
+        selection_mode="single-row",
+        key="sponsor_table",
     )
-    st.caption(NONE_CAPTION)
+    st.caption(f"Select a row to open that employer in Employer lookup. {NONE_CAPTION}")
+    if event.selection.rows:
+        open_employer(table.iloc[event.selection.rows[0]]["parent_group"])
     slug = re.sub(r"[^a-z0-9]+", "_", f"{family} {state}".lower()).strip("_")
     st.download_button(
         "Download CSV",

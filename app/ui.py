@@ -97,14 +97,30 @@ def init_filters() -> None:
         st.session_state["_filters_ready"] = True
     for key in FILTER_DEFAULTS:
         st.session_state[key] = st.session_state.get(key, FILTER_DEFAULTS[key])
+    for key in ("employer", "lookup_choice"):  # keep the chosen employer across pages
+        if key in st.session_state:
+            st.session_state[key] = st.session_state[key]
+    st.session_state["_on_lookup"] = False  # Employer lookup sets it while it runs
 
 
 def sync_url() -> None:
-    """Write the current filters to the URL so the view can be shared or bookmarked."""
+    """Write the current filters to the URL so the view can be shared or bookmarked.
+
+    The ?employer= parameter belongs to Employer lookup only; other pages drop it.
+    """
     filters = {k: st.session_state.get(k, v) for k, v in FILTER_DEFAULTS.items()}
     wanted = encode_query(filters)
     if {k: st.query_params.get(k) for k in wanted} != wanted:
         st.query_params.update(wanted)
+    if not st.session_state.get("_on_lookup") and "employer" in st.query_params:
+        del st.query_params["employer"]
+
+
+def open_employer(group: str) -> None:
+    """Show `group` in Employer lookup (click-through from a table row)."""
+    st.session_state["employer"] = group
+    st.session_state["lookup_choice"] = group
+    st.switch_page("views/employer_lookup.py")
 
 
 def reset_filters() -> None:
@@ -131,7 +147,7 @@ def cases_by_year_chart(df: pd.DataFrame, category: str) -> alt.Chart:
         .encode(
             y=alt.Y(f"{category}:N", sort=order, title=None, axis=alt.Axis(labelLimit=260)),
             yOffset=alt.YOffset("fiscal_year:O", sort=years),
-            x=alt.X("cases:Q", title="Certified cases"),
+            x=alt.X("cases:Q", title="Certified LCAs"),
             color=alt.Color(
                 "fiscal_year:O",
                 title="Fiscal year",
@@ -141,7 +157,7 @@ def cases_by_year_chart(df: pd.DataFrame, category: str) -> alt.Chart:
             tooltip=[
                 alt.Tooltip(f"{category}:N", title=category.replace("_", " ").capitalize()),
                 alt.Tooltip("fiscal_year:O", title="Fiscal year"),
-                alt.Tooltip("cases:Q", title="Certified cases", format=","),
+                alt.Tooltip("cases:Q", title="Certified LCAs", format=","),
             ],
         )
         .properties(height=alt.Step(14))
@@ -158,7 +174,7 @@ def level_chart(levels: pd.DataFrame) -> alt.Chart:
         .mark_bar(cornerRadiusEnd=4)
         .encode(
             x=alt.X("level:N", sort=order, title="Wage level", axis=alt.Axis(labelAngle=0)),
-            y=alt.Y("cases:Q", title="Certified cases"),
+            y=alt.Y("cases:Q", title="Certified LCAs"),
             color=alt.Color(
                 "level:N",
                 scale=alt.Scale(domain=order, range=list(LEVEL_COLORS.values())),
@@ -166,7 +182,7 @@ def level_chart(levels: pd.DataFrame) -> alt.Chart:
             ),
             tooltip=[
                 alt.Tooltip("level:N", title="Wage level"),
-                alt.Tooltip("cases:Q", title="Certified cases", format=","),
+                alt.Tooltip("cases:Q", title="Certified LCAs", format=","),
                 alt.Tooltip("share:Q", title="Share", format=".0%"),
             ],
         )

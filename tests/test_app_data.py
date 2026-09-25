@@ -4,9 +4,11 @@ import pandas as pd
 import pytest
 
 from app_data import (
+    ALIAS_PREFIX,
     ALL_OCCUPATIONS_LABEL,
     ALL_TARGET_LABEL,
     ANALYTICS_LABEL,
+    CURATED_SETS,
     FAMILY_DESCRIPTIONS,
     FAMILY_ORDER,
     FILTER_DEFAULTS,
@@ -18,13 +20,17 @@ from app_data import (
     encode_query,
     filter_sponsors,
     footer_text,
+    load_curated_sets,
+    lookup_options,
     parse_query,
     readme_bullet,
     readme_sections,
+    resolve_option,
     search_groups,
     state_label,
     state_options,
     status_line,
+    top_groups,
     year_columns,
     years_label,
 )
@@ -186,3 +192,67 @@ def test_query_params_round_trip_and_bad_values_fall_back():
     assert parse_query({"min": "0"}, families, states)["min_cases"] == 5  # out of range
     assert parse_query({"min": "101"}, families, states)["min_cases"] == 5
     assert parse_query({"state": "az"}, families, states)["state"] == "AZ"  # case-insensitive
+
+
+def lookup_frames():
+    sponsors = pd.DataFrame(
+        {
+            "family": ["Quant / Finance"] * 3 + ["Operations Research"],
+            "state": [STATE_ALL] * 4,
+            "parent_group": ["BANK OF AMERICA", "GOLDMAN SACHS", "TINY", "GOLDMAN SACHS"],
+            "display_name": ["Bank of America", "Goldman Sachs", "Tiny Co", "Goldman Sachs"],
+            "cases": [851, 1907, 3, 50],
+        }
+    )
+    groups = sponsors.drop_duplicates("parent_group")[["parent_group", "display_name"]]
+    members = pd.DataFrame(
+        {
+            "parent_group": ["BANK OF AMERICA", "BANK OF AMERICA", "GOLDMAN SACHS", "TINY"],
+            "employer_norm": ["BANK OF AMERICA", "MERRILL LYNCH", "GOLDMAN SACHS AND", "TINY"],
+            "rows": [1322, 87, 2461, 3],
+        }
+    )
+    return sponsors, groups, members
+
+
+def test_lookup_options_list_groups_by_size_then_member_aliases():
+    sponsors, groups, members = lookup_frames()
+    keys, labels = lookup_options(sponsors, groups, members, "Quant / Finance")
+    assert keys[:3] == ["GOLDMAN SACHS", "BANK OF AMERICA", "TINY"]
+    alias = ALIAS_PREFIX + "MERRILL LYNCH"
+    assert alias in keys and labels[alias] == "MERRILL LYNCH → Bank of America"
+    assert ALIAS_PREFIX + "BANK OF AMERICA" not in keys  # same as the display name
+    assert ALIAS_PREFIX + "TINY" not in keys  # single-name group: nothing to alias
+    assert resolve_option(alias, members) == "BANK OF AMERICA"
+    assert resolve_option("GOLDMAN SACHS", members) == "GOLDMAN SACHS"
+    assert resolve_option(None, members) is None
+    only_or, _ = lookup_options(sponsors, groups, members, "Operations Research")
+    assert only_or == ["GOLDMAN SACHS"]  # only groups with LCAs in the chosen role group
+
+
+def test_top_groups_and_curated_sets(tmp_path):
+    sponsors, _, _ = lookup_frames()
+    assert top_groups(sponsors, "Quant / Finance", n=2) == ["GOLDMAN SACHS", "BANK OF AMERICA"]
+    path = tmp_path / "sets.csv"
+    path.write_text(
+        "set_name,parent_group,display_name\n"
+        "Banks,GOLDMAN SACHS,Goldman Sachs\n"
+        "Banks,NOT PUBLISHED,Nope\n"
+        "Banks,BANK OF AMERICA,Bank of America\n"
+        "Empty,NOT PUBLISHED,Nope\n"
+    )
+    sets = load_curated_sets(path, ["GOLDMAN SACHS", "BANK OF AMERICA"])
+    assert sets == {"Banks": ["GOLDMAN SACHS", "BANK OF AMERICA"]}  # file order, unknown dropped
+    assert load_curated_sets(tmp_path / "missing.csv", []) == {}
+
+
+def test_every_curated_set_entry_matches_an_existing_group():
+    groups_file = ROOT / "data" / "app" / "groups.parquet"
+    if not groups_file.exists():
+        pytest.skip("data/app/ not published yet")
+    groups = set(pd.read_parquet(groups_file, columns=["parent_group"])["parent_group"])
+    curated = pd.read_csv(CURATED_SETS, dtype=str)
+    assert list(curated.columns) == ["set_name", "parent_group", "display_name"]
+    missing = sorted(set(curated["parent_group"]) - groups)
+    assert not missing, missing
+    assert not curated.duplicated(["set_name", "parent_group"]).any()

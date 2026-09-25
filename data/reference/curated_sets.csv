@@ -1,0 +1,59 @@
+set_name,parent_group,display_name
+Big Tech,AMAZON,Amazon
+Big Tech,MICROSOFT,Microsoft Corporation
+Big Tech,GOOGLE,Google LLC
+Big Tech,META PLATFORMS,"Meta Platforms, Inc"
+Big Tech,APPLE,Apple Inc.
+Big Tech,BYTEDANCE,ByteDance Inc.
+Big Tech,ADOBE,Adobe Inc.
+Big Tech,TIKTOK,TikTok Inc.
+Big Tech,UBER TECHNOLOGIES,"Uber Technologies, Inc."
+Big Tech,LINKEDIN,LINKEDIN CORPORATION
+Big Tech,INTEL,Intel Corporation
+Big Tech,SALESFORCE,"Salesforce, Inc."
+Big Tech,IBM,IBM Corporation
+Big Tech,NVIDIA,NVIDIA Corporation
+Big Tech,NETFLIX,"Netflix, Inc."
+Banks & Quant,GOLDMAN SACHS,Goldman Sachs
+Banks & Quant,JPMORGAN CHASE AND,JPMorgan Chase & Co.
+Banks & Quant,CAPITAL ONE,Capital One
+Banks & Quant,CITI,Citi
+Banks & Quant,BANK OF AMERICA,Bank of America
+Banks & Quant,MORGAN STANLEY SERVICES GROUP,Morgan Stanley Services Group Inc.
+Banks & Quant,BLACKROCK FINANCIAL MANAGEMENT,"BlackRock Financial Management, Inc."
+Banks & Quant,DEUTSCHE BANK SECURITIES,"Deutsche Bank Securities, Inc."
+Banks & Quant,BARCLAYS SERVICES,Barclays Services Corp.
+Banks & Quant,WELLS FARGO BANK N A,"WELLS FARGO BANK, N.A."
+Banks & Quant,CITADEL AMERICAS SERVICES,CITADEL AMERICAS SERVICES LLC
+Banks & Quant,CITADEL SECURITIES AMERICAS SERVICES,CITADEL SECURITIES AMERICAS SERVICES LLC
+Banks & Quant,AMERICAN EXPRESS,American Express Company
+Banks & Quant,UBS SECURITIES,UBS Securities LLC
+Consulting (Big 4 / MBB),EY,EY
+Consulting (Big 4 / MBB),DELOITTE,Deloitte
+Consulting (Big 4 / MBB),MCKINSEY AND UNITED STATES,"McKinsey & Company, Inc. United States"
+Consulting (Big 4 / MBB),BOSTON CONSULTING GROUP,"Boston Consulting Group, Inc."
+Consulting (Big 4 / MBB),PRICEWATERHOUSECOOPERS ADVISORY SERVICES,PRICEWATERHOUSECOOPERS ADVISORY SERVICES LLC
+Consulting (Big 4 / MBB),BAIN AND,"BAIN & COMPANY, INC."
+Consulting (Big 4 / MBB),KPMG,KPMG LLP
+Consulting (Big 4 / MBB),PWC US CONSULTING,PwC US Consulting LLP
+Consulting (Big 4 / MBB),PRICEWATERHOUSECOOPERS,PRICEWATERHOUSECOOPERS LLP
+Consulting (Big 4 / MBB),PWC US BUSINESS ADVISORY,PwC US Business Advisory LLP
+Analytics consultancies,EXLSERVICE COM,"ExlService.com, LLC"
+Analytics consultancies,TIGER ANALYTICS,"Tiger Analytics, Inc."
+Analytics consultancies,ZS ASSOCIATES,"ZS Associates, Inc."
+Analytics consultancies,GENPACT,Genpact LLC
+Analytics consultancies,TREDENCE,Tredence Inc.
+Analytics consultancies,AXTRIA,Axtria INC
+Analytics consultancies,LATENTVIEW ANALYTICS,LatentView Analytics Corporation
+Analytics consultancies,FRACTAL ANALYTICS,"Fractal Analytics, Inc."
+Analytics consultancies,QUANTIPHI,"Quantiphi, Inc."
+Manufacturing / EV,TESLA,"Tesla, Inc."
+Manufacturing / EV,RIVIAN AUTOMOTIVE,"Rivian Automotive, LLC"
+Manufacturing / EV,LUCID USA,"Lucid USA, Inc."
+Manufacturing / EV,FORD MOTOR,FORD MOTOR COMPANY
+Manufacturing / EV,GENERAL MOTORS,General Motors
+Manufacturing / EV,CATERPILLAR,Caterpillar Inc.
+Manufacturing / EV,RIVIAN,"RIVIAN, LLC"
+Manufacturing / EV,FCA US,FCA US LLC
+Manufacturing / EV,LG ENERGY SOLUTION MICHIGAN,"LG Energy Solution Michigan, Inc."
+Manufacturing / EV,BOEING,The Boeing Company

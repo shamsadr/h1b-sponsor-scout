@@ -77,8 +77,13 @@ Pages:
   every page and kept in the URL, e.g.
   `?role=Operations+Research&state=AZ&min=3&consistent=1`, so a filtered view can be bookmarked
   or sent. Unknown or invalid values fall back to the defaults.
-- **Employer lookup:** search a group or any member name to see certified cases by family and year,
-  the wage-level mix and the member names.
+- **Employer lookup:** quick picks for the 8 largest employers in the current role group and for
+  curated sets (`data/reference/curated_sets.csv`, keyed on `parent_group`, marked "(curated)").
+  A searchable list of employers also matches legal-entity names, so typing "Merrill" finds Bank
+  of America. A summary card (certified LCAs, years active, median offered wage, Level II+ share)
+  comes first, then certified LCAs by role family and year, the wage-level mix and the member
+  names. Selecting a row in Find sponsors opens that employer here, and `?employer=<display
+  name>` links straight to it.
 - **Trends:** certified cases per family and year, with the SOC-substitution and withdrawal caveats.
 - **Methodology & limitations:** rendered from this README.
 

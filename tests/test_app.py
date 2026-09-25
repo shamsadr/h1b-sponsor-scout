@@ -74,14 +74,56 @@ def test_find_sponsors_empty_state_and_reset(app):
     assert "Not legal or immigration advice." in footer(app)
 
 
-def test_employer_lookup_search(app):
+def lookup(app):
     app.switch_page("views/employer_lookup.py").run()
-    app.text_input[0].input("acme").run()
     assert not app.exception
-    assert app.selectbox[0].value == "ACME ANALYTICS"
-    assert int(app.metric[0].value.replace(",", "")) > 0
-    app.text_input[0].input("no such employer").run()
-    assert app.warning and "Not legal" in footer(app)
+    return app
+
+
+def employer_box(app):
+    return next(sb for sb in app.selectbox if sb.label == "Employer")
+
+
+def test_employer_lookup_starts_empty_with_quick_picks(app):
+    lookup(app)
+    assert "Pick a quick pick above" in app.info[0].value
+    top = app.get("button_group")[0]
+    assert len(top.options) == 5  # the 5 demo employers (top 8 when there are more)
+    assert "Not legal or immigration advice." in footer(app)
+
+
+def test_quick_pick_opens_a_summary_card(app):
+    lookup(app)
+    app.get("button_group")[0].set_value("ACME ANALYTICS").run()
+    assert not app.exception
+    assert app.subheader[0].value == "Acme Analytics, Inc."
+    labels = [m.label for m in app.metric]
+    assert labels == ["Certified LCAs", "Years active", "Median offered wage", "Level II+ share"]
+    assert app.metric[2].value.startswith("$")
+    assert app.query_params["employer"] == ["Acme Analytics, Inc."]
+    app.switch_page("views/trends.py").run()
+    assert "employer" not in app.query_params  # only Employer lookup keeps it
+
+
+def test_selectbox_and_row_click_handoff_open_the_employer(app):
+    lookup(app)
+    employer_box(app).set_value("DESERT HEALTH SYSTEM").run()
+    assert not app.exception and app.subheader[0].value == "Desert Health System"
+    # Find sponsors' row click stores the group, then switches page (ui.open_employer).
+    app.session_state["employer"] = "BLUE RIVER LOGISTICS"
+    app.session_state["lookup_choice"] = "BLUE RIVER LOGISTICS"
+    lookup(app)
+    assert app.subheader[0].value == "Blue River Logistics LLC"
+
+
+def test_shared_employer_link_opens_the_employer(demo_app_data, monkeypatch):
+    monkeypatch.setenv("H1B_APP_DATA", str(demo_app_data))
+    at = AppTest.from_file(APP, default_timeout=60)
+    at.query_params["employer"] = "Quantfield Capital L.P."
+    at.switch_page("views/employer_lookup.py")  # a shared link opens this page directly
+    at.run()
+    assert not at.exception
+    assert at.subheader[0].value == "Quantfield Capital L.P."
 
 
 def test_filters_come_from_the_url_and_go_back_to_it(demo_app_data, monkeypatch):
