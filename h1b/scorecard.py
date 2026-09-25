@@ -6,6 +6,23 @@ LEVELS = {"I", "II", "III", "IV"}
 BULK_POSITIONS_PER_CASE = 5  # above this many positions per case -> bulk_filer
 
 
+def dedupe_across_years(df: pd.DataFrame) -> pd.DataFrame:
+    """One row per CASE_NUMBER across all loaded years.
+
+    Keeps the record with the latest DECISION_DATE (so a later withdrawal replaces the
+    original certification) but assigns the earliest fiscal_year the case appears in.
+    """
+    df = df.reset_index(drop=True)
+    first_year = df.groupby("CASE_NUMBER")["fiscal_year"].transform("min")
+    latest = (
+        df.sort_values(["DECISION_DATE", "fiscal_year"], na_position="first")
+        .drop_duplicates("CASE_NUMBER", keep="last")
+        .sort_index()
+    )
+    latest["fiscal_year"] = first_year.loc[latest.index]
+    return latest.reset_index(drop=True)
+
+
 def _mode(s: pd.Series):
     s = s.dropna()
     return s.value_counts().idxmax() if len(s) else pd.NA

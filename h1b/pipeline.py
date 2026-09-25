@@ -16,7 +16,7 @@ import pandas as pd
 from h1b.clean import clean_lca
 from h1b.config import DEMO_DIR, INTERIM_DIR, PROCESSED_DIR, REPORTS_DIR, TARGET_FAMILIES
 from h1b.ingest import ingest, normalize_col, read_raw
-from h1b.scorecard import employer_scorecard, family_scorecards
+from h1b.scorecard import dedupe_across_years, employer_scorecard, family_scorecards
 
 
 def inspect_file(path: Path) -> list[str]:
@@ -93,7 +93,7 @@ def build_scorecard(
     files = sorted(processed_dir.glob("lca_fy*.parquet"))
     if not files:
         raise FileNotFoundError(f"No processed files in {processed_dir}. Run `run` first.")
-    df = pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
+    df = dedupe_across_years(pd.concat([pd.read_parquet(f) for f in files], ignore_index=True))
     card = employer_scorecard(df, families=families)
     reports_dir.mkdir(parents=True, exist_ok=True)
     out = reports_dir / "scorecard_target_roles.csv"

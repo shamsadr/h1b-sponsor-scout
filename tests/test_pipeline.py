@@ -96,3 +96,23 @@ def test_clean_twice_gives_identical_output(tmp_path):
 def test_clean_interim_errors_when_no_interim_files(tmp_path):
     with pytest.raises(FileNotFoundError, match="interim"):
         clean_interim(tmp_path / "interim", tmp_path / "processed")
+
+
+def test_build_scorecard_dedupes_cases_across_years(tmp_path):
+    fy24 = _write_lca_csv(
+        tmp_path / "LCA_FY2024_Q1.csv", [("A", "2024-03-01"), ("B", "2024-04-01")]
+    )
+    fy25 = _write_lca_csv(
+        tmp_path / "LCA_FY2025_Q1.csv", [("A", "2025-01-10"), ("C", "2025-02-01")]
+    )
+    pd.read_csv(fy25).assign(CASE_STATUS=["Certified - Withdrawn", "Certified"]).to_csv(
+        fy25, index=False
+    )
+    processed = tmp_path / "processed"
+    process_files([fy24], 2024, out_dir=processed, interim_dir=tmp_path / "i")
+    process_files([fy25], 2025, out_dir=processed, interim_dir=tmp_path / "i")
+
+    card = build_scorecard(processed_dir=processed, reports_dir=tmp_path / "r", families=None)
+    row = card.iloc[0]
+    assert row["cases"] == 2  # B (FY24) and C (FY25); A is now withdrawn
+    assert row["withdrawn_rate"] == 1 / 3  # A counted once

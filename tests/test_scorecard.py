@@ -1,6 +1,6 @@
 import pandas as pd
 
-from h1b.scorecard import employer_scorecard, family_scorecards
+from h1b.scorecard import dedupe_across_years, employer_scorecard, family_scorecards
 
 
 def make_rows(n: int = 1, **overrides) -> pd.DataFrame:
@@ -123,3 +123,42 @@ def test_family_scorecards_top_n_per_family_with_family_column():
     assert counts["Operations Research"] == 3 and counts["Quant / Finance"] == 2  # capped at top_n
     ops = out[out["family"] == "Operations Research"]
     assert ops["cases"].tolist() == [4, 3, 2]  # top by cases
+
+
+def test_case_certified_then_withdrawn_counts_once_as_first_year_and_withdrawn():
+    fy24 = make_rows(
+        2,
+        CASE_NUMBER=["A", "B"],
+        DECISION_DATE=list(pd.to_datetime(["2024-03-01", "2024-04-01"])),
+        fiscal_year=2024,
+    )
+    fy25 = make_rows(
+        1,
+        CASE_NUMBER=["A"],
+        DECISION_DATE=list(pd.to_datetime(["2025-01-10"])),
+        fiscal_year=2025,
+        CASE_STATUS="Certified - Withdrawn",
+    )
+    out = dedupe_across_years(pd.concat([fy24, fy25], ignore_index=True))
+
+    assert sorted(out["CASE_NUMBER"]) == ["A", "B"]  # A appears once
+    a = out[out["CASE_NUMBER"] == "A"].iloc[0]
+    assert a["CASE_STATUS"] == "Certified - Withdrawn"  # latest decision wins
+    assert a["fiscal_year"] == 2024  # earliest year it appears
+    assert out[out["CASE_NUMBER"] == "B"].iloc[0]["CASE_STATUS"] == "Certified"
+
+    card = employer_scorecard(out).iloc[0]
+    assert card["cases"] == 1  # only B is still certified
+    assert card["withdrawn_rate"] == 0.5  # A counted once, as withdrawn
+
+
+def test_dedupe_across_years_leaves_unique_cases_alone():
+    df = make_rows(
+        3,
+        CASE_NUMBER=["A", "B", "C"],
+        DECISION_DATE=list(pd.to_datetime(["2024-01-01", "2025-01-01", "2025-02-01"])),
+        fiscal_year=[2024, 2025, 2025],
+    )
+    out = dedupe_across_years(df)
+    assert len(out) == 3
+    assert sorted(out["fiscal_year"]) == [2024, 2025, 2025]
