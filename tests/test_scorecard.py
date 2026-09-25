@@ -42,3 +42,15 @@ def test_only_certified_counts_and_withdrawn_rate():
     assert row["level2plus_share"] == 0.5  # levels from certified rows only
     assert row["withdrawn_rate"] == 2 / 5  # (Withdrawn + Certified - Withdrawn) / all rows
     assert row["denial_rate"] == 1 / 4  # Denied / (Certified* + Denied), unchanged
+
+
+def test_flags_are_share_and_count_not_any():
+    df = make_rows(
+        100,
+        willful_violator=[True] + [False] * 99,
+        h1b_dependent=[True] * 25 + [False] * 75,
+    )
+    row = employer_scorecard(df).iloc[0]
+    assert row["willful_violator_count"] == 1  # one 'Yes' row, not a blanket True
+    assert row["h1b_dependent_share"] == 0.25
+    assert "willful_violator" not in employer_scorecard(df).columns

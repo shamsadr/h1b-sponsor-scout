@@ -52,8 +52,9 @@ def employer_scorecard(
     )
     card["denial_rate"] = denial
     card["withdrawn_rate"] = withdrawn.groupby(d["employer_norm"]).mean()
-    card["h1b_dependent"] = g["h1b_dependent"].any()
-    card["willful_violator"] = g["willful_violator"].any()
+    # Flags are per-filing self-attestations, so report share/count, not a label.
+    card["h1b_dependent_share"] = g["h1b_dependent"].mean()
+    card["willful_violator_count"] = g["willful_violator"].sum()
 
     card = card[card["positions"] >= min_positions]
     return card.sort_values(["positions", "years_active"], ascending=False).reset_index()
