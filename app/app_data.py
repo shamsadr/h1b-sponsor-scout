@@ -160,7 +160,7 @@ FILTER_DEFAULTS = {
     "consistent": False,
 }
 URL_KEYS = {"family": "role", "state": "state", "min_cases": "min", "consistent": "consistent"}
-MIN_CASES_RANGE = (1, 100)
+MIN_CASES_OPTIONS = [1, 3, 5, 10, 25, 50]  # the select-slider steps for "Minimum certified LCAs"
 
 
 def parse_query(params: dict, families: list[str], states: list[str]) -> dict:
@@ -177,7 +177,7 @@ def parse_query(params: dict, families: list[str], states: list[str]) -> dict:
         out["state"] = state
     try:
         n = int(params.get(URL_KEYS["min_cases"], ""))
-        if MIN_CASES_RANGE[0] <= n <= MIN_CASES_RANGE[1]:
+        if n in MIN_CASES_OPTIONS:
             out["min_cases"] = n
     except ValueError:
         pass
@@ -203,9 +203,9 @@ def status_line(n: int, family: str, state: str, consistent_only: bool, min_case
     parts = [f"Showing **{n:,} {noun}**", family]
     parts.append("All states" if state == STATE_ALL else STATE_NAMES.get(state, state))
     if consistent_only:
-        parts += ["consistent only", f"min {min_cases} cases/year"]
+        parts += ["consistent only", f"min {min_cases} LCAs/year"]
     else:
-        parts.append(f"min {min_cases} cases")
+        parts.append(f"min {min_cases} LCAs")
     return " · ".join(parts)
 
 

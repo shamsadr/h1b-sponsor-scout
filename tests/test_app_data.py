@@ -107,10 +107,10 @@ def test_year_columns_and_consistent_definition():
 def test_status_line():
     assert status_line(312, ANALYTICS_LABEL, "AZ", True, 5) == (
         "Showing **312 employers** · Analytics (combined) · Arizona · consistent only · "
-        "min 5 cases/year"
+        "min 5 LCAs/year"
     )
     assert status_line(1, "Operations Research", STATE_ALL, False, 3) == (
-        "Showing **1 employer** · Operations Research · All states · min 3 cases"
+        "Showing **1 employer** · Operations Research · All states · min 3 LCAs"
     )
 
 
@@ -189,8 +189,8 @@ def test_query_params_round_trip_and_bad_values_fall_back():
     assert parse_query({}, families, states) == FILTER_DEFAULTS
     bad = {"role": "Astronaut", "state": "ZZ", "min": "abc", "consistent": "maybe"}
     assert parse_query(bad, families, states) == FILTER_DEFAULTS
-    assert parse_query({"min": "0"}, families, states)["min_cases"] == 5  # out of range
-    assert parse_query({"min": "101"}, families, states)["min_cases"] == 5
+    assert parse_query({"min": "7"}, families, states)["min_cases"] == 5  # not a slider step
+    assert parse_query({"min": "25"}, families, states)["min_cases"] == 25
     assert parse_query({"state": "az"}, families, states)["state"] == "AZ"  # case-insensitive
 
 

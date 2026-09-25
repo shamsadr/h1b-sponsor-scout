@@ -70,7 +70,7 @@ Pages:
 
   **Consistent sponsors** (one definition, used by the app and `reports/consistent_sponsors.csv`):
   *filed at least N certified LCAs in this role group in every loaded fiscal year (FY2024 and
-  FY2025)*. In the app, N is the "Minimum certified LCAs" slider. Without the checkbox, N applies
+  FY2025)*. In the app, N is the "Minimum certified LCAs" slider (1, 3, 5, 10, 25 or 50). Without the checkbox, N applies
   to the total. The report uses N = 10.
 
   **Shareable links.** The role group, state, minimum cases and consistency filter are shared by

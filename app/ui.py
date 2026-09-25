@@ -77,7 +77,7 @@ def text_col(label: str, help: str | None = None, pinned: bool = False):
     return st.column_config.TextColumn(label, help=help, pinned=pinned)
 
 
-NONE_CAPTION = "None = not enough full-time or leveled cases to compute that value."
+NONE_CAPTION = "None = not enough full-time or leveled LCAs to compute that value."
 
 
 # --- Shared filters: one set of values for every page, mirrored in the URL -------------
@@ -137,8 +137,11 @@ def year_ramp(years: list[int]) -> list[str]:
     return [BLUE_STEPS[i] for i in idx]
 
 
+CATEGORY_TITLES = {"soc_family": "Role family", "family": "Role family"}
+
+
 def cases_by_year_chart(df: pd.DataFrame, category: str) -> alt.Chart:
-    """Horizontal bars of certified cases per category, one bar per fiscal year."""
+    """Horizontal bars of certified LCAs per category, one bar per fiscal year."""
     years = sorted(df["fiscal_year"].unique().tolist())
     order = df.groupby(category)["cases"].sum().sort_values(ascending=False).index.tolist()
     return (
@@ -155,7 +158,7 @@ def cases_by_year_chart(df: pd.DataFrame, category: str) -> alt.Chart:
                 legend=alt.Legend(orient="top"),
             ),
             tooltip=[
-                alt.Tooltip(f"{category}:N", title=category.replace("_", " ").capitalize()),
+                alt.Tooltip(f"{category}:N", title=CATEGORY_TITLES.get(category, category)),
                 alt.Tooltip("fiscal_year:O", title="Fiscal year"),
                 alt.Tooltip("cases:Q", title="Certified LCAs", format=","),
             ],
@@ -165,7 +168,7 @@ def cases_by_year_chart(df: pd.DataFrame, category: str) -> alt.Chart:
 
 
 def level_chart(levels: pd.DataFrame) -> alt.Chart:
-    """Certified cases by wage level I-IV plus 'Not leveled'."""
+    """Certified LCAs by wage level I-IV plus 'Not leveled'."""
     order = list(LEVEL_COLORS)
     d = levels.groupby("level", as_index=False)["cases"].sum()
     d["share"] = d["cases"] / d["cases"].sum()

@@ -1,4 +1,4 @@
-"""Trends: certified cases per role family and fiscal year."""
+"""Trends: certified LCAs per role family and fiscal year."""
 
 import streamlit as st
 

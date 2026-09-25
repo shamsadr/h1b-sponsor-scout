@@ -51,17 +51,17 @@ def test_every_page_runs_and_shows_the_footer(app):
 
 def test_find_sponsors_defaults_status_line_and_columns(app):
     assert app.selectbox[0].value == "Analytics (combined)"
-    assert app.slider[0].value == 5
+    assert app.select_slider[0].value == 5
     assert status(app).startswith("Showing **")
     table = app.dataframe[0].value
     assert "parent_group" not in table.columns  # users never see the internal key
     app.checkbox[0].check().run()
     assert not app.exception
-    assert "consistent only · min 5 cases/year" in status(app)
+    assert "consistent only · min 5 LCAs/year" in status(app)
 
 
 def test_find_sponsors_empty_state_and_reset(app):
-    app.slider[0].set_value(100).run()
+    app.select_slider[0].set_value(50).run()
     app.checkbox[0].check().run()
     assert not app.exception
     assert status(app).startswith("Showing **0 employers**")
@@ -69,7 +69,7 @@ def test_find_sponsors_empty_state_and_reset(app):
     assert not app.dataframe
     [b for b in app.button if b.label == "Reset filters"][0].click().run()
     assert not app.exception
-    assert app.slider[0].value == 5 and app.checkbox[0].value is False
+    assert app.select_slider[0].value == 5 and app.checkbox[0].value is False
     assert len(app.dataframe) == 1
     assert "Not legal or immigration advice." in footer(app)
 
@@ -135,9 +135,9 @@ def test_filters_come_from_the_url_and_go_back_to_it(demo_app_data, monkeypatch)
     assert not at.exception
     assert at.selectbox[0].value == "Operations Research"
     assert at.selectbox[1].value == "AZ"
-    assert (at.slider[0].value, at.checkbox[0].value) == (3, True)
-    at.slider[0].set_value(7).run()
-    assert at.query_params["min"] == ["7"]
+    assert (at.select_slider[0].value, at.checkbox[0].value) == (3, True)
+    at.select_slider[0].set_value(10).run()
+    assert at.query_params["min"] == ["10"]
 
 
 def test_bad_url_values_fall_back_to_defaults(demo_app_data, monkeypatch):
@@ -147,16 +147,16 @@ def test_bad_url_values_fall_back_to_defaults(demo_app_data, monkeypatch):
     at.run()
     assert not at.exception
     assert at.selectbox[0].value == "Analytics (combined)"
-    assert (at.selectbox[1].value, at.slider[0].value) == ("ALL", 5)
+    assert (at.selectbox[1].value, at.select_slider[0].value) == ("ALL", 5)
     assert at.query_params["role"] == ["Analytics (combined)"]
 
 
 def test_filters_persist_across_pages(app):
     app.selectbox[0].set_value("Operations Research").run()
-    app.slider[0].set_value(4).run()
+    app.select_slider[0].set_value(3).run()
     app.checkbox[0].check().run()
     app.switch_page("views/trends.py").run()
     assert app.query_params["role"] == ["Operations Research"]  # still in the URL
     app.switch_page("views/find_sponsors.py").run()
     assert app.selectbox[0].value == "Operations Research"
-    assert (app.slider[0].value, app.checkbox[0].value) == (4, True)
+    assert (app.select_slider[0].value, app.checkbox[0].value) == (3, True)

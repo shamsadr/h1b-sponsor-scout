@@ -8,6 +8,7 @@ from app_data import (
     ALL_OCCUPATIONS_LABEL,
     FAMILY_DESCRIPTIONS,
     FAMILY_ORDER,
+    MIN_CASES_OPTIONS,
     as_percent,
     consistent_definition,
     filter_sponsors,
@@ -30,8 +31,9 @@ from ui import (
 DATA = data()
 YEARS = DATA["meta"]["fiscal_years"]
 SPONSORS = DATA["sponsors"]
+TABLE_HEIGHT = 35 * 16 + 3  # about 15 rows plus the header (35 px each)
 EMPTY_MESSAGE = (
-    "No employers match these filters. Try lowering the minimum cases or unchecking "
+    "No employers match these filters. Try lowering the minimum certified LCAs or unchecking "
     "'Consistent sponsors only'."
 )
 
@@ -68,7 +70,7 @@ def column_config(year_cols: list[str]) -> dict:
         ),
         "withdrawn_pct": pct_col(
             "Withdrawn",
-            "Share of all filings later withdrawn. The latest year is low because its cases "
+            "Share of all filings later withdrawn. The latest year is low because its LCAs "
             "have had less time to be withdrawn.",
         ),
         "n_leveled": count_col("LCAs with a wage level", "Denominator for the Level II+ share"),
@@ -101,7 +103,7 @@ state = c2.selectbox(
     format_func=state_label,
 )
 c2.caption("Worksite state of the job, not company headquarters.")
-min_cases = c3.slider("Minimum certified LCAs", min_value=1, max_value=100, key="min_cases")
+min_cases = c3.select_slider("Minimum certified LCAs", MIN_CASES_OPTIONS, key="min_cases")
 definition = consistent_definition(min_cases, YEARS)
 c4.write("")  # align the checkbox with the inputs
 consistent = c4.checkbox("Consistent sponsors only", key="consistent", help=definition)
@@ -129,6 +131,7 @@ else:
         width="stretch",
         column_order=cols,
         column_config=column_config(years),
+        height=TABLE_HEIGHT,
         on_select="rerun",
         selection_mode="single-row",
         key="sponsor_table",
