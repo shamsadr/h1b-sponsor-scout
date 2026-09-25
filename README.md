@@ -254,6 +254,7 @@ h1b/publish.py     slim precomputed tables for the app
 h1b/pipeline.py    CLI entry point
 app/streamlit_app.py   navigation + footer; pages in app/views/, shared charts in app/ui.py
 app/app_data.py        pure helpers: load, filter, search, README sections
+.streamlit/config.toml theme (primary color = the charts' blue)
 data/app/              published app tables (committed)
 data/reference/employer_overrides.csv   manual merges and splits
 scripts/make_demo_data.py

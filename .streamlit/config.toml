@@ -1,0 +1,7 @@
+# Streamlit settings (read from the repo root locally and on Streamlit Community Cloud).
+[theme]
+# Series blue from the chart palette (app/ui.py), so buttons, sliders and checkboxes match.
+primaryColor = "#2a78d6"
+
+[browser]
+gatherUsageStats = false

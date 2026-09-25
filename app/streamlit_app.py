@@ -25,7 +25,8 @@ pages = st.navigation(
         st.Page("views/employer_lookup.py", title="Employer lookup"),
         st.Page("views/trends.py", title="Trends"),
         st.Page("views/methodology.py", title="Methodology & limitations"),
-    ]
+    ],
+    position="top",  # tabs across the top instead of a sidebar
 )
 pages.run()
 sync_url()
