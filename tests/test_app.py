@@ -82,3 +82,39 @@ def test_employer_lookup_search(app):
     assert int(app.metric[0].value.replace(",", "")) > 0
     app.text_input[0].input("no such employer").run()
     assert app.warning and "Not legal" in footer(app)
+
+
+def test_filters_come_from_the_url_and_go_back_to_it(demo_app_data, monkeypatch):
+    monkeypatch.setenv("H1B_APP_DATA", str(demo_app_data))
+    at = AppTest.from_file(APP, default_timeout=60)
+    at.query_params.update({"role": "Operations Research", "state": "az", "min": "3"})
+    at.query_params["consistent"] = "1"
+    at.run()
+    assert not at.exception
+    assert at.selectbox[0].value == "Operations Research"
+    assert at.selectbox[1].value == "AZ"
+    assert (at.slider[0].value, at.checkbox[0].value) == (3, True)
+    at.slider[0].set_value(7).run()
+    assert at.query_params["min"] == ["7"]
+
+
+def test_bad_url_values_fall_back_to_defaults(demo_app_data, monkeypatch):
+    monkeypatch.setenv("H1B_APP_DATA", str(demo_app_data))
+    at = AppTest.from_file(APP, default_timeout=60)
+    at.query_params.update({"role": "Astronaut", "state": "ZZ", "min": "abc"})
+    at.run()
+    assert not at.exception
+    assert at.selectbox[0].value == "Analytics (combined)"
+    assert (at.selectbox[1].value, at.slider[0].value) == ("ALL", 5)
+    assert at.query_params["role"] == ["Analytics (combined)"]
+
+
+def test_filters_persist_across_pages(app):
+    app.selectbox[0].set_value("Operations Research").run()
+    app.slider[0].set_value(4).run()
+    app.checkbox[0].check().run()
+    app.switch_page("views/trends.py").run()
+    assert app.query_params["role"] == ["Operations Research"]  # still in the URL
+    app.switch_page("views/find_sponsors.py").run()
+    assert app.selectbox[0].value == "Operations Research"
+    assert (app.slider[0].value, app.checkbox[0].value) == (4, True)

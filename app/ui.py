@@ -7,7 +7,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from app_data import data_dir, load_tables
+from app_data import FILTER_DEFAULTS, data_dir, encode_query, load_tables, parse_query
 
 # Ordinal blue ramp (older/lower -> lighter), validated for light and dark surfaces.
 BLUE_STEPS = ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#1c5cab"]
@@ -78,6 +78,39 @@ def text_col(label: str, help: str | None = None, pinned: bool = False):
 
 
 NONE_CAPTION = "None = not enough full-time or leveled cases to compute that value."
+
+
+# --- Shared filters: one set of values for every page, mirrored in the URL -------------
+def init_filters() -> None:
+    """Call at the top of every run (main script, before the page runs).
+
+    First run of a session: read the filters from the URL (?role=...&state=...&min=...&
+    consistent=1), falling back to defaults for anything missing or invalid. Later runs:
+    re-assign each value so Streamlit keeps it while its widget is on another page.
+    """
+    if "_filters_ready" not in st.session_state:
+        sponsors = data()["sponsors"]
+        families = sponsors["family"].unique().tolist()
+        states = sponsors["state"].unique().tolist()
+        params = {k: st.query_params.get(k) for k in st.query_params.keys()}
+        st.session_state.update(parse_query(params, families, states))
+        st.session_state["_filters_ready"] = True
+    for key in FILTER_DEFAULTS:
+        st.session_state[key] = st.session_state.get(key, FILTER_DEFAULTS[key])
+
+
+def sync_url() -> None:
+    """Write the current filters to the URL so the view can be shared or bookmarked."""
+    filters = {k: st.session_state.get(k, v) for k, v in FILTER_DEFAULTS.items()}
+    wanted = encode_query(filters)
+    if {k: st.query_params.get(k) for k in wanted} != wanted:
+        st.query_params.update(wanted)
+
+
+def reset_filters() -> None:
+    """Put every shared filter back to its default (button callback)."""
+    for key, value in FILTER_DEFAULTS.items():
+        st.session_state[key] = value
 
 
 def year_ramp(years: list[int]) -> list[str]:

@@ -6,10 +6,8 @@ import streamlit as st
 
 from app_data import (
     ALL_OCCUPATIONS_LABEL,
-    ANALYTICS_LABEL,
     FAMILY_DESCRIPTIONS,
     FAMILY_ORDER,
-    STATE_ALL,
     as_percent,
     consistent_definition,
     filter_sponsors,
@@ -18,22 +16,15 @@ from app_data import (
     status_line,
     year_columns,
 )
-from ui import NONE_CAPTION, count_col, data, money_col, pct_col, text_col
+from ui import NONE_CAPTION, count_col, data, money_col, pct_col, reset_filters, text_col
 
 DATA = data()
 YEARS = DATA["meta"]["fiscal_years"]
 SPONSORS = DATA["sponsors"]
-DEFAULTS = {"family": ANALYTICS_LABEL, "state": STATE_ALL, "min_cases": 5, "consistent": False}
 EMPTY_MESSAGE = (
     "No employers match these filters. Try lowering the minimum cases or unchecking "
     "'Consistent sponsors only'."
 )
-
-
-def reset_filters() -> None:
-    """Put every filter back to its default (button callback)."""
-    for key, value in DEFAULTS.items():
-        st.session_state[key] = value
 
 
 def family_label(family: str) -> str:
@@ -87,9 +78,7 @@ def column_config(year_cols: list[str]) -> dict:
 
 
 families = [f for f in FAMILY_ORDER if f in set(SPONSORS["family"])]
-for key, value in DEFAULTS.items():
-    st.session_state.setdefault(key, value)
-if st.session_state["family"] not in families:
+if st.session_state["family"] not in families:  # e.g. a family missing from demo data
     st.session_state["family"] = families[0]
 
 st.title("Find sponsors")

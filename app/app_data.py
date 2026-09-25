@@ -152,6 +152,50 @@ def filter_sponsors(
     return d.drop(columns=["family", "state"]).reset_index(drop=True)
 
 
+# Filters shared by every page (session_state keys) and their URL parameter names.
+FILTER_DEFAULTS = {
+    "family": ANALYTICS_LABEL,
+    "state": STATE_ALL,
+    "min_cases": 5,
+    "consistent": False,
+}
+URL_KEYS = {"family": "role", "state": "state", "min_cases": "min", "consistent": "consistent"}
+MIN_CASES_RANGE = (1, 100)
+
+
+def parse_query(params: dict, families: list[str], states: list[str]) -> dict:
+    """URL query parameters -> validated filter values; anything unknown falls back to default.
+
+    params: {'role': 'Operations Research', 'state': 'AZ', 'min': '3', 'consistent': '1'}.
+    """
+    out = dict(FILTER_DEFAULTS)
+    family = params.get(URL_KEYS["family"])
+    if family in families:
+        out["family"] = family
+    state = str(params.get(URL_KEYS["state"], "")).upper()
+    if state in states:
+        out["state"] = state
+    try:
+        n = int(params.get(URL_KEYS["min_cases"], ""))
+        if MIN_CASES_RANGE[0] <= n <= MIN_CASES_RANGE[1]:
+            out["min_cases"] = n
+    except ValueError:
+        pass
+    flag = str(params.get(URL_KEYS["consistent"], "")).lower()
+    out["consistent"] = flag in {"1", "true", "yes"}
+    return out
+
+
+def encode_query(filters: dict) -> dict[str, str]:
+    """Filter values -> URL query parameters (the inverse of parse_query)."""
+    return {
+        URL_KEYS["family"]: str(filters["family"]),
+        URL_KEYS["state"]: str(filters["state"]),
+        URL_KEYS["min_cases"]: str(int(filters["min_cases"])),
+        URL_KEYS["consistent"]: "1" if filters["consistent"] else "0",
+    }
+
+
 def status_line(n: int, family: str, state: str, consistent_only: bool, min_cases: int) -> str:
     """'Showing **312 employers** · Analytics (combined) · Arizona · consistent only · min 5
     cases/year' (markdown)."""

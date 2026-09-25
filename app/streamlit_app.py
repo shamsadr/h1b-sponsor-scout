@@ -14,10 +14,11 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from app_data import footer_text  # noqa: E402
-from ui import data  # noqa: E402
+from ui import data, init_filters, sync_url  # noqa: E402
 
 st.set_page_config(page_title="H-1B Sponsor Scout", layout="wide")
 
+init_filters()
 pages = st.navigation(
     [
         st.Page("views/find_sponsors.py", title="Find sponsors", default=True),
@@ -27,5 +28,6 @@ pages = st.navigation(
     ]
 )
 pages.run()
+sync_url()
 st.divider()
 st.caption(footer_text(data()["meta"]))

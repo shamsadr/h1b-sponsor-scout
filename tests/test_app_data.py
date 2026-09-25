@@ -9,13 +9,16 @@ from app_data import (
     ANALYTICS_LABEL,
     FAMILY_DESCRIPTIONS,
     FAMILY_ORDER,
+    FILTER_DEFAULTS,
     ROOT,
     STATE_ALL,
     STATE_NAMES,
     as_percent,
     consistent_definition,
+    encode_query,
     filter_sponsors,
     footer_text,
+    parse_query,
     readme_bullet,
     readme_sections,
     search_groups,
@@ -169,3 +172,17 @@ def test_footer_reads_years_from_meta():
     assert text.startswith("Source: U.S. DOL OFLC LCA disclosure data, FY2024–FY2025.")
     assert "Not legal or immigration advice." in text
     assert years_label([2025]) == "FY2025"
+
+
+def test_query_params_round_trip_and_bad_values_fall_back():
+    families, states = [ANALYTICS_LABEL, "Operations Research"], [STATE_ALL, "AZ"]
+    filters = {"family": "Operations Research", "state": "AZ", "min_cases": 3, "consistent": True}
+    params = encode_query(filters)
+    assert params == {"role": "Operations Research", "state": "AZ", "min": "3", "consistent": "1"}
+    assert parse_query(params, families, states) == filters
+    assert parse_query({}, families, states) == FILTER_DEFAULTS
+    bad = {"role": "Astronaut", "state": "ZZ", "min": "abc", "consistent": "maybe"}
+    assert parse_query(bad, families, states) == FILTER_DEFAULTS
+    assert parse_query({"min": "0"}, families, states)["min_cases"] == 5  # out of range
+    assert parse_query({"min": "101"}, families, states)["min_cases"] == 5
+    assert parse_query({"state": "az"}, families, states)["state"] == "AZ"  # case-insensitive

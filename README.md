@@ -72,6 +72,11 @@ Pages:
   *filed at least N certified LCAs in this role group in every loaded fiscal year (FY2024 and
   FY2025)*. In the app, N is the "Minimum certified LCAs" slider. Without the checkbox, N applies
   to the total. The report uses N = 10.
+
+  **Shareable links.** The role group, state, minimum cases and consistency filter are shared by
+  every page and kept in the URL, e.g.
+  `?role=Operations+Research&state=AZ&min=3&consistent=1`, so a filtered view can be bookmarked
+  or sent. Unknown or invalid values fall back to the defaults.
 - **Employer lookup:** search a group or any member name to see certified cases by family and year,
   the wage-level mix and the member names.
 - **Trends:** certified cases per family and year, with the SOC-substitution and withdrawal caveats.
