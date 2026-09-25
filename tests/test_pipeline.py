@@ -1,14 +1,20 @@
 """End-to-end sanity check on the synthetic demo data."""
 
 import pandas as pd
+import pytest
 
 from h1b.config import DEMO_DIR
-from h1b.pipeline import build_scorecard, group_by_fy, process_files
+from h1b.pipeline import build_scorecard, clean_interim, group_by_fy, process_files
 
 
 def test_demo_end_to_end(tmp_path):
     for fy in (2024, 2025):
-        process_files([DEMO_DIR / f"lca_demo_FY{fy}.csv"], fy, out_dir=tmp_path)
+        process_files(
+            [DEMO_DIR / f"lca_demo_FY{fy}.csv"],
+            fy,
+            out_dir=tmp_path,
+            interim_dir=tmp_path / "interim",
+        )
     card = build_scorecard(processed_dir=tmp_path, reports_dir=tmp_path)
 
     assert (tmp_path / "scorecard_target_roles.csv").exists()
@@ -51,10 +57,42 @@ def test_group_by_fy_uses_filename_or_override(tmp_path):
 def test_process_files_merges_overlapping_quarters(tmp_path):
     q1 = _write_lca_csv(tmp_path / "LCA_FY2025_Q1.csv", [("A", "2024-11-01"), ("B", "2024-12-01")])
     q2 = _write_lca_csv(tmp_path / "LCA_FY2025_Q2.csv", [("B", "2025-01-15"), ("C", "2025-02-01")])
-    out = process_files([q1, q2], 2025, out_dir=tmp_path)
+    out = process_files([q1, q2], 2025, out_dir=tmp_path, interim_dir=tmp_path / "interim")
 
     df = pd.read_parquet(out)
     assert out.name == "lca_fy2025.parquet"
     assert sorted(df["CASE_NUMBER"]) == ["A", "B", "C"]  # union, no duplicates
     b_date = df.loc[df["CASE_NUMBER"] == "B", "DECISION_DATE"].iloc[0]
     assert b_date == pd.Timestamp("2025-01-15")  # latest decision kept
+
+
+def test_run_writes_uncleaned_interim_then_clean_rebuilds_from_it(tmp_path):
+    q1 = _write_lca_csv(tmp_path / "LCA_FY2025_Q1.csv", [("A", "2024-11-01"), ("B", "2024-12-01")])
+    q2 = _write_lca_csv(tmp_path / "LCA_FY2025_Q2.csv", [("B", "2025-01-15"), ("C", "2025-02-01")])
+    interim, processed = tmp_path / "interim", tmp_path / "processed"
+    process_files([q1, q2], 2025, out_dir=processed, interim_dir=interim)
+
+    raw = pd.read_parquet(interim / "lca_raw_fy2025.parquet")
+    assert len(raw) == 4  # standardized but NOT deduped (B appears twice)
+    assert "annual_wage" not in raw.columns  # no cleaning columns yet
+
+    q1.unlink(), q2.unlink()  # clean must not need the source files
+    (processed / "lca_fy2025.parquet").unlink()
+    out = clean_interim(interim, processed)
+    assert [p.name for p in out] == ["lca_fy2025.parquet"]
+    assert sorted(pd.read_parquet(out[0])["CASE_NUMBER"]) == ["A", "B", "C"]
+
+
+def test_clean_twice_gives_identical_output(tmp_path):
+    src = _write_lca_csv(tmp_path / "LCA_FY2025_Q1.csv", [("A", "2024-11-01"), ("B", "2024-12-01")])
+    interim, processed = tmp_path / "interim", tmp_path / "processed"
+    process_files([src], 2025, out_dir=processed, interim_dir=interim)
+
+    first = pd.read_parquet(clean_interim(interim, processed)[0])
+    second = pd.read_parquet(clean_interim(interim, processed)[0])
+    pd.testing.assert_frame_equal(first, second)
+
+
+def test_clean_interim_errors_when_no_interim_files(tmp_path):
+    with pytest.raises(FileNotFoundError, match="interim"):
+        clean_interim(tmp_path / "interim", tmp_path / "processed")

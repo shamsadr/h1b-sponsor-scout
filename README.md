@@ -28,6 +28,8 @@ With real data (download from DOL OFLC "Performance Data" → Disclosure Data �
 ```bash
 python -m h1b.pipeline inspect data/raw/LCA_Disclosure_Data_FY2025_Q4.xlsx
 python -m h1b.pipeline run --input data/raw/LCA_Disclosure_Data_FY2025_Q*.xlsx
+python -m h1b.pipeline clean          # re-clean from data/interim without re-reading the xlsx
+python -m h1b.pipeline scorecard      # rebuild the scorecards from data/processed
 ```
 Files are grouped by the `FYxxxx` in their filename (or pass `--fy` if all share one year).
 
@@ -81,6 +83,8 @@ target family, with a leading `family` column.
 - The demo data is synthetic, with fake employers.
 
 ## Layout
+Data layers: `data/raw` (DOL xlsx) → `data/interim` (standardized, uncleaned parquet) →
+`data/processed` (cleaned, deduped parquet) → `reports/`. Only `run` reads the xlsx.
 ```
 h1b/config.py      constants: columns, SOC families, wage units
 h1b/ingest.py      read xlsx/csv, standardize headers

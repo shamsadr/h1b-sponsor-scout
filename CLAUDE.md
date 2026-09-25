@@ -3,7 +3,8 @@
 ## What this project is
 Pipeline over public DOL LCA disclosure data (FY2019–present) that ranks employers
 sponsoring H-1B in OR / Data-BI / Quant / IE / Business-Analyst roles.
-Flow: `h1b/ingest.py` → `h1b/clean.py` → `h1b/scorecard.py`, CLI in `h1b/pipeline.py`.
+Flow: `h1b/ingest.py` → `data/interim` → `h1b/clean.py` → `data/processed` → `h1b/scorecard.py`,
+CLI in `h1b/pipeline.py` (`run` reads xlsx; `clean` and `scorecard` re-run from parquet).
 
 ## Owner context
 Grad student, coding-rusty. Explain changes briefly (what + why) and keep code simple,
@@ -20,7 +21,7 @@ when there's a real tradeoff.
   the real headers. Put renames in `COLUMN_ALIASES` in `h1b/config.py`.
 - NEVER read raw .xlsx files into context directly; they are ~80 MB. Inspect via the CLI
   or query parquet with pandas/DuckDB and print summaries.
-- NEVER commit anything in `data/raw/` or `data/processed/`.
+- NEVER commit anything in `data/raw/`, `data/interim/` or `data/processed/`.
 - Don't invent statistics or findings. README results come only from actual runs.
 - Ask before adding new dependencies; update `requirements.txt` if approved.
 - Make small changes; one phase or feature per commit.
