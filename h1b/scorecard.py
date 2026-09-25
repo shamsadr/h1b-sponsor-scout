@@ -129,3 +129,33 @@ def family_trends(df: pd.DataFrame, groups: dict[str, list[str]]) -> pd.DataFram
         counts = certified[certified["soc_family"].isin(fams)].groupby("fiscal_year").size()
         rows += [(name, year, int(counts.get(year, 0))) for year in years]
     return pd.DataFrame(rows, columns=["family", "fiscal_year", "cases"])
+
+
+def consistent_sponsors(
+    df: pd.DataFrame, groups: dict[str, list[str]], min_cases: int = 10
+) -> pd.DataFrame:
+    """Employers with >= min_cases certified cases in EVERY loaded year, per group.
+
+    Columns: group, employer_norm, employer_name, cases_fy{year}..., total_cases.
+    """
+    status = df["CASE_STATUS"].astype("string").str.strip()
+    certified = df[status.eq("Certified").fillna(False)]
+    years = sorted(df["fiscal_year"].unique().tolist())
+    year_cols = [f"cases_fy{y}" for y in years]
+    parts = []
+    for name, fams in groups.items():
+        c = certified[certified["soc_family"].isin(fams)]
+        per_year = c.groupby(["employer_norm", "fiscal_year"]).size().unstack(fill_value=0)
+        per_year = per_year.reindex(columns=years, fill_value=0)
+        keep = per_year[(per_year >= min_cases).all(axis=1)]
+        if keep.empty:
+            continue
+        out = keep.set_axis(year_cols, axis=1)
+        out["total_cases"] = out.sum(axis=1)
+        out.insert(0, "employer_name", c.groupby("employer_norm")["EMPLOYER_NAME"].agg(_mode))
+        out.insert(0, "group", name)
+        parts.append(out.sort_values("total_cases", ascending=False).reset_index())
+    columns = ["group", "employer_norm", "employer_name"] + year_cols + ["total_cases"]
+    if not parts:
+        return pd.DataFrame(columns=columns)
+    return pd.concat(parts, ignore_index=True)[columns]

@@ -18,6 +18,7 @@ from h1b.config import DEMO_DIR, INTERIM_DIR, PROCESSED_DIR, REPORTS_DIR, TARGET
 from h1b.ingest import ingest, normalize_col, read_raw
 from h1b.scorecard import (
     analysis_groups,
+    consistent_sponsors,
     dedupe_across_years,
     employer_scorecard,
     family_scorecards,
@@ -108,6 +109,8 @@ def build_scorecard(
     by_family.to_csv(reports_dir / "scorecard_by_family.csv", index=False)
     groups = analysis_groups(families if families is not None else TARGET_FAMILIES)
     family_trends(df, groups).to_csv(reports_dir / "family_trends.csv", index=False)
+    sponsors = consistent_sponsors(df, groups)
+    sponsors.to_csv(reports_dir / "consistent_sponsors.csv", index=False)
     years = sorted(df["fiscal_year"].unique().tolist())
     print(f"[ok] scorecard: {len(card):,} employers, FY {years} -> {out}")
     cols = [

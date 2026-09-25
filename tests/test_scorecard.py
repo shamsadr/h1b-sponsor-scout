@@ -3,6 +3,7 @@ import pandas as pd
 from h1b.config import ANALYTICS_COMBINED, ANALYTICS_LABEL
 from h1b.scorecard import (
     analysis_groups,
+    consistent_sponsors,
     dedupe_across_years,
     employer_scorecard,
     family_scorecards,
@@ -205,3 +206,37 @@ def test_family_trends_counts_certified_cases_by_year_with_rollup():
     assert got[(ANALYTICS_LABEL, 2024)] == 3  # OR only
     assert got[(ANALYTICS_LABEL, 2025)] == 6  # OR 2 + DS 4
     assert not any(k[0] == "Other" for k in got)
+
+
+def test_consistent_sponsors_need_min_cases_in_every_loaded_year():
+    def emp(name, fam, n24, n25, status="Certified"):
+        kw = dict(employer_norm=name, EMPLOYER_NAME=name, soc_family=fam, CASE_STATUS=status)
+        return [make_rows(n24, fiscal_year=2024, **kw), make_rows(n25, fiscal_year=2025, **kw)]
+
+    parts = (
+        emp("STEADY", "Operations Research", 12, 15)
+        + emp("FADING", "Operations Research", 12, 5)  # only 5 in 2025
+        + emp("SPLIT", "Operations Research", 6, 6)  # 6 OR + 6 DS each year
+        + emp("SPLIT", "Data Science / BI", 6, 6)
+        + emp("WITHDRAWN", "Operations Research", 20, 20, status="Withdrawn")  # not certified
+    )
+    df = pd.concat(parts, ignore_index=True)
+    groups = analysis_groups(["Operations Research", "Data Science / BI"])
+    out = consistent_sponsors(df, groups, min_cases=10)
+
+    def names(group):
+        return out[out["group"] == group]["employer_norm"].tolist()
+
+    assert names("Operations Research") == ["STEADY"]
+    assert names("Data Science / BI") == []
+    assert names(ANALYTICS_LABEL) == ["STEADY", "SPLIT"]  # rollup adds up SPLIT's 12 per year
+    row = out[(out["group"] == "Operations Research")].iloc[0]
+    assert (row["cases_fy2024"], row["cases_fy2025"], row["total_cases"]) == (12, 15, 27)
+    assert list(out.columns) == [
+        "group",
+        "employer_norm",
+        "employer_name",
+        "cases_fy2024",
+        "cases_fy2025",
+        "total_cases",
+    ]
