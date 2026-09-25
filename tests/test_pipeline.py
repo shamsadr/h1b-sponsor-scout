@@ -28,7 +28,8 @@ def test_demo_end_to_end(tmp_path):
     groups = pd.read_csv(tmp_path / "parent_groups.csv")
     assert {"parent_group", "employer_norm", "primary_fein", "link"} <= set(groups.columns)
     assert groups["employer_norm"].is_unique
-    assert (tmp_path / "risky_name_merges.csv").exists()
+    review = pd.read_csv(tmp_path / "merge_review.csv")
+    assert {"name_sim", "state_mismatch", "row_share", "risk_flags"} <= set(review.columns)
     assert "n_entities" in card.columns
     assert 1 <= len(card) <= 5  # 5 fake employers in demo data
     assert card["positions"].gt(0).all()

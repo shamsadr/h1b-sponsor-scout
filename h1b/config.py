@@ -105,3 +105,21 @@ NAME_SIMILARITY = 0.85  # difflib ratio at or above which two names count as rel
 GENERIC_NAME_TOKENS = {"US", "USA", "AMERICA", "AMERICAS", "NA", "SERVICES", "GROUP", "HOLDINGS"}
 # No name edge for short/generic keys ('GLOBAL SERVICES' -> 'GLOBAL').
 MIN_NAME_KEY_TOKENS, MIN_NAME_KEY_CHARS = 2, 6
+
+# Merge review (reports/merge_review.csv): warning signals for members of a group.
+NAME_SIM_WARN = 0.5  # difflib ratio to the group label below this -> flag
+# Last word of a name that looks like a job title ('SYSTEMS ANALYST') ...
+TITLE_WORDS = {
+    "ANALYST",
+    "ENGINEER",
+    "DEVELOPER",
+    "PROGRAMMER",
+    "SCIENTIST",
+    "ARCHITECT",
+    "ADMINISTRATOR",
+    "SPECIALIST",
+    "MANAGER",
+    "ACCOUNTANT",
+}
+# ... or a person with a professional suffix ('JOHN SMITH MD').
+PERSON_SUFFIXES = {"MD", "DDS", "DMD", "DVM", "CPA", "ESQ", "PHD"}

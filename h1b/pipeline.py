@@ -22,7 +22,7 @@ from h1b.config import (
     REPORTS_DIR,
     TARGET_FAMILIES,
 )
-from h1b.groups import add_parent_group, build_parent_groups, load_overrides, risky_name_merges
+from h1b.groups import add_parent_group, build_parent_groups, load_overrides, merge_review
 from h1b.ingest import ingest, normalize_col, read_raw
 from h1b.scorecard import (
     analysis_groups,
@@ -114,8 +114,8 @@ def build_scorecard(
     # Groups use every row of every year, so they don't depend on the family filter.
     parent_groups = build_parent_groups(df, load_overrides(overrides_path))
     parent_groups.to_csv(reports_dir / "parent_groups.csv", index=False)
-    risky = risky_name_merges(parent_groups)
-    risky.to_csv(reports_dir / "risky_name_merges.csv", index=False)
+    review = merge_review(parent_groups)
+    review.to_csv(reports_dir / "merge_review.csv", index=False)
     df = add_parent_group(df, parent_groups)
     card = employer_scorecard(df, families=families)
     out = reports_dir / "scorecard_target_roles.csv"
@@ -129,7 +129,7 @@ def build_scorecard(
     years = sorted(df["fiscal_year"].unique().tolist())
     n_names, n_groups = len(parent_groups), parent_groups["parent_group"].nunique()
     print(f"[ok] parent groups: {n_names:,} employer names -> {n_groups:,} groups")
-    print_risky_merges(risky)
+    print_merge_review(review)
     print(f"[ok] scorecard: {len(card):,} employer groups, FY {years} -> {out}")
     cols = [
         "parent_group",
@@ -143,18 +143,16 @@ def build_scorecard(
     return card
 
 
-def print_risky_merges(risky: pd.DataFrame, top_n: int = 20) -> None:
-    """Print the largest groups held together by name edges only (for review by eye)."""
-    groups = risky.groupby("parent_group", sort=False)
+def print_merge_review(review: pd.DataFrame, top_n: int = 25) -> None:
+    """Print the group members with the most warning signals (for review by eye)."""
+    flagged = int(review["risk_flags"].gt(0).sum())
     print(
-        f"[review] {groups.ngroups:,} groups joined only by name edges across FEINs "
-        f"(reports/risky_name_merges.csv); top {top_n} by rows:"
+        f"[review] {len(review):,} members of multi-name groups, {flagged:,} with a warning "
+        f"(reports/merge_review.csv); top {top_n}:"
     )
-    for name, g in list(groups)[:top_n]:
-        members = "; ".join(
-            f"{r.employer_norm} ({r.primary_fein}, {r.rows})" for r in g.itertuples()
-        )
-        print(f"  {name} [{g['rows'].sum():,} rows]: {members}")
+    cols = ["parent_group", "employer_norm", "rows", "primary_fein", "primary_state", "link"]
+    cols += ["name_sim", "state_mismatch", "looks_like_person_or_title", "risk_flags"]
+    print(review[cols].head(top_n).to_string(index=False))
 
 
 def _fy_from_name(path: Path) -> int:

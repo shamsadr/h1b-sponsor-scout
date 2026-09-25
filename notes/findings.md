@@ -217,3 +217,41 @@ grouped by `h1b/groups.py` with the seed `data/reference/employer_overrides.csv`
   Operations Research 53, Quant / Finance 108, Statistics / Decision Science 63, Supply Chain /
   Logistics 19. The largest in the analytics rollup are Amazon (4,007 + 3,381), EY (2,447 + 1,899),
   Microsoft (861 + 1,022) and Goldman Sachs (890 + 989).
+
+## 2026-09-25 — More overrides and the merge review
+
+Same source as the entry above. New overrides: five more Amazon names, BANK OF AMERICA (Bank of
+America N.A. + BofA Securities), CITI (Citibank N.A. + Citigroup Global Markets), and splits for
+TALEBNEJAD and IRIS CAPITAL.
+
+- **JPMorgan has no separate entities in FY2024–25.** `JPMORGAN CHASE AND` (6,945 rows), `JP MORGAN
+  CHASE AND` (3) and `JPMORGAN AND CHASE` (1) all use FEIN 13-2624428 and were already one group.
+  The other names containing "CHASE" are unrelated (Chase County Community Hospital, Chase Oaks
+  Animal Clinic and others).
+- **Other Citi and BofA names left out of the overrides:** Citigroup Energy (10 rows), Citigroup
+  Technology (9), CitiMortgage (5), Citi Fund Services Ohio (4), Citi Ventures (1), Merrill Lynch
+  (87) and Merrill Lynch Commodities (15). A separate employer normalizes to `CITI` (4 rows, FEIN
+  56-1928771, NC); it is now labelled `CITI (56-1928771)`.
+- **Groups.** 88,665 names form 84,918 groups. Target-family employers: 26,205 groups. Analytics
+  (combined): 17,584 groups.
+- **Certified target-family cases in the changed groups:** AMAZON 10,221 (10 names), CITI 1,106
+  (2), BANK OF AMERICA 823 (3: Bank of America N.A., Bank of America and BofA Securities).
+- **Analytics (combined), top 12 groups by certified cases:** AMAZON 7,411, EY 4,346, Microsoft
+  1,883, GOLDMAN SACHS 1,879, Wal-Mart Associates 1,701, JPMorgan Chase 1,613, Meta Platforms
+  1,410, Google 1,320, DELOITTE 1,158, CAPITAL ONE 1,144, CITI 1,056, BANK OF AMERICA 822.
+- **`merge_review.csv`.** 7,041 members of 3,294 multi-name groups; 1,205 have at least one
+  warning (1 warning: 1,017, 2: 185, 3: 3).
+  - Members flagged by each signal: name_sim < 0.5 888, name-only link across FEINs 176, state
+    mismatch 300, person/title 36.
+  - 18 of the 38 override members are flagged, all by name_sim against a short brand label.
+  - The three members with 3 warnings:
+    - KOERBER SUPPLY CHAIN in the INFIOS US group (4 rows)
+    - SOFTWARE DEVELOPER in MACHINE INTELLIGENCE TECHNOLOGIES (3 rows)
+    - FOCUS BRANDS USA in GOTO FOODS (1 row)
+  - The person/title signal catches job titles typed as employer names (JAVA DEVELOPER,
+    SALESFORCE DEVELOPER, ICONIC MANAGER) and professional practices (… DDS, … CPA, … MD). It has
+    one false positive where MD means Maryland (UHY ADVISORS MID ATLANTIC MD).
+- **Consistent sponsors** (≥10 certified cases in both years, by `parent_group`): Analytics
+  (combined) 477, Business / Mgmt Analyst 54, Data Science / BI 217, Industrial Engineering 56,
+  Operations Research 53, Quant / Finance 106, Statistics / Decision Science 63, Supply Chain /
+  Logistics 19.

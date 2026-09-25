@@ -4,6 +4,11 @@ merge,AMAZON WEB SERVICES,AMAZON,hiring brand Amazon
 merge,AMAZON DATA SERVICES,AMAZON,hiring brand Amazon
 merge,AMAZON DEVELOPMENT CENTER U S,AMAZON,hiring brand Amazon
 merge,AMAZON ADVERTISING,AMAZON,hiring brand Amazon
+merge,AMAZON PAYMENTS,AMAZON,hiring brand Amazon
+merge,AMAZON CAPITAL SERVICES,AMAZON,hiring brand Amazon
+merge,AMAZON RETAIL,AMAZON,hiring brand Amazon
+merge,AMAZON COM CA,AMAZON,hiring brand Amazon
+merge,AMAZON STUDIOS,AMAZON,hiring brand Amazon
 merge,GOLDMAN SACHS AND,GOLDMAN SACHS,hiring brand Goldman Sachs
 merge,GOLDMAN SACHS BANK USA,GOLDMAN SACHS,hiring brand Goldman Sachs
 merge,GOLDMAN SACHS SERVICES,GOLDMAN SACHS,hiring brand Goldman Sachs
@@ -29,3 +34,9 @@ merge,RELX,RELX / LEXISNEXIS,FEIN 52-1471842 is cut by the unrelated-names cap
 merge,LEXISNEXIS USA,RELX / LEXISNEXIS,same FEIN as RELX
 merge,REED ELSEVIER TECHNOLOGY SERVICES,RELX / LEXISNEXIS,same FEIN as RELX
 split,MY529,,Utah college savings plan; shares the State of Utah FEIN 87-6000545
+merge,BANK OF AMERICA N A,BANK OF AMERICA,hiring brand Bank of America
+merge,BOFA SECURITIES,BANK OF AMERICA,hiring brand Bank of America
+merge,CITIBANK N A,CITI,hiring brand Citi
+merge,CITIGROUP GLOBAL MARKETS,CITI,hiring brand Citi
+split,TALEBNEJAD,,1 row on Bank of America N.A.'s FEIN 94-1687665
+split,IRIS CAPITAL,,shares FEIN 93-4004615 with Iris Software and Services; different company

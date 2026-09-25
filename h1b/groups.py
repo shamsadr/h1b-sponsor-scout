@@ -20,8 +20,11 @@ from h1b.config import (
     MAX_UNRELATED_PER_FEIN,
     MIN_NAME_KEY_CHARS,
     MIN_NAME_KEY_TOKENS,
+    NAME_SIM_WARN,
     NAME_SIMILARITY,
+    PERSON_SUFFIXES,
     PLACEHOLDER_FEINS,
+    TITLE_WORDS,
 )
 
 OVERRIDE_COLS = ["action", "employer_norm", "parent_group", "note"]
@@ -63,16 +66,29 @@ def name_key(norm: str) -> str:
     return key
 
 
+def _mode_per_name(names: pd.Series, values: pd.Series) -> pd.Series:
+    """employer_norm -> its most common non-null value (ties: smallest value)."""
+    d = pd.DataFrame({"employer_norm": names, "v": values}).dropna()
+    counts = d.groupby(["employer_norm", "v"]).size().rename("n").reset_index()
+    counts = counts.sort_values(["employer_norm", "n", "v"], ascending=[True, False, True])
+    return counts.drop_duplicates("employer_norm").set_index("employer_norm")["v"].astype(str)
+
+
 def primary_feins(df: pd.DataFrame) -> pd.Series:
     """employer_norm -> its most common usable FEIN (ties: smallest FEIN)."""
     if "EMPLOYER_FEIN" not in df.columns:
         return pd.Series(dtype="object")
     fein = df["EMPLOYER_FEIN"].astype("string").str.strip()
     usable = fein.str.match(FEIN_PATTERN).fillna(False) & ~fein.isin(PLACEHOLDER_FEINS)
-    d = pd.DataFrame({"employer_norm": df["employer_norm"], "fein": fein})[usable]
-    counts = d.groupby(["employer_norm", "fein"]).size().rename("n").reset_index()
-    counts = counts.sort_values(["employer_norm", "n", "fein"], ascending=[True, False, True])
-    return counts.drop_duplicates("employer_norm").set_index("employer_norm")["fein"].astype(str)
+    return _mode_per_name(df["employer_norm"], fein.where(usable))
+
+
+def primary_states(df: pd.DataFrame) -> pd.Series:
+    """employer_norm -> its most common EMPLOYER_STATE (ties: alphabetical)."""
+    if "EMPLOYER_STATE" not in df.columns:
+        return pd.Series(dtype="object")
+    state = df["EMPLOYER_STATE"].astype("string").str.strip().str.upper().replace("", pd.NA)
+    return _mode_per_name(df["employer_norm"], state)
 
 
 def _related(a: str, b: str) -> bool:
@@ -116,8 +132,10 @@ def load_overrides(path: Path | None) -> pd.DataFrame:
 def build_parent_groups(df: pd.DataFrame, overrides: pd.DataFrame | None = None) -> pd.DataFrame:
     """One row per employer_norm with its parent_group and how it was linked.
 
-    Columns: parent_group, employer_norm, primary_fein, rows, link, group_rows, n_entities.
-    link lists the edge types that touch the name ('name', 'fein', 'override'), or 'none'.
+    Columns: parent_group, employer_norm, primary_fein, primary_state, rows, link,
+    group_rows, n_entities. link lists the edge types that touch the name ('name', 'fein',
+    'override'), or 'none'. A group without overrides is labelled by its largest name; if
+    that name equals an override label, its FEIN is appended ('CITI (56-1928771)').
     """
     ov = overrides if overrides is not None else pd.DataFrame(columns=OVERRIDE_COLS)
     rows = df["employer_norm"].value_counts()
@@ -164,13 +182,22 @@ def build_parent_groups(df: pd.DataFrame, overrides: pd.DataFrame | None = None)
     out = pd.DataFrame({"employer_norm": nodes, "rows": rows.reindex(nodes).to_numpy()})
     out["root"] = out["employer_norm"].map(uf.find)
     out["primary_fein"] = out["employer_norm"].map(primary)
+    out["primary_state"] = out["employer_norm"].map(primary_states(df))
     # Default label: the member with the most rows (ties: alphabetical).
     best = (
         out.sort_values(["rows", "employer_norm"], ascending=[False, True])
         .drop_duplicates("root")
         .set_index("root")["employer_norm"]
     )
-    out["parent_group"] = [label_of_root.get(r, best[r]) for r in out["root"]]
+    taken = set(label_of_root.values())
+
+    def label(root: str) -> str:
+        if root in label_of_root:
+            return label_of_root[root]
+        name = best[root]
+        return f"{name} ({primary.get(name) or 'no FEIN'})" if name in taken else name
+
+    out["parent_group"] = [label(r) for r in out["root"]]
     out["link"] = ["+".join(sorted(links[n])) or "none" for n in out["employer_norm"]]
     g = out.groupby("parent_group")
     out["group_rows"] = g["rows"].transform("sum")
@@ -179,7 +206,7 @@ def build_parent_groups(df: pd.DataFrame, overrides: pd.DataFrame | None = None)
         ["group_rows", "parent_group", "rows", "employer_norm"],
         ascending=[False, True, False, True],
     )
-    cols = ["parent_group", "employer_norm", "primary_fein", "rows", "link"]
+    cols = ["parent_group", "employer_norm", "primary_fein", "primary_state", "rows", "link"]
     return out[cols + ["group_rows", "n_entities"]].reset_index(drop=True)
 
 
@@ -189,13 +216,68 @@ def add_parent_group(df: pd.DataFrame, groups: pd.DataFrame) -> pd.DataFrame:
     return df.assign(parent_group=df["employer_norm"].map(mapping))
 
 
-def risky_name_merges(groups: pd.DataFrame) -> pd.DataFrame:
-    """Members of groups whose names have 2+ different primary FEINs and no override.
+def looks_like_person_or_title(norm: str) -> bool:
+    """'SYSTEMS ANALYST' or 'JOHN SMITH MD': a job title or a person typed as the employer."""
+    tokens = norm.split()
+    if not tokens:
+        return False
+    return tokens[-1] in PERSON_SUFFIXES or (len(tokens) <= 3 and tokens[-1] in TITLE_WORDS)
 
-    FEIN edges only join names with the same primary FEIN, so such groups are held
-    together by name edges alone, which is worth a look by eye.
+
+def _group_mode(m: pd.DataFrame, col: str) -> pd.Series:
+    """Per row of m: the value of `col` that covers the most rows in its parent_group."""
+    w = m.dropna(subset=[col]).groupby(["parent_group", col])["rows"].sum().reset_index()
+    w = w.sort_values(["parent_group", "rows", col], ascending=[True, False, True])
+    top = w.drop_duplicates("parent_group").set_index("parent_group")[col]
+    return m["parent_group"].map(top)
+
+
+def merge_review(groups: pd.DataFrame) -> pd.DataFrame:
+    """One row per member of a multi-member group, with warning signals to review by eye.
+
+    risk_flags counts: name_sim < NAME_SIM_WARN (difflib ratio to the group label);
+    linked by name only while its primary FEIN differs from the group's main FEIN;
+    primary state differs from the group's main state; name looks like a person or title.
     """
-    g = groups.groupby("parent_group")
-    has_override = g["link"].transform(lambda s: s.str.contains("override").any())
-    n_feins = g["primary_fein"].transform("nunique")
-    return groups[~has_override & (n_feins >= 2)].reset_index(drop=True)
+    m = groups[groups["n_entities"] > 1].copy()
+    main_fein, main_state = _group_mode(m, "primary_fein"), _group_mode(m, "primary_state")
+    m["row_share"] = m["rows"] / m["group_rows"]
+    m["name_sim"] = [
+        round(SequenceMatcher(None, n, g).ratio(), 3)
+        for n, g in zip(m["employer_norm"], m["parent_group"], strict=True)
+    ]
+    m["state_mismatch"] = (
+        m["primary_state"].notna() & main_state.notna() & (m["primary_state"] != main_state)
+    )
+    m["looks_like_person_or_title"] = m["employer_norm"].map(looks_like_person_or_title)
+    name_only = (
+        m["link"].eq("name")
+        & m["primary_fein"].notna()
+        & main_fein.notna()
+        & (m["primary_fein"] != main_fein)
+    )
+    m["risk_flags"] = (
+        (m["name_sim"] < NAME_SIM_WARN).astype(int)
+        + name_only.astype(int)
+        + m["state_mismatch"].astype(int)
+        + m["looks_like_person_or_title"].astype(int)
+    )
+    m = m.sort_values(
+        ["risk_flags", "rows", "parent_group", "employer_norm"],
+        ascending=[False, False, True, True],
+    )
+    cols = [
+        "parent_group",
+        "employer_norm",
+        "rows",
+        "row_share",
+        "primary_fein",
+        "primary_state",
+        "link",
+        "name_sim",
+        "state_mismatch",
+        "looks_like_person_or_title",
+        "risk_flags",
+        "n_entities",
+    ]
+    return m[cols].reset_index(drop=True)

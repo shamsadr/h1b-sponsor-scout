@@ -79,12 +79,25 @@ are the connected components, and their label is the `parent_group` column.
 - **Manual overrides:** `data/reference/employer_overrides.csv` (committed) holds `merge` rows
   (join a name to a `parent_group` label) and `split` rows (the name gets no automatic edges).
 - **Merge rule: one hiring brand a candidate would apply to, not corporate ownership.** Amazon
-  therefore covers Amazon.com Services, AWS, Amazon Data Services, Amazon Development Center and
-  Amazon Advertising, but not Twitch, Zappos or Whole Foods. Subsidiaries file under their own
+  therefore covers the Amazon-branded entities (Amazon.com Services, AWS, Amazon Data Services,
+  Amazon Development Center, Amazon Advertising, Payments, Retail, Studios, ...) but not Twitch,
+  Zappos or Whole Foods. Subsidiaries file under their own
   FEINs, so brand groups like these come only from overrides.
-- **Review files:** `reports/parent_groups.csv` lists every name with its group and the edge types
-  that linked it. `reports/risky_name_merges.csv` lists groups held together only by name edges
-  across different primary FEINs; the largest 20 are printed after each run.
+- **Label clashes:** if a group without overrides has the same name as an override label, its
+  primary FEIN is appended to its label (the 4-row employer named `CITI` becomes
+  `CITI (56-1928771)`, separate from the `CITI` brand group).
+- **Review files:** `reports/parent_groups.csv` lists every name with its group, primary FEIN and
+  state, and the edge types that linked it. `reports/merge_review.csv` has one row per member of a
+  multi-name group. Its `risk_flags` column counts four warning signals:
+  - `name_sim < 0.5`: `name_sim` is the difflib similarity of the name to the group label
+  - linked by name only, with a primary FEIN different from the group's main FEIN
+  - `state_mismatch`: the member's main `EMPLOYER_STATE` differs from the group's
+  - `looks_like_person_or_title`: the name ends in a job title word ("SYSTEMS ANALYST", up to
+    3 words) or a professional suffix (MD, DDS, CPA, ...)
+
+  Rows are sorted by `risk_flags`, then rows, and the top 25 are printed after each run.
+  Override members with a short brand label (`AMAZON WEB SERVICES` vs `AMAZON`) get the
+  `name_sim` flag too.
 
 ## Methodology decisions
 - **Quarterly files are not cumulative.** The FY2025 Q4 file's `DECISION_DATE` runs only
@@ -131,8 +144,8 @@ Written to `reports/` by `run` and `scorecard` (git-ignored, regenerate any time
 | scorecard_target_roles.csv | one row per employer, columns above, target families only |
 | scorecard_by_family.csv | same columns, top 25 employers by cases in each target family |
 | family_trends.csv | certified cases per family and fiscal year, plus an "Analytics (combined)" rollup of OR, Statistics / Decision Science, Data Science / BI and Quant / Finance |
-| parent_groups.csv | one row per `employer_norm`: parent_group, primary_fein, rows, link (`name` / `fein` / `override` / `none`) |
-| risky_name_merges.csv | members of groups joined only by name edges whose names have different primary FEINs |
+| parent_groups.csv | one row per `employer_norm`: parent_group, primary_fein, primary_state, rows, link (`name` / `fein` / `override` / `none`) |
+| merge_review.csv | one row per member of a multi-name group: name_sim, link, state_mismatch, looks_like_person_or_title, row_share, risk_flags |
 | consistent_sponsors.csv | employers with ≥10 certified cases in every loaded year, per family and for the analytics rollup, with one `cases_fy{year}` column per year |
 
 ## Limitations

@@ -5,16 +5,17 @@ from h1b.groups import (
     build_parent_groups,
     count_unrelated,
     load_overrides,
+    looks_like_person_or_title,
+    merge_review,
     name_key,
     primary_feins,
-    risky_name_merges,
 )
 
 
-def lca(*specs: tuple[str, str | None, int]) -> pd.DataFrame:
-    """LCA rows from (employer_norm, EMPLOYER_FEIN, n_rows) specs."""
-    rows = [(name, fein) for name, fein, n in specs for _ in range(n)]
-    return pd.DataFrame(rows, columns=["employer_norm", "EMPLOYER_FEIN"])
+def lca(*specs: tuple) -> pd.DataFrame:
+    """LCA rows from (employer_norm, EMPLOYER_FEIN, n_rows[, EMPLOYER_STATE]) specs."""
+    rows = [(s[0], s[1], s[3] if len(s) > 3 else "NY") for s in specs for _ in range(s[2])]
+    return pd.DataFrame(rows, columns=["employer_norm", "EMPLOYER_FEIN", "EMPLOYER_STATE"])
 
 
 def group_of(groups: pd.DataFrame) -> dict[str, str]:
@@ -119,7 +120,21 @@ def test_override_merge_joins_unlinked_names_under_its_label():
     groups = build_parent_groups(df, ov)
     assert set(group_of(groups).values()) == {"AMAZON"}
     assert set(groups["link"]) == {"override"}
-    assert risky_name_merges(groups).empty
+    review = merge_review(groups)
+    # Only the short brand label lowers name_sim; override links are never 'name only'.
+    assert review["risk_flags"].eq((review["name_sim"] < 0.5).astype(int)).all()
+
+
+def test_label_matching_an_override_label_gets_its_fein_appended():
+    df = lca(
+        ("CITIBANK N A", "11-1111111", 9),
+        ("CITIGROUP GLOBAL MARKETS", "22-2222222", 3),
+        ("CITI", "33-3333333", 2),  # a different employer that normalizes to 'CITI'
+    )
+    ov = overrides(("merge", "CITIBANK N A", "CITI"), ("merge", "CITIGROUP GLOBAL MARKETS", "CITI"))
+    got = group_of(build_parent_groups(df, ov))
+    assert got["CITIBANK N A"] == got["CITIGROUP GLOBAL MARKETS"] == "CITI"
+    assert got["CITI"] == "CITI (33-3333333)"
 
 
 def test_override_split_detaches_a_name_from_fein_and_name_edges():
@@ -160,23 +175,63 @@ def test_grouping_is_order_independent():
         ("GOLDMAN SACHS SERVICES", "22-2222222", 7),
         ("GOLDMAN SACHS TRUST NA", "11-1111111", 1),
         ("ACME ANALYTICS", "33-3333333", 4),
-        ("ACME ANALYTICS US", None, 4),
-        ("ZETA LABS", "33-3333333", 2),
+        ("ACME ANALYTICS US", None, 4, "CA"),
+        ("ZETA LABS", "33-3333333", 2, "TX"),
+        ("ZETA LABS", "33-3333333", 2, "CA"),  # state tie -> alphabetical
         ("MY529", "44-4444444", 1),
     )
     ov = overrides(("split", "MY529", None))
     expected = build_parent_groups(df, ov)
     for seed in range(5):
         shuffled = df.sample(frac=1, random_state=seed).reset_index(drop=True)
-        pd.testing.assert_frame_equal(build_parent_groups(shuffled, ov), expected)
+        got = build_parent_groups(shuffled, ov)
+        pd.testing.assert_frame_equal(got, expected)
+        pd.testing.assert_frame_equal(merge_review(got), merge_review(expected))
 
 
-def test_risky_name_merges_flags_name_only_joins_across_feins():
+def test_merge_review_flags_one_row_unrelated_name_under_shared_fein():
+    df = lca(
+        ("BANK OF AMERICA N A", "94-1687665", 50),
+        ("TALEBNEJAD", "94-1687665", 1),  # 2 name clusters -> the FEIN still links
+    )
+    review = merge_review(build_parent_groups(df)).set_index("employer_norm")
+    odd = review.loc["TALEBNEJAD"]
+    assert odd["name_sim"] < 0.5
+    assert odd["risk_flags"] >= 1
+    assert odd["row_share"] == pytest.approx(1 / 51)
+    assert review.index[0] == "TALEBNEJAD"  # most flags first
+    assert review.loc["BANK OF AMERICA N A", "risk_flags"] == 0
+
+
+def test_merge_review_name_only_state_and_title_signals():
     df = lca(
         ("GOLDMAN SACHS AND", "11-1111111", 7),
-        ("GOLDMAN SACHS SERVICES", "22-2222222", 5),  # name edge, different FEIN
+        ("GOLDMAN SACHS SERVICES", "22-2222222", 5, "TX"),  # name edge, other FEIN and state
         ("TESLA MOTORS", "33-3333333", 5),
-        ("TESLA MOTORS US", "33-3333333", 1),  # name edge, same FEIN -> not risky
+        ("TESLA MOTORS US", "33-3333333", 1),  # name edge, same FEIN
+        ("NATSOFT", "44-4444444", 9),
+        ("SYSTEMS ANALYST", "44-4444444", 3),  # job title typed as the employer
+        ("SOLO", "55-5555555", 4),  # single-name group -> not reviewed
     )
-    risky = risky_name_merges(build_parent_groups(df))
-    assert set(risky["employer_norm"]) == {"GOLDMAN SACHS AND", "GOLDMAN SACHS SERVICES"}
+    review = merge_review(build_parent_groups(df)).set_index("employer_norm")
+    assert "SOLO" not in review.index
+    gs = review.loc["GOLDMAN SACHS SERVICES"]
+    assert gs["state_mismatch"] and gs["risk_flags"] == 2  # name only + state
+    assert review.loc["GOLDMAN SACHS AND", "risk_flags"] == 0  # holds the group's main FEIN
+    assert review.loc["TESLA MOTORS US", "risk_flags"] == 0
+    assert review.loc["SYSTEMS ANALYST", "looks_like_person_or_title"]
+
+
+@pytest.mark.parametrize(
+    "norm, expected",
+    [
+        ("SYSTEMS ANALYST", True),
+        ("SOFTWARE ENGINEER", True),
+        ("JOHN SMITH MD", True),
+        ("ACME DATA ANALYST SOLUTIONS", False),
+        ("DATA ENGINEERING PARTNERS OF AMERICA ENGINEER", False),  # long name
+        ("", False),
+    ],
+)
+def test_looks_like_person_or_title(norm, expected):
+    assert looks_like_person_or_title(norm) is expected
